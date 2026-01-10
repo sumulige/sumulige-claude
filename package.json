@@ -1,0 +1,31 @@
+{
+  "name": "oh-my-claude",
+  "version": "1.0.0",
+  "description": "The Best Agent Harness for Claude Code",
+  "main": "cli.js",
+  "bin": {
+    "oh-my-claude": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node cli.js init"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent",
+    "ai",
+    "skills",
+    "mcp"
+  ],
+  "author": "sumulige",
+  "license": "MIT",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sumulige/oh-my-claude.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
