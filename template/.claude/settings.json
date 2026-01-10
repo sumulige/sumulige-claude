@@ -2,6 +2,10 @@
   "matcher": "UserPromptSubmit|PreToolUse|PostToolUse",
   "hooks": [
     {
+      "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/project-kickoff.cjs",
+      "timeout": 1
+    },
+    {
       "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/thinking-silent.cjs",
       "timeout": 1
     },

@@ -375,10 +375,54 @@ const commands = {
     console.log('   • 20+ pre-configured skills');
     console.log('');
     console.log('Next steps:');
-    console.log('   1. Edit .claude/CLAUDE.md with your project info');
-    console.log('   2. Edit .claude/ANCHORS.md to add your anchors');
+    console.log('   1. Run: oh-my-claude kickoff  # 开始项目规划');
+    console.log('   2. Edit .claude/CLAUDE.md with your project info');
     console.log('   3. Run: oh-my-claude status');
     console.log('');
+  },
+
+  kickoff: () => {
+    const projectDir = process.cwd();
+    const kickoffFile = path.join(projectDir, 'PROJECT_KICKOFF.md');
+    const hintFile = path.join(projectDir, '.claude/.kickoff-hint.txt');
+
+    console.log('🚀 Project Kickoff - Manus 风格项目启动');
+    console.log('');
+
+    if (fs.existsSync(kickoffFile)) {
+      console.log('ℹ️  项目已经完成启动流程');
+      console.log('   文件:', kickoffFile);
+      console.log('');
+      console.log('如需重新规划，请先删除以下文件：');
+      console.log('   - PROJECT_KICKOFF.md');
+      console.log('   - TASK_PLAN.md');
+      console.log('   - PROJECT_PROPOSAL.md');
+      return;
+    }
+
+    // 运行启动 Hook
+    const kickoffHook = path.join(projectDir, '.claude/hooks/project-kickoff.cjs');
+    if (fs.existsSync(kickoffHook)) {
+      try {
+        execSync(`node "${kickoffHook}"`, {
+          cwd: projectDir,
+          env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
+          stdio: 'inherit'
+        });
+      } catch (e) {
+        // Hook 可能会输出内容然后退出，这是正常的
+      }
+
+      // 显示提示文件内容（如果存在）
+      if (fs.existsSync(hintFile)) {
+        const hint = fs.readFileSync(hintFile, 'utf-8');
+        console.log(hint);
+      }
+    } else {
+      console.log('⚠️  启动 Hook 不存在');
+      console.log('   请先运行: oh-my-claude template');
+      console.log('   或: oh-my-claude sync');
+    }
   }
 };
 
@@ -441,8 +485,10 @@ function main() {
     commands['skill:install'](arg);
   } else if (cmd === 'template') {
     commands.template(arg);
+  } else if (cmd === 'kickoff') {
+    commands.kickoff();
   } else {
-    console.log('Oh My Claude - Agent Harness for Claude Code');
+    console.log('Oh My Claude - Agent Harness for Claude Code (Manus-style)');
     console.log('');
     console.log('Usage: oh-my-claude <command> [args]');
     console.log('');
@@ -450,6 +496,7 @@ function main() {
     console.log('  init              Initialize configuration');
     console.log('  sync              Sync to current project');
     console.log('  template [path]   Deploy Claude Code project template');
+    console.log('  kickoff           Start project planning workflow (Manus-style)');
     console.log('  agent <task>      Run agent orchestration');
     console.log('  status            Show configuration status');
     console.log('  skill:list        List installed skills');
@@ -460,6 +507,7 @@ function main() {
     console.log('  oh-my-claude sync');
     console.log('  oh-my-claude template');
     console.log('  oh-my-claude template /path/to/project');
+    console.log('  oh-my-claude kickoff        # Start project planning');
     console.log('  oh-my-claude agent "Build a REST API"');
     console.log('  oh-my-claude skill:install anthropics/skills');
   }
