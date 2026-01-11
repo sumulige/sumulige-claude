@@ -206,6 +206,49 @@ const commands = {
     console.log('Skills:', config.skills.join(', '));
     console.log('');
     console.log('ThinkingLens:', config.thinkingLens.enabled ? '✅ Enabled' : '❌ Disabled');
+    console.log('');
+
+    // 显示项目 todos 状态
+    const projectDir = process.cwd();
+    const todosIndex = path.join(projectDir, 'development', 'todos', 'INDEX.md');
+
+    if (fs.existsSync(todosIndex)) {
+      const content = fs.readFileSync(todosIndex, 'utf-8');
+
+      // 提取进度信息
+      const totalMatch = content.match(/Total:\s+`([^`]+)`\s+(\d+)%/);
+      const p0Match = content.match(/P0[^`]*`([^`]+)`\s+(\d+)%\s+\((\d+)\/(\d+)\)/);
+      const p1Match = content.match(/P1[^`]*`([^`]+)`\s+(\d+)%\s+\((\d+)\/(\d+)\)/);
+      const p2Match = content.match(/P2[^`]*`([^`]+)`\s+(\d+)%\s+\((\d+)\/(\d+)\)/);
+
+      const activeMatch = content.match(/\|\s+🚧 进行中[^|]*\|\s+`active\/`\s+\|\s+(\d+)/);
+      const completedMatch = content.match(/\|\s+✅ 已完成[^|]*\|\s+`completed\/`\s+\|\s+(\d+)/);
+      const backlogMatch = content.match(/\|\s+📋 待办[^|]*\|\s+`backlog\/`\s+\|\s+(\d+)/);
+
+      console.log('📋 Project Tasks:');
+      console.log('');
+      if (totalMatch) {
+        console.log(`  Total: ${totalMatch[1]} ${totalMatch[2]}%`);
+      }
+      if (p0Match) {
+        console.log(`  P0:   ${p0Match[1]} ${p0Match[2]}% (${p0Match[3]}/${p0Match[4]})`);
+      }
+      if (p1Match) {
+        console.log(`  P1:   ${p1Match[1]} ${p1Match[2]}% (${p1Match[3]}/${p1Match[4]})`);
+      }
+      if (p2Match) {
+        console.log(`  P2:   ${p2Match[1]} ${p2Match[2]}% (${p2Match[3]}/${p2Match[4]})`);
+      }
+      console.log('');
+      console.log(`  🚧 Active:    ${activeMatch ? activeMatch[1] : 0}`);
+      console.log(`  ✅ Completed: ${completedMatch ? completedMatch[1] : 0}`);
+      console.log(`  📋 Backlog:   ${backlogMatch ? backlogMatch[1] : 0}`);
+      console.log('');
+      console.log(`  View: cat development/todos/INDEX.md`);
+    } else {
+      console.log('📋 Project Tasks: (not initialized)');
+      console.log('  Run: node .claude/hooks/todo-manager.cjs --force');
+    }
   },
 
   'skill:list': () => {
