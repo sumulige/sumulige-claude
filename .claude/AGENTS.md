@@ -11,19 +11,19 @@ This project uses **Oh My Claude** for multi-agent collaboration.
 - **Role**: Task coordination and decomposition
 
 ### architect
-- **Model**: claude-sonnet-4.5
+- **Model**: claude-opus-4.5
 - **Role**: Architecture design and decisions
 
 ### builder
-- **Model**: claude-sonnet-4.5
+- **Model**: claude-opus-4.5
 - **Role**: Code implementation and testing
 
 ### reviewer
-- **Model**: claude-haiku-4.5
+- **Model**: claude-opus-4.5
 - **Role**: Code review and quality check
 
 ### librarian
-- **Model**: claude-sonnet-4.5
+- **Model**: claude-opus-4.5
 - **Role**: Documentation and knowledge
 
 ## Usage

@@ -10,12 +10,13 @@ Oh My Claude 是一个专为 Claude Code 设计的配置管理和多 Agent 协�
 
 1. [什么是 Oh My Claude？](#什么是-oh-my-claude)
 2. [为什么使用它？](#为什么使用它)
-3. [Manus 风格工作流](#manus-风格工作流)
-4. [快速开始](#快速开始)
-5. [详细使用指南](#详细使用指南)
-6. [项目模板功能](#项目模板功能)
-7. [常见问题](#常见问题)
-8. [命令参考](#命令参考)
+3. [Boris 最佳实践](#boris-最佳实践)
+4. [Manus 风格工作流](#manus-风格工作流)
+5. [快速开始](#快速开始)
+6. [详细使用指南](#详细使用指南)
+7. [项目模板功能](#项目模板功能)
+8. [常见问题](#常见问题)
+9. [命令参考](#命令参考)
 
 ---
 
@@ -62,6 +63,73 @@ Architect: 我来设计架构...
 Builder: 我来写代码...
 Reviewer: 我来检查质量...
 结果: 代码更规范、更安全、更易维护
+```
+
+---
+
+## Boris 最佳实践
+
+> 基于 [Claude Code 创造者 Boris Cherny](https://twitter-thread.com/t/2007179832300581177) 的实战经验
+
+Oh My Claude 集成了 Boris 推荐的核心工作流，让开发效率提升 2-3 倍。
+
+### 四大核心优化
+
+| 优化 | 效果 | 实现方式 |
+|------|------|----------|
+| **验证反馈循环** | 质量提升 2-3 倍 | `/verify-work` + 自动验证提醒 |
+| **Slash Commands** | 减少重复提示 | 7 个预配置命令 |
+| **代码格式化 Hook** | 避免 CI 格式错误 | 自动格式化 (Prettier/Black/Gofmt) |
+| **并行多会话** | 充分利用 AI 算力 | 会话追踪和管理 |
+
+### Slash Commands
+
+部署模板后，可使用以下命令：
+
+| 命令 | 功能 |
+|------|------|
+| `/commit-push-pr` | 提交 → 推送 → 创建 PR（完整流程） |
+| `/commit` | 创建规范的 git commit |
+| `/pr` | 创建或更新 Pull Request |
+| `/test` | 运行测试套件并显示覆盖率 |
+| `/review` | 审查当前更改（代码质量检查） |
+| `/verify-work` | 查看待验证任务列表 |
+| `/sessions` | 管理并行会话 |
+
+### 自动验证反馈
+
+在关键操作后自动提醒验证：
+
+```bash
+git commit    → 提醒运行测试
+git push      → 提醒检查 CI 状态
+deploy        → 提醒在预发布环境验证
+```
+
+### 代码自动格式化
+
+支持的语言和格式化工具：
+
+| 语言 | 格式化工具 |
+|------|-----------|
+| JavaScript/TypeScript | Prettier |
+| Python | Black |
+| Go | gofmt |
+| Rust | rustfmt |
+| JSON/YAML/Markdown | Prettier |
+
+### 并行工作流
+
+Boris 的多终端工作流：
+
+```
+终端 1: Conductor  - 任务规划和协调
+终端 2: Architect  - 架构设计
+终端 3: Builder    - 代码实现
+终端 4: Reviewer   - 代码审查
+终端 5: Explorer   - 代码探索和研究
+
++ 5-10 个 claude.ai/code Web 会话并行运行
 ```
 
 ---
