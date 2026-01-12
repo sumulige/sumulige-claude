@@ -1,14 +1,14 @@
-# Oh My Claude
+# Sumulige Claude
 
 > **Claude Code 的终极 Agent 编排框架**
 
-Oh My Claude 是一个专为 Claude Code 设计的配置管理和多 Agent 协作框架，让 AI 辅助开发更智能、更高效。
+Sumulige Claude 是一个专为 Claude Code 设计的配置管理和多 Agent 协作框架，让 AI 辅助开发更智能、更高效。
 
 ---
 
 ## 目录
 
-1. [什么是 Oh My Claude？](#什么是-oh-my-claude)
+1. [什么是 Sumulige Claude？](#什么是-sumulige-claude)
 2. [为什么使用它？](#为什么使用它)
 3. [Boris 最佳实践](#boris-最佳实践)
 4. [Manus 风格工作流](#manus-风格工作流)
@@ -22,9 +22,9 @@ Oh My Claude 是一个专为 Claude Code 设计的配置管理和多 Agent 协�
 
 ---
 
-## 什么是 Oh My Claude？
+## 什么是 Sumulige Claude？
 
-Oh My Claude 是一个 **CLI 工具**（命令行工具），它帮你：
+Sumulige Claude 是一个 **CLI 工具**（命令行工具），它帮你：
 
 - **管理多个 AI Agent**：让不同的 Claude 模型各司其职
 - **统一技能库**：安装和管理 Claude Skills
@@ -40,13 +40,13 @@ Oh My Claude 是一个 **CLI 工具**（命令行工具），它帮你：
 - **Reviewer**：代码审查员，检查质量
 - **Librarian**：文档员，整理知识
 
-Oh My Claude 让你拥有这样一个 AI 团队！
+Sumulige Claude 让你拥有这样一个 AI 团队！
 
 ---
 
 ## 为什么使用它？
 
-### 没有 Oh My Claude 时
+### 没有 Sumulige Claude 时
 
 ```
 你: 帮我写一个用户登录功能
@@ -56,7 +56,7 @@ Claude: [开始写代码...]
      [代码风格不统一]
 ```
 
-### 有 Oh My Claude 时
+### 有 Sumulige Claude 时
 
 ```
 你: 帮我写一个用户登录功能
@@ -73,7 +73,7 @@ Reviewer: 我来检查质量...
 
 > 基于 [Claude Code 创造者 Boris Cherny](https://twitter-thread.com/t/2007179832300581177) 的实战经验
 
-Oh My Claude 集成了 Boris 推荐的核心工作流，让开发效率提升 2-3 倍。
+Sumulige Claude 集成了 Boris 推荐的核心工作流，让开发效率提升 2-3 倍。
 
 ### 四大核心优化
 
@@ -140,7 +140,7 @@ Boris 的多终端工作流：
 
 > "AI 负责编写和维护，人负责最终确认"
 
-Oh My Claude 采用 **Manus 风格**的 AI 2.0 开发范式，强调项目启动时的完整规划。
+Sumulige Claude 采用 **Manus 风格**的 AI 2.0 开发范式，强调项目启动时的完整规划。
 
 ### 核心理念
 
@@ -160,7 +160,7 @@ Oh My Claude 采用 **Manus 风格**的 AI 2.0 开发范式，强调项目启动
 │                  AI Project Kickoff Workflow               │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  1. 运行 omc kickoff                                        │
+│  1. 运行 smc kickoff                                        │
 │     ↓                                                       │
 │  2. AI 生成任务计划 (TASK_PLAN.md)                         │
 │     ├── 任务分解 (WBS)                                      │
@@ -188,10 +188,10 @@ Oh My Claude 采用 **Manus 风格**的 AI 2.0 开发范式，强调项目启动
 mkdir my-project && cd my-project
 
 # 2. 部署模板
-omc template
+smc template
 
 # 3. 启动项目规划
-omc kickoff
+smc kickoff
 
 # 4. 回答 AI 的问题，等待生成计划
 #    - 项目名称？
@@ -228,12 +228,12 @@ omc kickoff
 
 > 创建和管理可复用的 Claude 技能
 
-Oh My Claude 提供完整的技能系统，让 AI 能力模块化、可复用。
+Sumulige Claude 提供完整的技能系统，让 AI 能力模块化、可复用。
 
 ### 创建技能
 
 ```bash
-omc skill:create my-skill
+smc skill:create my-skill
 ```
 
 自动生成：
@@ -249,10 +249,10 @@ omc skill:create my-skill
 
 ```bash
 # 检查技能依赖
-omc skill:check my-skill
+smc skill:check my-skill
 
 # 检查所有技能
-omc skill:check
+smc skill:check
 ```
 
 ### 内置技能
@@ -275,7 +275,7 @@ omc skill:check
 
 > AI 自动维护的任务追踪系统（支持优先级分组）
 
-Oh My Claude 内置 TODO 任务管理系统，支持按优先级（P0/P1/P2）分组和 AI 自动更新。
+Sumulige Claude 内置 TODO 任务管理系统，支持按优先级（P0/P1/P2）分组和 AI 自动更新。
 
 ### 目录结构
 
@@ -292,7 +292,7 @@ development/todos/
 
 ```bash
 # 查看项目状态（包含 todos 进度）
-omc status
+smc status
 
 # 查看完整任务总览
 cat development/todos/INDEX.md
@@ -301,7 +301,7 @@ cat development/todos/INDEX.md
 查看 todos    # AI 会读取 INDEX.md
 ```
 
-### omc status 输出示例
+### smc status 输出示例
 
 ```
 📊 Project Tasks:
@@ -350,16 +350,16 @@ node --version
 
 如果没安装，访问 [nodejs.org](https://nodejs.org/) 下载安装。
 
-### 第二步：安装 Oh My Claude
+### 第二步：安装 Sumulige Claude
 
 ```bash
-npm install -g oh-my-claude
+npm install -g sumulige-claude
 ```
 
 ### 第三步：初始化配置
 
 ```bash
-omc init
+smc init
 ```
 
 这会创建 `~/.claude/config.json` 配置文件。
@@ -367,13 +367,13 @@ omc init
 ### 第四步：验证安装
 
 ```bash
-omc status
+smc status
 ```
 
 你应该看到类似输出：
 
 ```
-📊 Oh My Claude Status
+📊 Sumulige Claude Status
 
 Config: /Users/你的用户名/.claude/config.json
 
@@ -396,12 +396,12 @@ Skills: anthropics/skills, numman-ali/n-skills
 ThinkingLens: ✅ Enabled
 
 📋 Project Tasks:
-  (not initialized - run `omc template` first)
+  (not initialized - run `smc template` first)
 ```
 
 恭喜！安装成功了！
 
-> **提示**: 使用 `omc` 命令更简洁，或者继续使用 `oh-my-claude` 长命令。
+> **提示**: 使用 `smc` 命令更简洁，或者继续使用 `sumulige-claude` 长命令。
 
 ---
 
@@ -409,7 +409,7 @@ ThinkingLens: ✅ Enabled
 
 ### 1. 创建新项目
 
-Oh My Claude 内置了一个完整的项目模板，包含：
+Sumulige Claude 内置了一个完整的项目模板，包含：
 
 - AI 自治记忆系统（ThinkingLens）
 - RAG 动态技能索引
@@ -420,13 +420,13 @@ Oh My Claude 内置了一个完整的项目模板，包含：
 
 ```bash
 cd /path/to/your/project
-omc template
+smc template
 ```
 
 **指定目录创建项目：**
 
 ```bash
-omc template /path/to/project
+smc template /path/to/project
 ```
 
 创建后，项目结构如下：
@@ -450,11 +450,11 @@ your-project/
 
 ### 2. 同步到现有项目
 
-如果你已经有一个项目，想加入 Oh My Claude：
+如果你已经有一个项目，想加入 Sumulige Claude：
 
 ```bash
 cd /path/to/your/project
-omc sync
+smc sync
 ```
 
 这会创建 `.claude/AGENTS.md` 文件，Claude Code 会自动识别。
@@ -485,13 +485,13 @@ omc sync
 
 ```bash
 # 查看已安装的技能
-omc skill:list
+smc skill:list
 
 # 安装新技能
-omc skill:install anthropics/skills
+smc skill:install anthropics/skills
 
 # 同步到项目
-omc sync
+smc sync
 ```
 
 ### 5. 自定义配置
@@ -531,7 +531,7 @@ nano ~/.claude/config.json
 }
 ```
 
-修改后运行 `omc sync` 更新项目。
+修改后运行 `smc sync` 更新项目。
 
 ---
 
@@ -597,7 +597,7 @@ source ~/.zshrc
 
 ```bash
 # 使用 sudo
-sudo npm install -g oh-my-claude
+sudo npm install -g sumulige-claude
 
 # 然后创建短命令链接
 npm link
@@ -640,7 +640,7 @@ npm install -g openskills
 rm -rf ~/.claude
 
 # 重新初始化
-omc init
+smc init
 ```
 
 ### Q6: Agent 可以用不同的模型吗？
@@ -666,38 +666,38 @@ omc init
 
 ## 命令参考
 
-> 支持 `omc` 短命令和 `oh-my-claude` 长命令
+> 支持 `smc` 短命令和 `sumulige-claude` 长命令
 
 ### 基础命令
 
 | 命令 | 说明 | 示例 |
 |------|------|------|
-| `init` | 初始化配置 | `omc init` |
-| `status` | 查看状态 | `omc status` |
-| `sync` | 同步到项目 | `omc sync` |
+| `init` | 初始化配置 | `smc init` |
+| `status` | 查看状态 | `smc status` |
+| `sync` | 同步到项目 | `smc sync` |
 
 ### 项目模板
 
 | 命令 | 说明 | 示例 |
 |------|------|------|
-| `template [path]` | 部署项目模板 | `omc template` |
-| `template <path>` | 指定目录部署 | `omc template ~/my-project` |
-| `kickoff` | **启动项目规划 (Manus 风格)** | `omc kickoff` |
+| `template [path]` | 部署项目模板 | `smc template` |
+| `template <path>` | 指定目录部署 | `smc template ~/my-project` |
+| `kickoff` | **启动项目规划 (Manus 风格)** | `smc kickoff` |
 
 ### 技能管理
 
 | 命令 | 说明 | 示例 |
 |------|------|------|
-| `skill:list` | 列出技能 | `omc skill:list` |
-| `skill:create <name>` | 创建新技能 | `omc skill:create api-tester` |
-| `skill:check [name]` | 检查技能依赖 | `omc skill:check manus-kickoff` |
-| `skill:install <source>` | 安装技能 | `omc skill:install anthropics/skills` |
+| `skill:list` | 列出技能 | `smc skill:list` |
+| `skill:create <name>` | 创建新技能 | `smc skill:create api-tester` |
+| `skill:check [name]` | 检查技能依赖 | `smc skill:check manus-kickoff` |
+| `skill:install <source>` | 安装技能 | `smc skill:install anthropics/skills` |
 
 ### Agent 编排
 
 | 命令 | 说明 | 示例 |
 |------|------|------|
-| `agent <task>` | 启动编排 | `omc agent "Build a REST API"` |
+| `agent <task>` | 启动编排 | `smc agent "Build a REST API"` |
 
 ---
 
@@ -849,9 +849,9 @@ MIT
 ## 获取帮助
 
 - 遇到问题？查看 [常见问题](#常见问题)
-- 需要更多信息？运行 `omc status`
-- 查看完整命令：运行 `omc` 不带参数
+- 需要更多信息？运行 `smc status`
+- 查看完整命令：运行 `smc` 不带参数
 
 ---
 
-**Happy Coding with Oh My Claude! 🚀**
+**Happy Coding with Sumulige Claude! 🚀**

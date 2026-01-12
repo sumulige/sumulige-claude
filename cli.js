@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Oh My Claude - CLI Entry Point
+ * Sumulige Claude - CLI Entry Point
  * Agent harness for Claude Code
  *
  * Features:
@@ -47,7 +47,7 @@ const DEFAULT_CONFIG = {
 // 命令处理
 const commands = {
   init: () => {
-    console.log('🚀 Initializing Oh My Claude...');
+    console.log('🚀 Initializing Sumulige Claude...');
 
     // 创建配置目录
     if (!fs.existsSync(CONFIG_DIR)) {
@@ -83,16 +83,16 @@ const commands = {
     }
 
     console.log('');
-    console.log('🎉 Oh My Claude initialized!');
+    console.log('🎉 Sumulige Claude initialized!');
     console.log('');
     console.log('Next steps:');
-    console.log('  oh-my-claude sync      # Sync to current project');
-    console.log('  oh-my-claude agent     # Run agent orchestration');
-    console.log('  oh-my-claude status    # Show configuration');
+    console.log('  sumulige-claude sync      # Sync to current project');
+    console.log('  sumulige-claude agent     # Run agent orchestration');
+    console.log('  sumulige-claude status    # Show configuration');
   },
 
   sync: () => {
-    console.log('🔄 Syncing Oh My Claude to current project...');
+    console.log('🔄 Syncing Sumulige Claude to current project...');
 
     const projectDir = process.cwd();
     const projectConfigDir = path.join(projectDir, '.claude');
@@ -173,9 +173,9 @@ const commands = {
 
   agent: (task) => {
     if (!task) {
-      console.log('Usage: oh-my-claude agent <task>');
+      console.log('Usage: sumulige-claude agent <task>');
       console.log('');
-      console.log('Example: oh-my-claude agent "Build a React dashboard"');
+      console.log('Example: sumulige-claude agent "Build a React dashboard"');
       return;
     }
 
@@ -194,7 +194,7 @@ const commands = {
 
   status: () => {
     const config = loadConfig();
-    console.log('📊 Oh My Claude Status');
+    console.log('📊 Sumulige Claude Status');
     console.log('');
     console.log('Config:', CONFIG_FILE);
     console.log('');
@@ -262,9 +262,9 @@ const commands = {
 
   'skill:create': (skillName) => {
     if (!skillName) {
-      console.log('Usage: oh-my-claude skill:create <skill-name>');
+      console.log('Usage: sumulige-claude skill:create <skill-name>');
       console.log('');
-      console.log('Example: oh-my-claude skill:create api-tester');
+      console.log('Example: sumulige-claude skill:create api-tester');
       console.log('');
       console.log('The skill will be created at:');
       console.log('  .claude/skills/<skill-name>/');
@@ -457,8 +457,8 @@ const commands = {
 
   'skill:install': (source) => {
     if (!source) {
-      console.log('Usage: oh-my-claude skill:install <source>');
-      console.log('Example: oh-my-claude skill:install anthropics/skills');
+      console.log('Usage: sumulige-claude skill:install <source>');
+      console.log('Example: sumulige-claude skill:install anthropics/skills');
       return;
     }
     try {
@@ -480,7 +480,7 @@ const commands = {
     // 检查模板目录是否存在
     if (!fs.existsSync(TEMPLATE_DIR)) {
       console.log('❌ Template not found at:', TEMPLATE_DIR);
-      console.log('   Please reinstall oh-my-claude');
+      console.log('   Please reinstall sumulige-claude');
       process.exit(1);
     }
 
@@ -640,14 +640,14 @@ const commands = {
     fs.writeFileSync(path.join(targetDir, '.claude/ANCHORS.md'), anchorsContent);
     console.log('   ✅ .claude/ANCHORS.md');
 
-    // 初始化 Oh My Claude（如果已安装）
+    // 初始化 Sumulige Claude（如果已安装）
     console.log('');
-    console.log('🤖 Initializing Oh My Claude...');
+    console.log('🤖 Initializing Sumulige Claude...');
     try {
-      execSync('oh-my-claude sync', { cwd: targetDir, stdio: 'pipe' });
-      console.log('   ✅ Oh My Claude synced');
+      execSync('sumulige-claude sync', { cwd: targetDir, stdio: 'pipe' });
+      console.log('   ✅ Sumulige Claude synced');
     } catch (e) {
-      console.log('   ⚠️  Oh My Claude not available (run: npm i -g oh-my-claude)');
+      console.log('   ⚠️  Sumulige Claude not available (run: npm i -g sumulige-claude)');
     }
 
     console.log('');
@@ -655,14 +655,14 @@ const commands = {
     console.log('');
     console.log('📦 What was included:');
     console.log('   • AI autonomous memory system (ThinkingLens)');
-    console.log('   • Oh My Claude integration');
+    console.log('   • Sumulige Claude integration');
     console.log('   • RAG dynamic skill index');
     console.log('   • 20+ pre-configured skills');
     console.log('');
     console.log('Next steps:');
-    console.log('   1. Run: oh-my-claude kickoff  # 开始项目规划');
+    console.log('   1. Run: sumulige-claude kickoff  # 开始项目规划');
     console.log('   2. Edit .claude/CLAUDE.md with your project info');
-    console.log('   3. Run: oh-my-claude status');
+    console.log('   3. Run: sumulige-claude status');
     console.log('');
   },
 
@@ -705,8 +705,8 @@ const commands = {
       }
     } else {
       console.log('⚠️  启动 Hook 不存在');
-      console.log('   请先运行: oh-my-claude template');
-      console.log('   或: oh-my-claude sync');
+      console.log('   请先运行: sumulige-claude template');
+      console.log('   或: sumulige-claude sync');
     }
   }
 };
@@ -733,7 +733,7 @@ function generateAgentsMd(config) {
 
 ## Agent Orchestration
 
-This project uses **Oh My Claude** for multi-agent collaboration.
+This project uses **Sumulige Claude** for multi-agent collaboration.
 
 ${agentsList}
 
@@ -741,13 +741,13 @@ ${agentsList}
 
 \`\`\`bash
 # View agent status
-oh-my-claude status
+sumulige-claude status
 
 # Run agent task
-oh-my-claude agent <task>
+sumulige-claude agent <task>
 
 # List skills
-oh-my-claude skill:list
+sumulige-claude skill:list
 \`\`\`
 
 </skills_system>
@@ -781,10 +781,10 @@ function main() {
   } else if (cmd === 'kickoff') {
     commands.kickoff();
   } else {
-    console.log('Oh My Claude (omc) - Agent Harness for Claude Code');
+    console.log('Sumulige Claude (smc) - Agent Harness for Claude Code');
     console.log('');
-    console.log('Usage: omc <command> [args]');
-    console.log('   (or: oh-my-claude <command> [args])');
+    console.log('Usage: smc <command> [args]');
+    console.log('   (or: sumulige-claude <command> [args])');
     console.log('');
     console.log('Commands:');
     console.log('  init              Initialize configuration');
@@ -799,15 +799,15 @@ function main() {
     console.log('  skill:install <s> Install a skill');
     console.log('');
     console.log('Examples:');
-    console.log('  omc init');
-    console.log('  omc sync');
-    console.log('  omc template');
-    console.log('  omc template /path/to/project');
-    console.log('  omc kickoff        # Start project planning');
-    console.log('  omc agent "Build a REST API"');
-    console.log('  omc skill:create api-tester');
-    console.log('  omc skill:check manus-kickoff');
-    console.log('  omc skill:install anthropics/skills');
+    console.log('  smc init');
+    console.log('  smc sync');
+    console.log('  smc template');
+    console.log('  smc template /path/to/project');
+    console.log('  smc kickoff        # Start project planning');
+    console.log('  smc agent "Build a REST API"');
+    console.log('  smc skill:create api-tester');
+    console.log('  smc skill:check manus-kickoff');
+    console.log('  smc skill:install anthropics/skills');
   }
 }
 
