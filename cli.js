@@ -342,7 +342,7 @@ const commands = {
     if (fs.existsSync(ragIndexFile)) {
       try {
         ragIndex = JSON.parse(fs.readFileSync(ragIndexFile, 'utf-8'));
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // 添加新技能到索引
@@ -445,9 +445,9 @@ const commands = {
       // 检查所有技能
       const allSkills = fs.existsSync(skillsDir)
         ? fs.readdirSync(skillsDir).filter(f => {
-            const dir = path.join(skillsDir, f);
-            return fs.statSync(dir).isDirectory() && f !== 'template' && f !== 'examples';
-          })
+          const dir = path.join(skillsDir, f);
+          return fs.statSync(dir).isDirectory() && f !== 'template' && f !== 'examples';
+        })
         : [];
 
       console.log(`Found ${allSkills.length} skills\n`);
@@ -484,14 +484,46 @@ const commands = {
       process.exit(1);
     }
 
+    // 递归复制目录（含子目录和文件）
+    const copyRecursive = (src, dest, overwrite = false) => {
+      if (!fs.existsSync(src)) return 0;
+
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+      }
+
+      let count = 0;
+      const entries = fs.readdirSync(src, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const srcPath = path.join(src, entry.name);
+        const destPath = path.join(dest, entry.name);
+
+        if (entry.isDirectory()) {
+          count += copyRecursive(srcPath, destPath, overwrite);
+        } else {
+          if (overwrite || !fs.existsSync(destPath)) {
+            fs.copyFileSync(srcPath, destPath);
+            // 添加执行权限
+            if (entry.name.endsWith('.sh') || entry.name.endsWith('.cjs')) {
+              fs.chmodSync(destPath, 0o755);
+            }
+            count++;
+          }
+        }
+      }
+      return count;
+    };
+
     // 创建目录结构
     console.log('📁 Creating directory structure...');
     const dirs = [
-      path.join(targetDir, '.claude/hooks'),
-      path.join(targetDir, '.claude/thinking-routes'),
-      path.join(targetDir, '.claude/skills'),
-      path.join(targetDir, '.claude/rag'),
-      path.join(targetDir, 'prompts')
+      path.join(targetDir, '.claude'),
+      path.join(targetDir, 'prompts'),
+      path.join(targetDir, 'development/todos/active'),
+      path.join(targetDir, 'development/todos/completed'),
+      path.join(targetDir, 'development/todos/backlog'),
+      path.join(targetDir, 'development/todos/archived')
     ];
 
     dirs.forEach(dir => {
@@ -504,82 +536,96 @@ const commands = {
     // 复制文件
     console.log('📋 Copying template files...');
 
-    // 复制 .claude 文件
     const claudeTemplateDir = path.join(TEMPLATE_DIR, '.claude');
-    if (fs.existsSync(claudeTemplateDir)) {
-      // CLAUDE-template.md
-      const claudeTemplate = path.join(claudeTemplateDir, 'CLAUDE-template.md');
-      if (fs.existsSync(claudeTemplate)) {
-        fs.copyFileSync(claudeTemplate, path.join(targetDir, '.claude/CLAUDE.md'));
-        console.log('   ✅ .claude/CLAUDE.md');
-      }
+    const targetClaudeDir = path.join(targetDir, '.claude');
 
-      // settings.json
-      const settingsFile = path.join(claudeTemplateDir, 'settings.json');
-      if (fs.existsSync(settingsFile)) {
-        fs.copyFileSync(settingsFile, path.join(targetDir, '.claude/settings.json'));
-        console.log('   ✅ .claude/settings.json');
-      }
-
-      // hooks/
-      const hooksDir = path.join(claudeTemplateDir, 'hooks');
-      if (fs.existsSync(hooksDir)) {
-        const hooks = fs.readdirSync(hooksDir);
-        hooks.forEach(hook => {
-          const src = path.join(hooksDir, hook);
-          const dest = path.join(targetDir, '.claude/hooks', hook);
-          fs.copyFileSync(src, dest);
-          // 添加执行权限
-          if (hook.endsWith('.js') || hook.endsWith('.sh')) {
-            fs.chmodSync(dest, 0o755);
-          }
-        });
-        console.log('   ✅ .claude/hooks/ (' + hooks.length + ' files)');
-      }
-
-      // thinking-routes/
-      const routesDir = path.join(claudeTemplateDir, 'thinking-routes');
-      if (fs.existsSync(routesDir)) {
-        const files = fs.readdirSync(routesDir);
-        files.forEach(file => {
-          fs.copyFileSync(
-            path.join(routesDir, file),
-            path.join(targetDir, '.claude/thinking-routes', file)
-          );
-        });
-        console.log('   ✅ .claude/thinking-routes/');
-      }
-
-      // rag/
-      const ragDir = path.join(claudeTemplateDir, 'rag');
-      if (fs.existsSync(ragDir)) {
-        const files = fs.readdirSync(ragDir);
-        files.forEach(file => {
-          fs.copyFileSync(
-            path.join(ragDir, file),
-            path.join(targetDir, '.claude/rag', file)
-          );
-        });
-        console.log('   ✅ .claude/rag/');
-      }
+    // 1. CLAUDE.md (从 CLAUDE-template.md)
+    const claudeTemplate = path.join(claudeTemplateDir, 'CLAUDE-template.md');
+    if (fs.existsSync(claudeTemplate)) {
+      fs.copyFileSync(claudeTemplate, path.join(targetClaudeDir, 'CLAUDE.md'));
+      console.log('   ✅ .claude/CLAUDE.md');
     }
 
-    // 复制 prompts/
+    // 2. README.md
+    const readmeFile = path.join(claudeTemplateDir, 'README.md');
+    if (fs.existsSync(readmeFile)) {
+      fs.copyFileSync(readmeFile, path.join(targetClaudeDir, 'README.md'));
+      console.log('   ✅ .claude/README.md');
+    }
+
+    // 3. settings.json
+    const settingsFile = path.join(claudeTemplateDir, 'settings.json');
+    if (fs.existsSync(settingsFile)) {
+      fs.copyFileSync(settingsFile, path.join(targetClaudeDir, 'settings.json'));
+      console.log('   ✅ .claude/settings.json');
+    }
+
+    // 4. boris-optimizations.md
+    const borisFile = path.join(claudeTemplateDir, 'boris-optimizations.md');
+    if (fs.existsSync(borisFile)) {
+      fs.copyFileSync(borisFile, path.join(targetClaudeDir, 'boris-optimizations.md'));
+      console.log('   ✅ .claude/boris-optimizations.md');
+    }
+
+    // 5. hooks/ (递归复制)
+    const hooksDir = path.join(claudeTemplateDir, 'hooks');
+    if (fs.existsSync(hooksDir)) {
+      const count = copyRecursive(hooksDir, path.join(targetClaudeDir, 'hooks'), true);
+      console.log(`   ✅ .claude/hooks/ (${count} files)`);
+    }
+
+    // 6. commands/ (递归复制) ⭐ 新增
+    const commandsDir = path.join(claudeTemplateDir, 'commands');
+    if (fs.existsSync(commandsDir)) {
+      const count = copyRecursive(commandsDir, path.join(targetClaudeDir, 'commands'), true);
+      console.log(`   ✅ .claude/commands/ (${count} files)`);
+    }
+
+    // 7. skills/ (递归复制) ⭐ 新增
+    const skillsDir = path.join(claudeTemplateDir, 'skills');
+    if (fs.existsSync(skillsDir)) {
+      const count = copyRecursive(skillsDir, path.join(targetClaudeDir, 'skills'), false);
+      console.log(`   ✅ .claude/skills/ (${count} files)`);
+    }
+
+    // 8. templates/ (递归复制) ⭐ 新增
+    const templatesDir = path.join(claudeTemplateDir, 'templates');
+    if (fs.existsSync(templatesDir)) {
+      const count = copyRecursive(templatesDir, path.join(targetClaudeDir, 'templates'), false);
+      console.log(`   ✅ .claude/templates/ (${count} files)`);
+    }
+
+    // 9. thinking-routes/
+    const routesDir = path.join(claudeTemplateDir, 'thinking-routes');
+    if (fs.existsSync(routesDir)) {
+      const count = copyRecursive(routesDir, path.join(targetClaudeDir, 'thinking-routes'), false);
+      console.log(`   ✅ .claude/thinking-routes/ (${count} files)`);
+    }
+
+    // 10. rag/
+    const ragDir = path.join(claudeTemplateDir, 'rag');
+    if (fs.existsSync(ragDir)) {
+      const count = copyRecursive(ragDir, path.join(targetClaudeDir, 'rag'), true);
+      console.log(`   ✅ .claude/rag/ (${count} files)`);
+    }
+
+    // 11. prompts/
     const promptsDir = path.join(TEMPLATE_DIR, 'prompts');
     if (fs.existsSync(promptsDir)) {
-      const files = fs.readdirSync(promptsDir);
-      files.forEach(file => {
-        fs.copyFileSync(
-          path.join(promptsDir, file),
-          path.join(targetDir, 'prompts', file)
-        );
-      });
-      console.log('   ✅ prompts/');
+      const count = copyRecursive(promptsDir, path.join(targetDir, 'prompts'), false);
+      console.log(`   ✅ prompts/ (${count} files)`);
     }
 
-    // 复制根目录文件
-    const files = ['project-paradigm.md', 'thinkinglens-silent.md'];
-    files.forEach(file => {
+    // 12. development/todos/
+    const todosDir = path.join(TEMPLATE_DIR, 'development', 'todos');
+    if (fs.existsSync(todosDir)) {
+      const count = copyRecursive(todosDir, path.join(targetDir, 'development', 'todos'), false);
+      console.log(`   ✅ development/todos/ (${count} files)`);
+    }
+
+    // 13. 根目录文件
+    const rootFiles = ['project-paradigm.md', 'thinkinglens-silent.md', 'CLAUDE-template.md'];
+    rootFiles.forEach(file => {
       const src = path.join(TEMPLATE_DIR, file);
       if (fs.existsSync(src)) {
         fs.copyFileSync(src, path.join(targetDir, file));
@@ -589,11 +635,11 @@ const commands = {
 
     // 创建记忆文件
     console.log('📝 Creating memory files...');
-    if (!fs.existsSync(path.join(targetDir, '.claude/MEMORY.md'))) {
-      fs.writeFileSync(path.join(targetDir, '.claude/MEMORY.md'), '# Memory\n\n<!-- Project memory updated by AI -->\n');
+    if (!fs.existsSync(path.join(targetClaudeDir, 'MEMORY.md'))) {
+      fs.writeFileSync(path.join(targetClaudeDir, 'MEMORY.md'), '# Memory\n\n<!-- Project memory updated by AI -->\n');
     }
-    if (!fs.existsSync(path.join(targetDir, '.claude/PROJECT_LOG.md'))) {
-      fs.writeFileSync(path.join(targetDir, '.claude/PROJECT_LOG.md'), '# Project Log\n\n<!-- Build history and decisions -->\n');
+    if (!fs.existsSync(path.join(targetClaudeDir, 'PROJECT_LOG.md'))) {
+      fs.writeFileSync(path.join(targetClaudeDir, 'PROJECT_LOG.md'), '# Project Log\n\n<!-- Build history and decisions -->\n');
     }
     console.log('   ✅ Memory files created');
 
@@ -637,7 +683,7 @@ const commands = {
 ## Add Your Anchors Here...
 
 `;
-    fs.writeFileSync(path.join(targetDir, '.claude/ANCHORS.md'), anchorsContent);
+    fs.writeFileSync(path.join(targetClaudeDir, 'ANCHORS.md'), anchorsContent);
     console.log('   ✅ .claude/ANCHORS.md');
 
     // 初始化 Sumulige Claude（如果已安装）
@@ -655,14 +701,16 @@ const commands = {
     console.log('');
     console.log('📦 What was included:');
     console.log('   • AI autonomous memory system (ThinkingLens)');
-    console.log('   • Sumulige Claude integration');
+    console.log('   • Slash commands (/commit, /test, /review, etc.)');
+    console.log('   • Skills system with templates');
     console.log('   • RAG dynamic skill index');
-    console.log('   • 20+ pre-configured skills');
+    console.log('   • Hooks for automation');
+    console.log('   • TODO management system');
     console.log('');
     console.log('Next steps:');
-    console.log('   1. Run: sumulige-claude kickoff  # 开始项目规划');
-    console.log('   2. Edit .claude/CLAUDE.md with your project info');
-    console.log('   3. Run: sumulige-claude status');
+    console.log('   1. Edit .claude/CLAUDE.md with your project info');
+    console.log('   2. Run: claude  # Start Claude Code');
+    console.log('   3. Try: /commit, /test, /review');
     console.log('');
   },
 
