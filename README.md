@@ -1,757 +1,204 @@
 # Sumulige Claude
 
-> **Claude Code 的终极 Agent 编排框架**
+**The Ultimate Agent Harness for Claude Code**
+**Claude Code 的终极 Agent 编排框架**
 
-Sumulige Claude 是一个专为 Claude Code 设计的配置管理和多 Agent 协作框架，让 AI 辅助开发更智能、更高效。
-
----
-
-## 目录
-
-1. [什么是 Sumulige Claude？](#什么是-sumulige-claude)
-2. [为什么使用它？](#为什么使用它)
-3. [Boris 最佳实践](#boris-最佳实践)
-4. [Manus 风格工作流](#manus-风格工作流)
-5. [技能系统](#技能系统)
-6. [TODO 管理](#todo-管理)
-7. [快速开始](#快速开始)
-8. [详细使用指南](#详细使用指南)
-9. [项目模板功能](#项目模板功能)
-10. [常见问题](#常见问题)
-11. [命令参考](#命令参考)
+[![npm version](https://badge.fury.io/js/sumulige-claude.svg)](https://www.npmjs.com/package/sumulige-claude)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 什么是 Sumulige Claude？
+## About / 关于
 
-Sumulige Claude 是一个 **CLI 工具**（命令行工具），它帮你：
+**English** | Sumulige Claude is a CLI tool designed for Claude Code, providing multi-agent orchestration, skill marketplace, and project template management for AI-assisted development.
 
-- **管理多个 AI Agent**：让不同的 Claude 模型各司其职
-- **统一技能库**：安装和管理 Claude Skills
-- **部署项目模板**：一键创建配置好的 Claude Code 项目
-- **追踪对话历史**：ThinkingLens 系统自动记录 AI 思考过程
-
-### 简单来说
-
-想象你在管理一个开发团队：
-- **Conductor**：项目经理，分配任务
-- **Architect**：架构师，设计技术方案
-- **Builder**：工程师，写代码
-- **Reviewer**：代码审查员，检查质量
-- **Librarian**：文档员，整理知识
-
-Sumulige Claude 让你拥有这样一个 AI 团队！
+**中文** | Sumulige Claude 是专为 Claude Code 设计的 CLI 工具，提供多 Agent 编排、技能市场和项目模板管理，让 AI 辅助开发更智能、更高效。
 
 ---
 
-## 为什么使用它？
+## Table of Contents / 目录
 
-### 没有 Sumulige Claude 时
-
-```
-你: 帮我写一个用户登录功能
-Claude: [开始写代码...]
-     [可能忘了某些最佳实践]
-     [可能没有考虑到安全]
-     [代码风格不统一]
-```
-
-### 有 Sumulige Claude 时
-
-```
-你: 帮我写一个用户登录功能
-Conductor: 我来分解任务...
-Architect: 我来设计架构...
-Builder: 我来写代码...
-Reviewer: 我来检查质量...
-结果: 代码更规范、更安全、更易维护
-```
+1. [Features / 核心功能](#features--核心功能)
+2. [Quick Start / 快速开始](#quick-start--快速开始)
+3. [Commands Reference / 命令参考](#commands-reference--命令参考)
+4. [Configuration / 配置](#configuration--配置)
+5. [Documentation / 文档](#documentation--文档)
+6. [Changelog / 更新日志](#changelog--更新日志)
+7. [License / 许可证](#license--许可证)
 
 ---
 
-## Boris 最佳实践
+## Features / 核心功能
 
-> 基于 [Claude Code 创造者 Boris Cherny](https://twitter-thread.com/t/2007179832300581177) 的实战经验
+### Multi-Agent System / 多 Agent 系统
 
-Sumulige Claude 集成了 Boris 推荐的核心工作流，让开发效率提升 2-3 倍。
+**English** | Coordinate 5 specialized AI agents, each with specific roles:
 
-### 四大核心优化
+**中文** | 协调 5 个专业 AI Agent，各司其职：
 
-| 优化 | 效果 | 实现方式 |
-|------|------|----------|
-| **验证反馈循环** | 质量提升 2-3 倍 | `/verify-work` + 自动验证提醒 |
-| **Slash Commands** | 减少重复提示 | 7 个预配置命令 |
-| **代码格式化 Hook** | 避免 CI 格式错误 | 自动格式化 (Prettier/Black/Gofmt) |
-| **并行多会话** | 充分利用 AI 算力 | 会话追踪和管理 |
+| Agent | Role / 职责 |
+|-------|-------------|
+| **Conductor** | Task coordination and decomposition / 任务分解与协调 |
+| **Architect** | Architecture design and decisions / 架构设计与决策 |
+| **Builder** | Code implementation and testing / 代码实现与测试 |
+| **Reviewer** | Code review and quality check / 代码审查与质量检查 |
+| **Librarian** | Documentation and knowledge / 文档与知识管理 |
 
-### Slash Commands
+---
 
-部署模板后，可使用以下命令：
+### Skill Marketplace / 技能市场 🆕
 
-| 命令 | 功能 |
-|------|------|
-| `/commit-push-pr` | 提交 → 推送 → 创建 PR（完整流程） |
-| `/commit` | 创建规范的 git commit |
-| `/pr` | 创建或更新 Pull Request |
-| `/test` | 运行测试套件并显示覆盖率 |
-| `/review` | 审查当前更改（代码质量检查） |
-| `/verify-work` | 查看待验证任务列表 |
-| `/sessions` | 管理并行会话 |
+**English** | Discover, install, and sync skills from external repositories. Features automatic daily sync via GitHub Actions.
 
-### 自动验证反馈
-
-在关键操作后自动提醒验证：
+**中文** | 从外部仓库发现、安装和同步技能。支持 GitHub Actions 每日自动同步。
 
 ```bash
-git commit    → 提醒运行测试
-git push      → 提醒检查 CI 状态
-deploy        → 提醒在预发布环境验证
+# List available skills / 列出可用技能
+smc marketplace:list
+
+# Install a skill / 安装技能
+smc marketplace:install dev-browser
+
+# Sync external skills / 同步外部技能
+smc marketplace:sync
 ```
 
-### 代码自动格式化
+**Skill Categories / 技能分类:**
 
-支持的语言和格式化工具：
-
-| 语言 | 格式化工具 |
-|------|-----------|
-| JavaScript/TypeScript | Prettier |
-| Python | Black |
-| Go | gofmt |
-| Rust | rustfmt |
-| JSON/YAML/Markdown | Prettier |
-
-### 并行工作流
-
-Boris 的多终端工作流：
-
-```
-终端 1: Conductor  - 任务规划和协调
-终端 2: Architect  - 架构设计
-终端 3: Builder    - 代码实现
-终端 4: Reviewer   - 代码审查
-终端 5: Explorer   - 代码探索和研究
-
-+ 5-10 个 claude.ai/code Web 会话并行运行
-```
+| Category | Description / 说明 |
+|----------|-------------------|
+| 🔧 **tools** | CLI tools and utilities / CLI 工具和实用程序 |
+| 💻 **development** | Language-specific dev assistance / 语言特定开发辅助 |
+| ⚡ **productivity** | Workflow automation / 工作流自动化 |
+| 🤖 **automation** | Browser, CI/CD, system automation / 浏览器、CI/CD、系统自动化 |
+| 📊 **data** | Database, data processing / 数据库、数据处理 |
+| 📚 **documentation** | Docs, diagrams, specs / 文档、图表、规范 |
+| 🎼 **workflow** | Multi-agent orchestration / 多代理编排 |
 
 ---
 
-## Manus 风格工作流
+### Project Template / 项目模板
 
-> "AI 负责编写和维护，人负责最终确认"
+**English** | One-click deployment of a fully configured Claude Code project with:
 
-Sumulige Claude 采用 **Manus 风格**的 AI 2.0 开发范式，强调项目启动时的完整规划。
+**中文** | 一键部署完整配置的 Claude Code 项目，包含：
 
-### 核心理念
+- **ThinkingLens** - Autonomous memory system / AI 自治记忆系统
+- **RAG System** - Dynamic skill discovery / 动态技能发现
+- **Slash Commands** - 7 pre-configured commands / 7 个预配置命令
+- **Hooks** - Automation for code formatting, TODO management / 代码格式化、任务管理自动化
+- **TODO System** - GTD-style task tracking / GTD 风格任务追踪
 
-```
-传统模式                    Manus 模式
-─────────────────────────────────────────
-问什么做什么    VS    先规划再执行
-每次重新理解    VS    持久化上下文
-人工管理任务    VS    AI 自主管理
-被动响应需求    VS    主动规划里程碑
-```
+---
 
-### 项目启动流程
+### Manus Workflow / Manus 工作流
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  AI Project Kickoff Workflow               │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. 运行 smc kickoff                                        │
-│     ↓                                                       │
-│  2. AI 生成任务计划 (TASK_PLAN.md)                         │
-│     ├── 任务分解 (WBS)                                      │
-│     ├── 依赖关系                                           │
-│     ├── Agent 分配                                         │
-│     └── 检查点设置                                         │
-│     ↓                                                       │
-│  3. AI 生成项目计划书 (PROJECT_PROPOSAL.md)                │
-│     ├── 技术架构                                           │
-│     ├── 功能需求                                           │
-│     ├── 开发迭代                                           │
-│     └── 风险评估                                           │
-│     ↓                                                       │
-│  4. Human 确认                                             │
-│     ↓                                                       │
-│  5. AI 自主执行 (带检查点)                                 │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+**English** | AI 2.0 development paradigm emphasizing comprehensive project planning before execution.
 
-### 使用方法
+**中文** | AI 2.0 开发范式，强调执行前的完整项目规划。
 
 ```bash
-# 1. 创建项目
-mkdir my-project && cd my-project
-
-# 2. 部署模板
-smc template
-
-# 3. 启动项目规划
+# Start project planning / 启动项目规划
 smc kickoff
-
-# 4. 回答 AI 的问题，等待生成计划
-#    - 项目名称？
-#    - 要解决什么问题？
-#    - 核心目标是什么？
-#    - 有什么技术约束？
-#    - 预期时间框架？
-
-# 5. 确认后开始开发
 ```
 
-### 生成的文件
-
-| 文件 | 说明 |
-|------|------|
-| `PROJECT_KICKOFF.md` | 项目启动清单，定义目标和约束 |
-| `TASK_PLAN.md` | 任务执行计划，包含 WBS 和状态追踪 |
-| `PROJECT_PROPOSAL.md` | 完整项目计划书，技术架构和里程碑 |
-
-### AI/Human 责任划分
-
-| AI 负责 | Human 确认 |
-|---------|-----------|
-| 代码编写与重构 | ✅ 架构设计变更 |
-| 测试编写与执行 | ✅ 数据模型变更 |
-| 文档更新 | ✅ 新增外部依赖 |
-| 技术方案选择 | ✅ 安全与隐私 |
-| 问题诊断与修复 | ✅ 用户体验重大变更 |
-| | ✅ 成本与资源 |
+Generated files / 生成文件:
+- `PROJECT_KICKOFF.md` - Project goals and constraints / 项目目标和约束
+- `TASK_PLAN.md` - Task execution plan with WBS / 任务执行计划
+- `PROJECT_PROPOSAL.md` - Complete project proposal / 完整项目计划书
 
 ---
 
-## 技能系统
+## Quick Start / 快速开始
 
-> 创建和管理可复用的 Claude 技能
-
-Sumulige Claude 提供完整的技能系统，让 AI 能力模块化、可复用。
-
-### 创建技能
-
-```bash
-smc skill:create my-skill
-```
-
-自动生成：
-```
-.claude/skills/my-skill/
-├── SKILL.md          # 技能定义
-├── metadata.yaml     # 元数据
-├── templates/        # 模板文件
-└── examples/         # 使用示例
-```
-
-### 技能依赖管理
-
-```bash
-# 检查技能依赖
-smc skill:check my-skill
-
-# 检查所有技能
-smc skill:check
-```
-
-### 内置技能
-
-| 技能 | 说明 |
-|------|------|
-| **manus-kickoff** | Manus 风格项目启动流程 |
-| **template** | 技能创建模板 |
-| **examples** | 示例技能库 |
-
-### 示例库
-
-- `basic-task` - 基础任务处理模板
-- `feature-development` - 功能开发工作流
-- `bug-fix-workflow` - Bug 修复流程
-
----
-
-## TODO 管理
-
-> AI 自动维护的任务追踪系统（支持优先级分组）
-
-Sumulige Claude 内置 TODO 任务管理系统，支持按优先级（P0/P1/P2）分组和 AI 自动更新。
-
-### 目录结构
-
-```
-development/todos/
-├── INDEX.md       # 任务总览（可点击跳转）
-├── active/        # 🚧 进行中的任务
-├── completed/     # ✅ 已完成的任务
-├── backlog/       # 📋 待办任务
-└── archived/      # 📦 已归档任务
-```
-
-### 使用方式
-
-```bash
-# 查看项目状态（包含 todos 进度）
-smc status
-
-# 查看完整任务总览
-cat development/todos/INDEX.md
-
-# 在 Claude Code 中
-查看 todos    # AI 会读取 INDEX.md
-```
-
-### smc status 输出示例
-
-```
-📊 Project Tasks:
-
-  Total: █████████░░░░░░░░░░░ 46%
-  P0:   ████████████████████ 100% (4/4)
-  P1:   ░░░░░░░░░░░░░░░░░░░░ 0%  (0/3)
-  P2:   ███████░░░░░░░░░░░░░ 33%  (2/6)
-
-  🚧 Active:    0
-  ✅ Completed: 6
-  📋 Backlog:   7
-
-  View: cat development/todos/INDEX.md
-```
-
-### 优先级说明
-
-| 优先级 | 名称 | 用途 |
-|--------|------|------|
-| P0 | 关键任务 | 阻塞发布，必须完成 |
-| P1 | 高优先级 | 重要功能，下个里程碑 |
-| P2 | 中优先级 | 正常功能开发 |
-| P3 | 低优先级 | 改进优化，有空再做 |
-
-### AI 自动维护
-
-- 任务创建时自动添加索引
-- 任务状态变更自动更新
-- 支持点击跳转到具体任务
-- 按优先级和状态双重视图
-- 静默运行，不打扰工作流
-
----
-
-## 快速开始
-
-### 第一步：安装 Node.js
-
-如果你已经安装了 Node.js，跳过这步。
-
-检查是否已安装：
-```bash
-node --version
-```
-
-如果没安装，访问 [nodejs.org](https://nodejs.org/) 下载安装。
-
-### 第二步：安装 Sumulige Claude
+### Installation / 安装
 
 ```bash
 npm install -g sumulige-claude
 ```
 
-### 第三步：初始化配置
+### Initialize / 初始化
 
 ```bash
 smc init
 ```
 
-这会创建 `~/.claude/config.json` 配置文件。
-
-### 第四步：验证安装
+### Deploy Template / 部署模板
 
 ```bash
-smc status
-```
-
-你应该看到类似输出：
-
-```
-📊 Sumulige Claude Status
-
-Config: /Users/你的用户名/.claude/config.json
-
-  Agents + Skills + Hooks + MCP
-  ├── Conductor → 任务分解
-  ├── Architect → 架构设计
-  ├── Builder   → 代码实现
-  ├── Reviewer  → 质量检查
-  └── Librarian → 文档整理
-
-Agents:
-  conductor    claude-opus-4.5      (Task coordination and decomposition)
-  architect    claude-opus-4.5      (Architecture design and decisions)
-  builder      claude-opus-4.5      (Code implementation and testing)
-  reviewer     claude-opus-4.5      (Code review and quality check)
-  librarian    claude-opus-4.5      (Documentation and knowledge)
-
-Skills: anthropics/skills, numman-ali/n-skills
-
-ThinkingLens: ✅ Enabled
-
-📋 Project Tasks:
-  (not initialized - run `smc template` first)
-```
-
-恭喜！安装成功了！
-
-> **提示**: 使用 `smc` 命令更简洁，或者继续使用 `sumulige-claude` 长命令。
-
----
-
-## 详细使用指南
-
-### 1. 创建新项目
-
-Sumulige Claude 内置了一个完整的项目模板，包含：
-
-- AI 自治记忆系统（ThinkingLens）
-- RAG 动态技能索引
-- 20+ 预配置技能
-- 完整的 Hook 系统
-
-**在当前目录创建项目：**
-
-```bash
-cd /path/to/your/project
+# Create a new project / 创建新项目
+mkdir my-project && cd my-project
 smc template
-```
 
-**指定目录创建项目：**
-
-```bash
+# Or specify a path / 或指定路径
 smc template /path/to/project
 ```
 
-创建后，项目结构如下：
-
-```
-your-project/
-├── .claude/
-│   ├── CLAUDE.md           # 项目说明（AI 首先读取）
-│   ├── MEMORY.md           # 增量记忆
-│   ├── PROJECT_LOG.md      # 构建历史
-│   ├── ANCHORS.md          # 技能锚点索引
-│   ├── settings.json       # Claude Code 设置
-│   ├── hooks/              # 自动化脚本
-│   ├── skills/             # 项目技能
-│   ├── rag/                # RAG 技能索引
-│   └── thinking-routes/    # 思维轨迹
-└── prompts/                # 教学资源
-    ├── project-paradigm.md # 项目开发范式
-    └── how-to-find.md      # 对话查找指南
-```
-
-### 2. 同步到现有项目
-
-如果你已经有一个项目，想加入 Sumulige Claude：
+### Start Planning / 开始规划
 
 ```bash
-cd /path/to/your/project
-smc sync
+smc kickoff
 ```
-
-这会创建 `.claude/AGENTS.md` 文件，Claude Code 会自动识别。
-
-### 3. 在 Claude Code 中使用
-
-打开 Claude Code，在你的项目中：
-
-**方式一：直接请求**
-
-```
-帮我用 frontend-design 技能创建一个登录页面
-```
-
-**方式二：指定 Agent**
-
-```
-让 Builder Agent 实现一个 REST API
-```
-
-**方式三：读取技能内容**
-
-```
-用 openskills read frontend-design
-```
-
-### 4. 安装新技能
-
-```bash
-# 查看已安装的技能
-smc skill:list
-
-# 安装新技能
-smc skill:install anthropics/skills
-
-# 同步到项目
-smc sync
-```
-
-### 5. 自定义配置
-
-编辑配置文件：
-
-```bash
-# macOS/Linux
-nano ~/.claude/config.json
-```
-
-配置示例：
-
-```json
-{
-  "version": "1.0.0",
-  "agents": {
-    "conductor": {
-      "model": "claude-opus-4.5",
-      "role": "项目总协调，负责任务分解"
-    },
-    "builder": {
-      "model": "claude-opus-4.5",
-      "role": "代码实现和单元测试"
-    }
-  },
-  "skills": [
-    "anthropics/skills",
-    "numman-ali/n-skills",
-    "your-custom-skills"
-  ],
-  "thinkingLens": {
-    "enabled": true,
-    "autoSync": true,
-    "syncInterval": 20
-  }
-}
-```
-
-修改后运行 `smc sync` 更新项目。
 
 ---
 
-## 项目模板功能
+## Commands Reference / 命令参考
 
-### 内置技能索引
+### Basic Commands / 基础命令
 
-模板包含 20+ 预配置技能，支持 RAG 动态发现：
+| Command | Description / 说明 |
+|---------|-------------------|
+| `smc init` | Initialize configuration / 初始化配置 |
+| `smc status` | Show configuration status / 显示配置状态 |
+| `smc sync` | Sync to current project / 同步到当前项目 |
 
-| 技能 | 关键词 | 用途 |
-|------|--------|------|
-| frontend-design | frontend, ui, react | 前端界面设计 |
-| docx | document, word | Word 文档处理 |
-| pdf | pdf, form | PDF 操作 |
-| pptx | slide, powerpoint | PPT 制作 |
-| xlsx | excel, spreadsheet | 表格处理 |
-| mcp-builder | api, mcp, server | MCP 服务器构建 |
-| webapp-testing | test, playwright | Web 应用测试 |
-| orchestration | agent, multi-agent | 多 Agent 编排 |
+### Project Template / 项目模板
 
-### RAG 自动技能发现
+| Command | Description / 说明 |
+|---------|-------------------|
+| `smc template [path]` | Deploy project template / 部署项目模板 |
+| `smc kickoff` | Start project planning (Manus-style) / 启动项目规划 |
 
-当你在 Claude Code 中工作时，RAG 系统会自动：
+### Skill Management / 技能管理
 
-1. 分析你的任务内容
-2. 匹配相关技能
-3. 提示你使用合适的技能
+| Command | Description / 说明 |
+|---------|-------------------|
+| `smc skill:list` | List installed skills / 列出已安装技能 |
+| `smc skill:create <name>` | Create a new skill / 创建新技能 |
+| `smc skill:check [name]` | Check skill dependencies / 检查技能依赖 |
+| `smc skill:install <source>` | Install a skill / 安装技能 |
 
-无需手动查找，自动感知需求！
+### Marketplace Commands / 市场命令 🆕
 
-### ThinkingLens 对话追踪
+| Command | Description / 说明 |
+|---------|-------------------|
+| `smc marketplace:list` | List all available skills / 列出所有可用技能 |
+| `smc marketplace:install <name>` | Install a skill from marketplace / 从市场安装技能 |
+| `smc marketplace:sync` | Sync external skills / 同步外部技能 |
+| `smc marketplace:add <repo>` | Add external skill source / 添加外部技能源 |
+| `smc marketplace:remove <name>` | Remove skill from sources / 从源中移除技能 |
+| `smc marketplace:status` | Show marketplace status / 显示市场状态 |
 
-自动记录每次对话的关键信息：
+### Agent Orchestration / Agent 编排
 
-- **MEMORY.md**：增量记忆，记录最新变更
-- **PROJECT_LOG.md**：完整构建历史和决策
-- **thinking-routes/**：思维轨迹系统
-
----
-
-## 常见问题
-
-### Q1: 安装后命令找不到？
-
-**原因**：npm 全局安装路径可能不在 PATH 中。
-
-**解决**：
-
-```bash
-# 查找 npm 全局路径
-npm config get prefix
-
-# 添加到 PATH（macOS/Linux）
-echo 'export PATH="$PATH:$(npm config get prefix)/bin"' >> ~/.zshrc
-source ~/.zshrc
-```
-
-### Q2: 权限错误？
-
-**原因**：npm 全局安装需要权限。
-
-**解决**：
-
-```bash
-# 使用 sudo
-sudo npm install -g sumulige-claude
-
-# 然后创建短命令链接
-npm link
-
-# 或者配置 npm 使用用户目录
-mkdir ~/.npm-global
-npm config set prefix '~/.npm-global'
-echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.zshrc
-source ~/.zshrc
-```
-
-### Q3: template 命令失败？
-
-**原因**：目标目录可能没有写权限。
-
-**解决**：
-
-```bash
-# 检查目录权限
-ls -la /path/to/project
-
-# 修改权限
-chmod +w /path/to/project
-```
-
-### Q4: OpenSkills 相关命令失败？
-
-**原因**：OpenSkills 没有安装。
-
-**解决**：
-
-```bash
-npm install -g openskills
-```
-
-### Q5: 如何重置配置？
-
-```bash
-# 删除配置目录
-rm -rf ~/.claude
-
-# 重新初始化
-smc init
-```
-
-### Q6: Agent 可以用不同的模型吗？
-
-可以！编辑 `~/.claude/config.json`：
-
-```json
-{
-  "agents": {
-    "conductor": { "model": "claude-opus-4.5" },
-    "builder": { "model": "claude-sonnet-4.5" },
-    "reviewer": { "model": "claude-haiku-4.5" }
-  }
-}
-```
-
-可用的模型：
-- `claude-opus-4.5` - 最强大
-- `claude-sonnet-4.5` - 平衡性能
-- `claude-haiku-4.5` - 最快速
+| Command | Description / 说明 |
+|---------|-------------------|
+| `smc agent <task>` | Run agent orchestration / 运行 Agent 编排 |
 
 ---
 
-## 命令参考
+## Configuration / 配置
 
-> 支持 `smc` 短命令和 `sumulige-claude` 长命令
-
-### 基础命令
-
-| 命令 | 说明 | 示例 |
-|------|------|------|
-| `init` | 初始化配置 | `smc init` |
-| `status` | 查看状态 | `smc status` |
-| `sync` | 同步到项目 | `smc sync` |
-
-### 项目模板
-
-| 命令 | 说明 | 示例 |
-|------|------|------|
-| `template [path]` | 部署项目模板 | `smc template` |
-| `template <path>` | 指定目录部署 | `smc template ~/my-project` |
-| `kickoff` | **启动项目规划 (Manus 风格)** | `smc kickoff` |
-
-### 技能管理
-
-| 命令 | 说明 | 示例 |
-|------|------|------|
-| `skill:list` | 列出技能 | `smc skill:list` |
-| `skill:create <name>` | 创建新技能 | `smc skill:create api-tester` |
-| `skill:check [name]` | 检查技能依赖 | `smc skill:check manus-kickoff` |
-| `skill:install <source>` | 安装技能 | `smc skill:install anthropics/skills` |
-
-### Agent 编排
-
-| 命令 | 说明 | 示例 |
-|------|------|------|
-| `agent <task>` | 启动编排 | `smc agent "Build a REST API"` |
-
----
-
-## Agent 团队介绍
-
-### Conductor（指挥家）
-
-- **模型**: Claude Opus 4.5
-- **职责**: 任务分解和协调
-- **何时工作**: 复杂任务需要拆分时
-
-### Architect（架构师）
-
-- **模型**: Claude Opus 4.5
-- **职责**: 架构设计和技术决策
-- **何时工作**: 设计系统架构时
-
-### Builder（建造者）
-
-- **模型**: Claude Opus 4.5
-- **职责**: 代码实现和测试
-- **何时工作**: 编写具体代码时
-
-### Reviewer（审查员）
-
-- **模型**: Claude Opus 4.5
-- **职责**: 代码审查和质量检查
-- **何时工作**: 检查代码质量时
-
-### Librarian（图书管理员）
-
-- **模型**: Claude Opus 4.5
-- **职责**: 文档编写和知识整理
-- **何时工作**: 编写或更新文档时
-
----
-
-## 配置文件详解
-
-### 默认配置位置
+### Config Location / 配置位置
 
 **macOS/Linux**: `~/.claude/config.json`
 
-### 完整配置示例
-
-> v1.0.6+ 支持配置外置，默认配置位于 `config/defaults.json`
-
-用户配置可覆盖默认值（`~/.claude/config.json`）：
+### Example / 示例
 
 ```json
 {
-  "version": "1.0.6",
+  "version": "1.0.7",
   "model": "claude-opus-4.5",
-
   "agents": {
     "conductor": {
       "role": "Task coordination and decomposition"
@@ -769,17 +216,10 @@ smc init
       "role": "Documentation and knowledge"
     }
   },
-
   "skills": [
     "anthropics/skills",
     "numman-ali/n-skills"
   ],
-
-  "hooks": {
-    "preTask": [],
-    "postTask": []
-  },
-
   "thinkingLens": {
     "enabled": true,
     "autoSync": true,
@@ -788,84 +228,64 @@ smc init
 }
 ```
 
-**注意**：
-- `model` 字段可作为全局默认值
-- 各 Agent 可单独指定 `model` 覆盖全局设置
+---
+
+## Documentation / 文档
+
+- **[Development Guide / 开发指南](docs/DEVELOPMENT.md)** - Architecture, adding skills, sync mechanism / 架构、添加技能、同步机制
+- **[Marketplace Guide / 市场指南](docs/MARKETPLACE.md)** - User guide for marketplace features / 市场功能用户指南
 
 ---
 
-## 进阶使用
+## Changelog / 更新日志
 
-### 创建自定义技能
+### v1.0.7 (2025-01-14)
 
-1. 在项目中创建 `.claude/skills/my-skill.md`
-2. 编写技能内容
-3. 在 `CLAUDE.md` 中引用
+**English** | Added Skill Marketplace system with auto-sync from external repositories.
 
-### 使用 Hooks
+**中文** | 新增技能市场系统，支持从外部仓库自动同步。
 
-Hooks 是在特定事件触发的脚本：
-
-- `UserPromptSubmit` - 用户提交请求时
-- `PreToolUse` - 工具调用前
-- `PostToolUse` - 工具调用后
-
-在 `.claude/settings.json` 中配置：
-
-```json
-{
-  "matcher": "UserPromptSubmit|PreToolUse|PostToolUse",
-  "hooks": [
-    {
-      "command": ".claude/hooks/my-script.js",
-      "timeout": 5
-    }
-  ]
-}
-```
-
----
-
-## 更新日志
+- **Marketplace System / 市场系统**
+  - `.claude-plugin/marketplace.json` - Claude Code native plugin registry / 原生插件注册表
+  - `sources.yaml` - External skills configuration / 外部技能配置
+  - 6 new marketplace commands / 6 个新市场命令
+- **Auto-Sync / 自动同步**
+  - `scripts/sync-external.mjs` - Sync engine / 同步引擎
+  - `scripts/update-registry.mjs` - Registry generator / 注册表生成器
+  - GitHub Actions daily sync / GitHub Actions 每日同步
+- **Documentation / 文档**
+  - `docs/DEVELOPMENT.md` - Development guide / 开发指南
+  - `docs/MARKETPLACE.md` - Marketplace user guide / 市场用户指南
 
 ### v1.0.6 (2026-01-14)
 
-- **代码重构**：cli.js 从 862 行拆分为模块化结构
-  - `lib/commands.js` - 命令实现（~700 行）
-  - `lib/config.js` - 配置管理（~70 行）
-  - `lib/utils.js` - 公共工具函数（~60 行）
-- **配置外置**：默认配置移至 `config/defaults.json`
-- **数据驱动**：命令分发改为零 if-else 的数据驱动模式
-- **消除重复**：`copyRecursive` 等公共函数统一管理
+**English** | Code refactoring - modularized cli.js from 862 lines.
+
+**中文** | 代码重构 - cli.js 从 862 行模块化拆分。
+
+- `lib/commands.js` - Command implementations / 命令实现
+- `lib/config.js` - Configuration management / 配置管理
+- `lib/utils.js` - Common utilities / 公共工具函数
+- Data-driven command dispatch / 数据驱动的命令分发
 
 ### v1.0.0 (2026-01-11)
 
-- 初始版本发布
-- 5 个 Agent 全部使用 Opus 4.5
-- 内置项目模板
-- RAG 动态技能发现
-- ThinkingLens 对话追踪
+**English** | Initial release with 5 agents, project template, and RAG system.
+
+**中文** | 初始版本，包含 5 个 Agent、项目模板和 RAG 系统。
 
 ---
 
-## License
+## License / 许可证
 
-MIT
-
----
-
-## 致谢
-
-灵感来自 [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode)
+MIT © [sumulige](https://github.com/sumulige)
 
 ---
 
-## 获取帮助
+## Acknowledgments / 致谢
 
-- 遇到问题？查看 [常见问题](#常见问题)
-- 需要更多信息？运行 `smc status`
-- 查看完整命令：运行 `smc` 不带参数
+Inspired by [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) and [n-skills](https://github.com/numman-ali/n-skills).
 
 ---
 
-**Happy Coding with Sumulige Claude! 🚀**
+**Happy Coding with AI! / 祝编码愉快! 🚀**

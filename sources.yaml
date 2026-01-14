@@ -1,0 +1,83 @@
+# SMC External Skills Sources
+# ===========================
+# 此清单定义了从外部仓库同步到本项目的技能。
+# GitHub Actions 工作流会读取此文件并每日自动同步上游技能。
+#
+# 添加技能：提交 PR 添加条目到此处。参考 CONTRIBUTING.md。
+
+version: 1
+skills:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # manus-kickoff - Native skill (maintained directly in this repo)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: manus-kickoff
+    description: Manus-style project kickoff workflow for AI autonomous development
+    native: true  # Maintained directly in this repo
+    target:
+      category: workflow
+      path: template/.claude/skills/manus-kickoff
+    author:
+      name: sumulige
+      github: sumulige
+    license: MIT
+    homepage: https://github.com/sumulige/sumulige-claude
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Example: Adding an external skill (commented out)
+  # ─────────────────────────────────────────────────────────────────────────────
+  # - name: dev-browser
+  #   description: Browser automation with persistent page state
+  #   source:
+  #     repo: SawyerHood/dev-browser
+  #     path: skills/dev-browser
+  #     ref: main
+  #   target:
+  #     category: automation
+  #     path: template/.claude/skills/automation/dev-browser
+  #   author:
+  #     name: Sawyer Hood
+  #     github: SawyerHood
+  #   license: MIT
+  #   homepage: https://github.com/SawyerHood/dev-browser
+  #   verified: false
+  #   sync:
+  #     include:
+  #       - SKILL.md
+  #       - references/
+  #       - scripts/
+  #       - src/
+  #       - package.json
+  #     exclude:
+  #       - node_modules/
+  #       - "*.lock"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Schema Reference
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# skills[]:
+#   name: Required. Unique skill identifier (lowercase, hyphens ok)
+#   description: Required. One-line description for marketplace listings
+#
+#   native: Optional. Set true if skill is maintained directly in this repo
+#
+#   source: Required for external skills
+#     repo: GitHub owner/repo (e.g., "SawyerHood/dev-browser")
+#     path: Path to skill folder within repo
+#     ref: Branch, tag, or commit SHA (default: main)
+#
+#   target: Required
+#     category: One of: tools, development, productivity, automation, data, documentation, workflow
+#     path: Target path in smc-skills repo
+#
+#   author: Required
+#     name: Display name
+#     github: GitHub username
+#
+#   license: Required. SPDX identifier (MIT, Apache-2.0, etc.)
+#   homepage: Required. Link to project homepage or repo
+#   verified: Optional. Set true after manual review (default: false)
+#
+#   sync: Optional. Fine-grained sync control
+#     include: List of files/folders to copy
+#     exclude: Glob patterns to skip

@@ -13,6 +13,7 @@
  */
 
 const { runCommand } = require('./lib/commands');
+const { marketplaceCommands } = require('./lib/marketplace');
 
 // ============================================================================
 // Command Registry (data-driven, no if-else chains)
@@ -58,6 +59,30 @@ const COMMANDS = {
   'skill:install': {
     help: 'Install a skill',
     args: '<source>'
+  },
+  'marketplace:list': {
+    help: 'List all available skills',
+    args: ''
+  },
+  'marketplace:install': {
+    help: 'Install a skill from marketplace',
+    args: '<name>'
+  },
+  'marketplace:sync': {
+    help: 'Sync external skills',
+    args: ''
+  },
+  'marketplace:add': {
+    help: 'Add external skill source',
+    args: '<owner/repo>'
+  },
+  'marketplace:remove': {
+    help: 'Remove skill from sources',
+    args: '<name>'
+  },
+  'marketplace:status': {
+    help: 'Show marketplace status',
+    args: ''
   }
 };
 
@@ -93,6 +118,9 @@ function showHelp() {
   console.log('  smc skill:create api-tester');
   console.log('  smc skill:check manus-kickoff');
   console.log('  smc skill:install anthropics/skills');
+  console.log('  smc marketplace:list');
+  console.log('  smc marketplace:install dev-browser');
+  console.log('  smc marketplace:sync');
 }
 
 // ============================================================================
@@ -110,7 +138,12 @@ function main() {
   const handler = COMMANDS[cmd];
 
   if (handler) {
-    runCommand(cmd, args);
+    // Check if it's a marketplace command
+    if (cmd.startsWith('marketplace:')) {
+      marketplaceCommands[cmd](...args);
+    } else {
+      runCommand(cmd, args);
+    }
   } else {
     console.log(`Unknown command: ${cmd}`);
     console.log('');

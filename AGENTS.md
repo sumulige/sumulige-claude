@@ -1,33 +1,92 @@
-# AGENTS
+# AGENTS.md
 
 <skills_system priority="1">
 
-## Available Skills
+## Multi-Agent Orchestration
 
-<!-- SKILLS_TABLE_START -->
-<usage>
-When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
+This project uses **Sumulige Claude (SMC)** for intelligent multi-agent collaboration.
 
-How to use skills:
-- Invoke: Bash("openskills read <skill-name>")
-- The skill content will load with detailed instructions on how to complete the task
-- Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
+### Available Agents
 
-Usage notes:
-- Only use skills listed in <available_skills> below
-- Do not invoke a skill that is already loaded in your context
-- Each skill invocation is stateless
-</usage>
+| Agent | Model | Role |
+|-------|-------|------|
+| **Conductor** | claude-opus-4.5 | Task coordination and decomposition |
+| **Architect** | claude-opus-4.5 | Architecture design and technical decisions |
+| **Builder** | claude-opus-4.5 | Code implementation and testing |
+| **Reviewer** | claude-opus-4.5 | Code review and quality assurance |
+| **Librarian** | claude-opus-4.5 | Documentation and knowledge management |
 
-<available_skills>
+### Usage
 
-<skill>
-<name>api-tester</name>
-<description></description>
-<location>project</location>
-</skill>
+```bash
+# View agent status
+smc status
 
-</available_skills>
-<!-- SKILLS_TABLE_END -->
+# Run agent task
+smc agent <task>
+
+# List available skills
+smc marketplace:list
+
+# Install a skill
+smc marketplace:install <skill-name>
+
+# Sync external skills
+smc marketplace:sync
+```
+
+---
+
+## Skills Marketplace
+
+This project includes a curated skills marketplace with automatic synchronization from external repositories.
+
+### Categories
+
+| Category | Description |
+|----------|-------------|
+| 🔧 **tools** | CLI tools and utilities |
+| 💻 **development** | Language-specific dev assistance |
+| ⚡ **productivity** | Workflow automation |
+| 🤖 **automation** | Browser, CI/CD, system automation |
+| 📊 **data** | Database, data processing |
+| 📚 **documentation** | Docs, diagrams, specs |
+| 🎼 **workflow** | Multi-agent orchestration |
+
+### Universal Compatibility
+
+This project follows the **AGENTS.md** standard, adopted by 20,000+ repositories and natively supported by:
+- Claude Code
+- GitHub Copilot
+- Google Gemini
+- OpenAI Codex
+- Factory Droid
+- Cursor
+- And more...
+
+### Quick Commands
+
+```bash
+# Initialize SMC in your project
+smc init
+
+# Deploy Claude Code project template
+smc template
+
+# Start Manus-style project planning
+smc kickoff
+```
+
+---
+
+## Project Template Features
+
+When you run `smc template`, your project gets:
+
+- **ThinkingLens** - Autonomous memory system for AI
+- **Slash Commands** - `/commit`, `/test`, `/review`, `/pr`, etc.
+- **RAG System** - Dynamic skill discovery based on task context
+- **Hooks** - Automation for code formatting, TODO management, etc.
+- **TODO System** - GTD-style task management
 
 </skills_system>

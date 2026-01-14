@@ -1,0 +1,71 @@
+{
+  "name": "smc-skills",
+  "description": "Sumulige Claude Agent Harness - Curated skill collection for AI coding agents",
+  "homepage": "https://github.com/sumulige/sumulige-claude",
+  "owner": {
+    "name": "sumulige",
+    "email": "sumulige@example.com"
+  },
+  "plugins": [
+    {
+      "name": "smc-skills",
+      "description": "Multi-agent orchestration harness with curated skills. Includes Conductor, Architect, Builder, Reviewer, Librarian agents plus RAG-based skill discovery system.",
+      "source": "./",
+      "skills": [
+        "./../template/.claude/skills/manus-kickoff"
+      ],
+      "strict": false,
+      "skill_list": [
+        {
+          "name": "manus-kickoff",
+          "description": "Manus 风格项目启动流程 - AI 2.0 开发范式",
+          "path": "./../template/.claude/skills/manus-kickoff",
+          "category": "tools",
+          "external": false
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "1.0.7",
+    "generated_at": "2026-01-14T12:21:55.220Z",
+    "skill_count": 1,
+    "categories": {
+      "tools": {
+        "name": "CLI 工具",
+        "description": "命令行工具和实用程序",
+        "icon": "🔧"
+      },
+      "development": {
+        "name": "开发辅助",
+        "description": "语言特定的开发辅助工具",
+        "icon": "💻"
+      },
+      "productivity": {
+        "name": "效率工具",
+        "description": "工作流自动化和效率提升",
+        "icon": "⚡"
+      },
+      "automation": {
+        "name": "自动化",
+        "description": "浏览器、CI/CD、系统自动化",
+        "icon": "🤖"
+      },
+      "data": {
+        "name": "数据处理",
+        "description": "数据库、数据处理和分析",
+        "icon": "📊"
+      },
+      "documentation": {
+        "name": "文档",
+        "description": "文档、图表、规范生成",
+        "icon": "📚"
+      },
+      "workflow": {
+        "name": "工作流编排",
+        "description": "多代理编排和协调",
+        "icon": "🎼"
+      }
+    }
+  }
+}

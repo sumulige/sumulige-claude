@@ -9,7 +9,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node cli.js init"
+    "postinstall": "node cli.js init",
+    "sync": "node scripts/sync-external.mjs",
+    "update-registry": "node scripts/update-registry.mjs",
+    "sync:all": "npm run sync && npm run update-registry"
   },
   "keywords": [
     "claude",
@@ -17,19 +20,22 @@
     "agent",
     "ai",
     "skills",
-    "mcp"
+    "mcp",
+    "marketplace",
+    "plugin"
   ],
   "author": "sumulige",
   "license": "MIT",
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sumulige/oh-my-claude.git"
+    "url": "git+https://github.com/sumulige/sumulige-claude.git"
   },
   "engines": {
     "node": ">=16.0.0"
   },
   "devDependencies": {
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "yaml": "^2.8.2"
   }
 }
