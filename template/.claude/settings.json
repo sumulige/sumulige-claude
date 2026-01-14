@@ -38,6 +38,11 @@
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/todo-manager.cjs",
             "timeout": 1000
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/conversation-logger.cjs",
+            "timeout": 1000
           }
         ]
       }
