@@ -199,7 +199,29 @@ smc sync        # ✅ 增量添加，不覆盖已有配置
 - `.claude/hooks/*` - 钩子脚本
 - `.claude/commands/*` - 命令定义
 
-如果你已经在这些文件中有自定义内容，运行 `template` 前请先备份！
+**v1.1.0 新增安全选项**：
+- `smc template --safe`   - 跳过已存在的文件（不覆盖）
+- `smc template --force`  - 强制覆盖（不备份）
+- `smc template` (默认)   - 覆盖前自动备份到 `.claude/backup/`
+
+### 🛡️ 安全机制
+
+默认情况下，`smc template` 会自动备份被覆盖的文件：
+
+```bash
+smc template
+# 会创建备份文件：.claude/backup/CLAUDE.2026-01-15.bak
+```
+
+如果你不想要任何备份（确定要覆盖），使用 `--force`：
+```bash
+smc template --force  # 不备份，直接覆盖
+```
+
+如果你想完全保留现有文件，使用 `--safe`：
+```bash
+smc template --safe  # 只添加缺失的文件
+```
 
 ---
 

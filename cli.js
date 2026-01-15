@@ -34,7 +34,7 @@ const COMMANDS = {
   },
   template: {
     help: 'Deploy Claude Code project template',
-    args: '[path]'
+    args: '[path] [--safe] [--force] [--help]'
   },
   kickoff: {
     help: 'Start project planning workflow (Manus-style)',
@@ -156,8 +156,10 @@ function showHelp() {
   console.log('  smc init');
   console.log('  smc sync            # Auto-migrates old format');
   console.log('  smc migrate         # Manual migration');
-  console.log('  smc template');
+  console.log('  smc template          # Deploy to current dir (with backup)');
   console.log('  smc template /path/to/project');
+  console.log('  smc template --safe   # Skip existing files');
+  console.log('  smc template --force  # Overwrite without backup');
   console.log('  smc kickoff        # Start project planning');
   console.log('  smc agent "Build a REST API"');
   console.log('  smc skill:create api-tester');
