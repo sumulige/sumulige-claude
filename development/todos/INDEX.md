@@ -1,79 +1,105 @@
 # 项目任务追踪系统
 
-> 本目录由 AI 自动维护，记录项目开发任务和进度
+> **统一管理**: 研究 → 开发 → 测试
+> **最后更新**: 2026-01-15
 
-**最后更新**: 2026-01-15
+@version: 2.0.0
 
-## 任务总览
+---
 
-| 状态 | 目录 | 数量 |
+## 📊 项目进度
+
+| 阶段 | 进度 | 状态 |
 |------|------|------|
-| 🚧 进行中 | `active/` | 1 |
-| ✅ 已完成 | `completed/` | 1 |
-| 📋 待办 | `backlog/` | 1 |
-| 📦 已归档 | `archived/` | 0 |
+| Phase 1: MVP 智能监控 | 80% | 🚧 进行中 |
+| Phase 2: V1.5 动态调整 | 0% | 📋 待规划 |
+| Phase 3: V2.0 AI 教练 | 0% | 📋 待规划 |
 
-@version: 1.0.0
+---
 
-## 目录结构
+## 🔄 任务生命周期
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  RESEARCH   │ → │  DEVELOP    │ → │   TEST      │
+│  📊 研究     │    │  💻 开发     │    │  🧪 测试     │
+└─────────────┘    └─────────────┘    └─────────────┘
+```
+
+---
+
+## 📁 目录结构
 
 ```
 development/todos/
 ├── INDEX.md           # 本文件 - 任务总览
-├── active/            # 进行中的任务 (1)
-├── completed/         # 已完成的任务 (1)
-├── backlog/           # 待规划的任务 (1)
-└── archived/          # 已归档的任务 (0)
+├── _templates/        # 任务模板
+├── active/            # 进行中的任务 (0)
+│   ├── research/      # 📊 研究中 (0)
+│   ├── develop/       # 💻 开发中 (0)
+│   └── test/          # 🧪 测试中 (0)
+├── completed/         # 已完成的任务 (0)
+│   ├── research/
+│   ├── develop/
+│   └── test/
+├── backlog/           # 待规划的任务 (0)
+└── archived/          # 已归档的任务
 ```
 
-## 快速跳转
+---
 
-## 🚧 进行中的任务 (1)
+## 🚧 当前进行中的任务
 
-- [P1] [TODO 任务管理系统](./active/todo-system.md) - 🚧 `branch: feature/todo-system`
+### 📊 研究任务
+暂无
+
+### 💻 开发任务
+暂无
+
+### 🧪 测试任务
+暂无
+
+---
 
 ## ✅ 最近完成的任务
 
-- [Boris 最佳实践集成](./completed/boris-optimizations.md)
+### 💻 开发任务
+暂无
 
-## 📋 待办任务 (1)
+### 🧪 测试任务
+暂无
 
-- [P2] [MCP 集成增强](./backlog/mcp-integration.md)
+---
 
-## 全部目录
+## 📋 待办任务
 
-- [🚧 所有进行中的任务](./active/) - 当前开发重点
-- [✅ 所有已完成的任务](./completed/) - 完整历史
-- [📋 所有待办任务](./backlog/) - 待规划
-- [📦 所有已归档任务](./archived/) - 历史记录
+暂无
 
-## 使用方式
+---
+
+## 🎯 使用方式
 
 ### 查看任务
-点击上方链接跳转到对应目录，或使用：
 ```bash
-# 查看进行中的任务
-cat development/todos/active/*.md
-
-# 查看特定任务
-cat development/todos/active/feature-name.md
+# 按类型查看
+ls development/todos/active/research/   # 研究任务
+ls development/todos/active/develop/    # 开发任务
+ls development/todos/active/test/       # 测试任务
 ```
 
 ### 创建新任务
 在 Claude Code 中：
 ```
-创建一个新任务：实现用户登录功能
+创建一个新任务：
+- 类型：测试
+- 标题：Dashboard 功能测试
 ```
-
-AI 会自动在 `active/` 目录创建对应的任务文件。
 
 ### 更新任务状态
 ```
 将 [任务名] 标记为完成
 ```
 
-AI 会自动将任务移动到 `completed/` 目录。
-
 ---
 
-> **维护说明**: 本系统由 AI 自动维护，请勿手动编辑（除非你知道自己在做什么）
+> **维护说明**: 本系统由 AI 自动维护

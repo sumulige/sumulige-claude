@@ -106,6 +106,12 @@ Usage notes:
 </skill>
 
 <skill>
+<name>test-workflow</name>
+<description>Automated testing workflow that combines Playwright testing, Slack GIF recording, and test report generation. Use when user mentions "测试"、"test"、"Playwright" or asks for QA/testing workflows. Automatically generates: (1) Test execution with Playwright, (2) Slack-optimized GIF of test process, (3) Screenshot at each verification point, (4) Markdown test report with embedded screenshots.</description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>theme-factory</name>
 <description>Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.</description>
 <location>project</location>
