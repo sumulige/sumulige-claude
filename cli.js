@@ -22,7 +22,7 @@ const { marketplaceCommands } = require('./lib/marketplace');
 const COMMANDS = {
   init: {
     help: 'Initialize configuration',
-    args: ''
+    args: '[--interactive]'
   },
   sync: {
     help: 'Sync to current project (auto-migrates old format)',
@@ -87,6 +87,46 @@ const COMMANDS = {
   'marketplace:status': {
     help: 'Show marketplace status',
     args: ''
+  },
+  ultrathink: {
+    help: 'Enable deep thinking mode for AI',
+    args: ''
+  },
+  'skills:official': {
+    help: 'List official Claude skills',
+    args: ''
+  },
+  'skills:install-official': {
+    help: 'Install an official skill',
+    args: '<name>'
+  },
+  'skills:install-all': {
+    help: 'Install all recommended skills',
+    args: ''
+  },
+  doctor: {
+    help: 'Check system health',
+    args: ''
+  },
+  'skills:search': {
+    help: 'Search skills by keyword',
+    args: '<keyword>'
+  },
+  'skills:validate': {
+    help: 'Validate skill format',
+    args: '[path]'
+  },
+  'skills:update': {
+    help: 'Update official skills list',
+    args: ''
+  },
+  'skills:publish': {
+    help: 'Publish skill to GitHub',
+    args: '[path]'
+  },
+  config: {
+    help: 'Manage configuration',
+    args: '[get|set] [key] [value]'
   }
 };
 
@@ -126,6 +166,11 @@ function showHelp() {
   console.log('  smc marketplace:list');
   console.log('  smc marketplace:install dev-browser');
   console.log('  smc marketplace:sync');
+  console.log('  smc ultrathink      # Enable deep thinking mode');
+  console.log('  smc skills:official # List official skills');
+  console.log('  smc doctor           # Check system health');
+  console.log('  smc skills:search    # Search skills by keyword');
+  console.log('  smc init -i         # Interactive setup');
 }
 
 // ============================================================================

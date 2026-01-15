@@ -1,0 +1,183 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-15",
+  "source": "anthropics/skills",
+  "categories": {
+    "documents": {
+      "name": "文档处理",
+      "icon": "📄",
+      "description": "Office 文档创建、编辑和转换"
+    },
+    "creative": {
+      "name": "创意设计",
+      "icon": "🎨",
+      "description": "艺术创作、设计、品牌规范"
+    },
+    "development": {
+      "name": "开发工具",
+      "icon": "🛠️",
+      "description": "MCP 服务器、技能创建、测试"
+    },
+    "workflow": {
+      "name": "工作流",
+      "icon": "📋",
+      "description": "文档协作、内部沟通"
+    }
+  },
+  "skills": [
+    {
+      "name": "docx",
+      "category": "documents",
+      "description": "Word 文档创建、编辑、修订模式和批注",
+      "source": "anthropics/skills",
+      "path": "skills/docx",
+      "license": "source-available",
+      "recommended": true
+    },
+    {
+      "name": "pdf",
+      "category": "documents",
+      "description": "PDF 文本表格提取、合并拆分、表单填写",
+      "source": "anthropics/skills",
+      "path": "skills/pdf",
+      "license": "source-available",
+      "recommended": true
+    },
+    {
+      "name": "pptx",
+      "category": "documents",
+      "description": "PowerPoint 演示文稿创建、编辑、布局管理",
+      "source": "anthropics/skills",
+      "path": "skills/pptx",
+      "license": "source-available",
+      "recommended": true
+    },
+    {
+      "name": "xlsx",
+      "category": "documents",
+      "description": "Excel 电子表格创建、公式、格式化、数据分析",
+      "source": "anthropics/skills",
+      "path": "skills/xlsx",
+      "license": "source-available",
+      "recommended": true
+    },
+    {
+      "name": "frontend-design",
+      "category": "creative",
+      "description": "生产级前端界面设计，避免 AI 审美同质化",
+      "source": "anthropics/skills",
+      "path": "skills/frontend-design",
+      "license": "Apache-2.0",
+      "recommended": true
+    },
+    {
+      "name": "algorithmic-art",
+      "category": "creative",
+      "description": "使用 p5.js 创建算法艺术、流场、粒子系统",
+      "source": "anthropics/skills",
+      "path": "skills/algorithmic-art",
+      "license": "Apache-2.0",
+      "recommended": false
+    },
+    {
+      "name": "canvas-design",
+      "category": "creative",
+      "description": "创建 PNG/PDF 格式的视觉艺术作品",
+      "source": "anthropics/skills",
+      "path": "skills/canvas-design",
+      "license": "Apache-2.0",
+      "recommended": false
+    },
+    {
+      "name": "brand-guidelines",
+      "category": "creative",
+      "description": "应用 Anthropic 官方品牌色彩和排版",
+      "source": "anthropics/skills",
+      "path": "skills/brand-guidelines",
+      "license": "proprietary",
+      "recommended": false
+    },
+    {
+      "name": "mcp-builder",
+      "category": "development",
+      "description": "创建 MCP 服务器的完整指南（Python FastMCP / Node SDK）",
+      "source": "anthropics/skills",
+      "path": "skills/mcp-builder",
+      "license": "Apache-2.0",
+      "recommended": true
+    },
+    {
+      "name": "skill-creator",
+      "category": "development",
+      "description": "创建高质量 Agent Skills 的指南",
+      "source": "anthropics/skills",
+      "path": "skills/skill-creator",
+      "license": "Apache-2.0",
+      "recommended": false
+    },
+    {
+      "name": "webapp-testing",
+      "category": "development",
+      "description": "使用 Playwright 测试本地 Web 应用",
+      "source": "anthropics/skills",
+      "path": "skills/webapp-testing",
+      "license": "Apache-2.0",
+      "recommended": false
+    },
+    {
+      "name": "doc-coauthoring",
+      "category": "workflow",
+      "description": "结构化文档协作工作流（提案、规格、决策文档）",
+      "source": "anthropics/skills",
+      "path": "skills/doc-coauthoring",
+      "license": "Apache-2.0",
+      "recommended": true
+    },
+    {
+      "name": "internal-comms",
+      "category": "workflow",
+      "description": "企业内部沟通格式（状态报告、更新、公告）",
+      "source": "anthropics/skills",
+      "path": "skills/internal-comms",
+      "license": "proprietary",
+      "recommended": false
+    },
+    {
+      "name": "slack-gif-creator",
+      "category": "creative",
+      "description": "创建适用于 Slack 的动画 GIF",
+      "source": "anthropics/skills",
+      "path": "skills/slack-gif-creator",
+      "license": "Apache-2.0",
+      "recommended": false
+    },
+    {
+      "name": "theme-factory",
+      "category": "creative",
+      "description": "为文档应用预设主题（10 种配色/字体方案）",
+      "source": "anthropics/skills",
+      "path": "skills/theme-factory",
+      "license": "Apache-2.0",
+      "recommended": false
+    },
+    {
+      "name": "web-artifacts-builder",
+      "category": "development",
+      "description": "使用 React/Tailwind/shadcn.ui 构建 HTML 工件",
+      "source": "anthropics/skills",
+      "path": "skills/web-artifacts-builder",
+      "license": "Apache-2.0",
+      "recommended": false
+    },
+    {
+      "name": "test-workflow",
+      "category": "development",
+      "description": "自动化测试工作流：Playwright测试 + Slack GIF录制 + 测试报告生成",
+      "source": "sumulige-claude",
+      "path": "test-workflow",
+      "license": "MIT",
+      "recommended": true,
+      "native": true
+    }
+  ]
+}

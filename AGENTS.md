@@ -29,7 +29,7 @@ Usage notes:
 
 <skill>
 <name>api-tester</name>
-<description></description>
+<description>API testing and HTTP request validation tool for REST/GraphQL endpoints</description>
 <location>project</location>
 </skill>
 
