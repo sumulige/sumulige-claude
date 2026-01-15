@@ -131,6 +131,10 @@ const COMMANDS = {
   config: {
     help: 'Manage configuration',
     args: '[get|set] [key] [value]'
+  },
+  changelog: {
+    help: 'Generate changelog from git commits',
+    args: '[--from <tag>] [--to <tag>] [--json]'
   }
 };
 
@@ -177,6 +181,7 @@ function showHelp() {
   console.log('  smc skills:official # List official skills');
   console.log('  smc doctor           # Check system health');
   console.log('  smc skills:search    # Search skills by keyword');
+  console.log('  smc changelog        # Generate changelog');
   console.log('  smc init -i         # Interactive setup');
 }
 

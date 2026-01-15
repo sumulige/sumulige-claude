@@ -1,6 +1,23 @@
-# Changelog
+## [Unreleased] (2026-01-15)
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+### ✨ Features
+
+- kickoff creates tasks in backlog (d1a6f958)
+- add 'help' command as alias (697d5ef2)
+- add --check-update flag to sync command (b8ab1131)
+- add version update check (stage 1 & 2) (dd116a75)
+- add safety options to smc template command (74441b8f)
+- upgrade todo-manager to v2.0 with R-D-T lifecycle (16e8f7ea)
+- add test-workflow skill and enhance CLI commands (972a6762)
+
+### 📝 Documentation
+
+- add Q4 for version update flow (16c43298)
+- add Q3 for smc template vs sync comparison (346e9a6e)
+
+### 🧹 Chores
+
+- **release**: 1.1.0 (ba1afd24)
 
 ## [1.1.0](https://github.com/sumulige/sumulige-claude/compare/v1.0.11...v1.1.0) (2026-01-15)
 
