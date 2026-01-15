@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.11] - 2026-01-15
+
+### Added
+- Complete test suite with 78 tests across 5 modules
+- Version-aware migration system (`lib/migrations.js`)
+- `smc migrate` command for manual migration
+- Auto-migration of old hooks format on `smc sync`
+- Code simplifier integration
+
+### Changed
+- Modularized codebase for better maintainability
+
+### Fixed
+- Test coverage improvements
+
+## [1.0.10] - 2026-01-15
+
+### Added
+- Conversation logger Hook (`conversation-logger.cjs`)
+- Automatic conversation recording to `DAILY_CONVERSATION.md`
+- Date-grouped conversation history
+
+### Fixed
+- Auto-migration for old hooks format
+
+## [1.0.9] - 2026-01-15
+
+### Fixed
+- Clean up stale session entries
+
+## [1.0.8] - 2026-01-14
+
+### Added
+- Skill Marketplace system with external repository support
+- Auto-sync mechanism via GitHub Actions (daily schedule)
+- 6 new marketplace commands: `list`, `install`, `sync`, `add`, `remove`, `status`
+- Claude Code native plugin registry (`.claude-plugin/marketplace.json`)
+- Skill categorization system (7 categories)
+- Development documentation (`docs/DEVELOPMENT.md`)
+- Marketplace user guide (`docs/MARKETPLACE.md`)
+
+### Changed
+- Refactored CLI into modular architecture (`lib/` directory)
+- Streamlined README with dedicated documentation files
+
+## [1.0.7] - 2026-01-13
+
+### Changed
+- Project template updates
+
 ## [1.0.6] - 2026-01-14
 
 ### Added

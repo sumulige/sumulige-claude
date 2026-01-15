@@ -15,9 +15,12 @@
 | 功能 | 描述 |
 |------|------|
 | **多 Agent 协作** | 5个专业化 Agent（Conductor/Architect/Builder/Reviewer/Librarian）分工协作 |
+| **技能市场** | 发现、安装和同步外部技能（v1.0.8 新增） |
 | **技能系统** | 可复用的 Claude Skills 管理（安装/创建/依赖检查） |
+| **版本迁移** | 自动检测并迁移旧格式项目（v1.0.11 新增） |
 | **项目模板** | 一键部署完整的 Claude Code 项目配置 |
 | **TODO 管理** | 按优先级分组的 AI 自动维护任务系统 |
+| **测试套件** | 78 个测试用例覆盖核心模块（v1.0.11 新增） |
 | **ThinkingLens** | 对话追踪和增量记忆系统 |
 
 ### Agent 角色说明
@@ -52,10 +55,36 @@ sumulige-claude/
 ├── lib/                              # ⭐ 核心库模块（v1.0.6+ 重构）
 │   ├── commands.js                   # 命令实现（~700 行）
 │   ├── config.js                     # 配置管理（~70 行）
+│   ├── marketplace.js                # 技能市场功能（v1.0.8 新增）
+│   ├── migrations.js                 # 版本迁移系统（v1.0.11 新增）
 │   └── utils.js                      # 公共工具函数（~60 行）
 │
 ├── config/                           # ⭐ 默认配置（v1.0.6+ 新增）
-│   └── defaults.json                 # 默认配置文件
+│   ├── defaults.json                 # 默认配置文件
+│   └── skill-categories.json         # 技能分类（v1.0.8 新增）
+│
+├── scripts/                          # ⭐ 自动化脚本（v1.0.8 新增）
+│   ├── sync-external.mjs             # 外部技能同步引擎
+│   └── update-registry.mjs           # 市场注册表生成器
+│
+├── tests/                            # ⭐ 测试套件（v1.0.11 新增）
+│   ├── *.test.js                     # 单元测试（78 tests）
+│   ├── fixtures/                     # 测试夹具
+│   ├── mocks/                        # Mock 数据
+│   └── README.md                     # 测试文档
+│
+├── docs/                             # ⭐ 开发文档（v1.0.8 新增）
+│   ├── DEVELOPMENT.md                # 开发指南
+│   └── MARKETPLACE.md                # 技能市场指南
+│
+├── .claude-plugin/                   # ⭐ Claude Code 插件（v1.0.8 新增）
+│   └── marketplace.json              # 技能市场注册表
+│
+├── .github/                          # CI/CD 配置（v1.0.8 新增）
+│   └── workflows/
+│       └── sync-skills.yml           # 每日技能同步
+│
+├── sources.yaml                      # 外部技能源配置（v1.0.8 新增）
 │
 ├── development/                      # 开发任务管理
 │   └── todos/                        # TODO 任务系统（GTD 风格）
@@ -131,7 +160,8 @@ sumulige-claude/
 smc (sumulige-claude 简写)
 ├── init                  # 初始化配置 (~/.claude/config.json)
 ├── status                # 查看状态（Agents/Skills/Tasks）
-├── sync                  # 同步配置到项目
+├── sync                  # 同步配置到项目（自动执行迁移）
+├── migrate               # 手动执行项目迁移（v1.0.11 新增）
 ├── template [path]       # 部署项目模板
 ├── kickoff               # Manus 风格项目规划启动
 │
@@ -139,6 +169,13 @@ smc (sumulige-claude 简写)
 ├── skill:create <name>   # 创建新技能
 ├── skill:check [name]    # 检查技能依赖
 ├── skill:install <src>   # 安装外部技能
+│
+├── marketplace:list      # 列出市场技能（v1.0.8 新增）
+├── marketplace:install   # 安装市场技能
+├── marketplace:sync      # 同步外部技能源
+├── marketplace:add       # 添加技能源
+├── marketplace:remove    # 移除技能源
+├── marketplace:status    # 查看市场状态
 │
 └── agent <task>          # 启动 Agent 编排
 ```
@@ -226,4 +263,4 @@ smc (sumulige-claude 简写)
 
 ---
 
-*Generated: 2026-01-13*
+*Generated: 2026-01-15*

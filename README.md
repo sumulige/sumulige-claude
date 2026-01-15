@@ -151,7 +151,8 @@ smc kickoff
 |---------|-------------------|
 | `smc init` | Initialize configuration / 初始化配置 |
 | `smc status` | Show configuration status / 显示配置状态 |
-| `smc sync` | Sync to current project / 同步到当前项目 |
+| `smc sync` | Sync to current project (auto-migrates old format) / 同步到当前项目（自动迁移旧格式） |
+| `smc migrate` | Manually run project migrations / 手动执行项目迁移 |
 
 ### Project Template / 项目模板
 
@@ -198,7 +199,7 @@ smc kickoff
 
 ```json
 {
-  "version": "1.0.7",
+  "version": "1.0.11",
   "model": "claude-opus-4.5",
   "agents": {
     "conductor": {
@@ -260,6 +261,55 @@ See **[tests/README.md](tests/README.md)** for detailed test documentation.
 ---
 
 ## Changelog / 更新日志
+
+### v1.0.11 (2026-01-15)
+
+**English** | Test suite and version-aware migration system.
+
+**中文** | 测试套件和版本感知迁移系统。
+
+- **Migration System / 迁移系统**
+  - `lib/migrations.js` - Version-aware migrations / 版本感知迁移
+  - `smc migrate` command / 迁移命令
+  - Auto-migration on sync / 同步时自动迁移
+- **Test Suite / 测试套件**
+  - 78 tests across 5 modules / 5 个模块共 78 个测试
+  - Jest framework with mocking / Jest 框架和 Mock
+
+### v1.0.10 (2026-01-15)
+
+**English** | Conversation logger hook for daily tracking.
+
+**中文** | 对话日志器 Hook，按日期记录。
+
+- `template/.claude/hooks/conversation-logger.cjs` - Auto-record conversations / 自动记录对话
+- `DAILY_CONVERSATION.md` - Date-grouped history / 按日期分组的历史记录
+
+### v1.0.9 (2026-01-15)
+
+**English** | Session cleanup improvements.
+
+**中文** | 会话清理改进。
+
+- Clean up stale session entries / 清理过期会话记录
+
+### v1.0.8 (2026-01-14)
+
+**English** | Skill Marketplace system with auto-sync.
+
+**中文** | 技能市场系统，支持自动同步。
+
+- **Marketplace System / 市场系统**
+  - `.claude-plugin/marketplace.json` - Claude Code native plugin registry / 原生插件注册表
+  - `sources.yaml` - External skills configuration / 外部技能配置
+  - 6 new marketplace commands / 6 个新市场命令
+- **Auto-Sync / 自动同步**
+  - `scripts/sync-external.mjs` - Sync engine / 同步引擎
+  - `scripts/update-registry.mjs` - Registry generator / 注册表生成器
+  - GitHub Actions daily sync / GitHub Actions 每日同步
+- **Documentation / 文档**
+  - `docs/DEVELOPMENT.md` - Development guide / 开发指南
+  - `docs/MARKETPLACE.md` - Marketplace user guide / 市场用户指南
 
 ### v1.0.7 (2025-01-14)
 
