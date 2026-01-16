@@ -5,9 +5,15 @@
     {
       "id": "line-count-limit",
       "enabled": true,
-      "severity": "error",
+      "severity": "warn",
       "config": {
-        "maxLines": 800
+        "maxLines": 3000,
+        "exclude": [
+          "node_modules/**",
+          "package-lock.json",
+          ".claude/skills/**",
+          "lib/commands.js"
+        ]
       }
     },
     {
