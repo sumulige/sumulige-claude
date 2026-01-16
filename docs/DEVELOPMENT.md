@@ -1,115 +1,192 @@
-# Development Guide - SMC Marketplace
+# Development Guide - 开发指南
 
-本文档详细说明了 SMC 技能市场和自动同步系统的开发细节。
-
-## 目录
-
-- [架构概述](#架构概述)
-- [项目结构](#项目结构)
-- [添加新技能](#添加新技能)
-- [同步机制原理](#同步机制原理)
-- [命令开发](#命令开发)
-- [调试指南](#调试指南)
+> 从零开始理解项目架构，逐步深入开发细节
 
 ---
 
-## 架构概述
+## Level 1: 项目概述 (5 分钟)
 
-### 核心组件
+### 这是一个什么项目？
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        SMC CLI                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
-│  │   Commands   │  │  Marketplace │  │      Config      │  │
-│  │              │  │   Commands   │  │                  │  │
-│  └──────────────┘  └──────────────┘  └──────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-           │                    │                    │
-           ▼                    ▼                    ▼
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│  sources.yaml    │  │ sync-external.mjs│  │ update-registry  │
-│                  │  │                  │  │      .mjs        │
-└──────────────────┘  └──────────────────┘  └──────────────────┘
-           │                    │                    │
-           ▼                    ▼                    ▼
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│ External Repos   │  │  Template Skills │  │ marketplace.json  │
-│  (GitHub)        │  │                  │  │                  │
-└──────────────────┘  └──────────────────┘  └──────────────────┘
-```
+**一句话**：为 Claude Code 添加多 Agent 编排能力的 CLI 工具。
 
-### 数据流
+**核心功能**：
+1. **多 Agent 协作** - 5 个专业 AI Agent 配合工作
+2. **技能管理** - 发现、安装、管理可复用的 AI 技能
+3. **项目模板** - 一键部署配置好的 AI 开发环境
+4. **质量门禁** - 自动代码质量检查
+
+### 技术栈
 
 ```
-sources.yaml ──► sync-external.mjs ──► template/.claude/skills/
-       │                                    │
-       │                                    ▼
-       └──────────────────► update-registry.mjs ──► marketplace.json
+语言：     JavaScript (CommonJS + ES Modules)
+运行时：   Node.js >= 16.0
+测试：     Jest
+发布：     npm
+依赖：     ajv, ajv-formats (配置验证)
 ```
 
 ---
 
-## 项目结构
+## Level 2: 项目结构 (10 分钟)
+
+### 目录树
 
 ```
 sumulige-claude/
-├── .claude-plugin/
-│   └── marketplace.json          # Claude Code 插件注册表
-├── .github/workflows/
-│   └── sync-skills.yml           # 自动同步工作流
-├── scripts/
-│   ├── sync-external.mjs         # 同步引擎 (ES Module)
-│   └── update-registry.mjs       # 注册表生成器 (ES Module)
-├── config/
-│   └── skill-categories.json     # 技能分类配置
-├── lib/
-│   ├── commands.js               # 基础命令 (CommonJS)
-│   ├── config.js                 # 配置管理
-│   ├── marketplace.js            # 市场命令 (CommonJS)
-│   └── utils.js                  # 工具函数
-├── template/.claude/skills/
-│   ├── manus-kickoff/            # 本地技能
-│   └── ...
-├── sources.yaml                  # 外部技能清单
 ├── cli.js                        # 入口文件
+│
+├── lib/                          # 核心代码 (CommonJS)
+│   ├── commands.js               # 命令实现
+│   ├── config.js                 # 配置管理
+│   ├── marketplace.js            # 技能市场
+│   ├── config-schema.js          # 配置 Schema
+│   ├── config-validator.js       # 配置验证
+│   ├── config-manager.js         # 配置管理器
+│   ├── quality-rules.js          # 质量规则
+│   ├── quality-gate.js           # 质量门禁
+│   ├── errors.js                 # 错误类型
+│   └── utils.js                  # 工具函数
+│
+├── template/.claude/             # 项目模板
+│   ├── commands/                 # 斜杠命令
+│   ├── skills/                   # 技能库
+│   ├── hooks/                    # 自动化钩子
+│   └── settings.json             # 默认配置
+│
+├── scripts/                      # 工具脚本 (ES Modules)
+│   ├── sync-external.mjs         # 同步外部技能
+│   └── update-registry.mjs       # 更新技能注册表
+│
+├── config/                       # 配置文件
+│   ├── defaults.json             # 默认配置
+│   ├── quality-gate.json         # 质量门禁配置
+│   └── skill-categories.json     # 技能分类
+│
+├── sources.yaml                  # 外部技能清单
+├── .claude-plugin/               # Claude Code 插件
+│   └── marketplace.json          # 技能注册表
+│
 └── package.json                  # 项目配置
+```
+
+### 模块职责
+
+| 模块 | 职责 | 类型 |
+|------|------|------|
+| `cli.js` | 命令入口、分发 | CommonJS |
+| `lib/commands.js` | 核心命令实现 | CommonJS |
+| `lib/marketplace.js` | 技能市场命令 | CommonJS |
+| `lib/config*.js` | 配置系统 | CommonJS |
+| `lib/quality*.js` | 质量门禁系统 | CommonJS |
+| `scripts/*.mjs` | 工具脚本 | ES Module |
+
+---
+
+## Level 3: 命令系统 (15 分钟)
+
+### 命令分发的数据流
+
+```
+用户输入
+    │
+    ▼
+┌─────────────┐
+│   cli.js    │  解析命令
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────────────────┐
+│  COMMANDS 注册表                │
+│  {                             │
+│    'init': { help, args },     │
+│    'sync': { help, args },     │
+│    ...                          │
+│  }                             │
+└────────────┬────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────┐
+│  runCommand(cmd, args)          │
+│  ├─ 核心命令 → lib/commands.js  │
+│  ├─ 市场命令 → lib/marketplace.js│
+│  └─ 技能命令 → lib/commands.js  │
+└─────────────────────────────────┘
+```
+
+### 添加新命令
+
+**Step 1**: 在 `lib/commands.js` 添加实现
+
+```javascript
+const commands = {
+  // 新命令
+  'my:command': (arg1) => {
+    console.log('执行命令，参数:', arg1);
+    // 你的逻辑
+  }
+};
+```
+
+**Step 2**: 在 `cli.js` 注册
+
+```javascript
+const COMMANDS = {
+  'my:command': {
+    help: '命令描述',
+    args: '<arg1>'
+  }
+};
+```
+
+**Step 3**: 测试
+
+```bash
+node cli.js my:command test
 ```
 
 ---
 
-## 添加新技能
+## Level 4: 技能系统 (20 分钟)
 
-### 1. 本地技能 (Native Skill)
+### 什么是技能？
 
-直接在 `template/.claude/skills/` 下创建目录：
+**技能 = 知识 + 指令 + 资源**
+
+```
+my-skill/
+├── SKILL.md           # 知识和指令
+├── metadata.yaml      # 技能元数据
+├── scripts/           # 可执行脚本 (资源)
+└── templates/         # 模板文件 (资源)
+```
+
+### 添加本地技能
 
 ```bash
+# 1. 创建技能目录
 mkdir -p template/.claude/skills/my-skill
-cd template/.claude/skills/my-skill
 
-# 创建 SKILL.md
-cat > SKILL.md << 'EOF'
+# 2. 创建 SKILL.md
+cat > template/.claude/skills/my-skill/SKILL.md << 'EOF'
 # My Skill
 
-> A brief description of what this skill does
+> 技能描述
 
-## Usage
+## 使用场景
 
-When to use this skill...
+当用户需要...时使用此技能。
 
 EOF
 
-# 创建 metadata.yaml
-cat > metadata.yaml << 'EOF'
+# 3. 创建 metadata.yaml
+cat > template/.claude/skills/my-skill/metadata.yaml << 'EOF'
 name: my-skill
-description: A brief description
+description: 技能描述
 version: 1.0.0
 category: tools
 keywords:
   - my-skill
-  - example
-dependencies: []
 author:
   name: Your Name
   github: yourusername
@@ -117,29 +194,13 @@ license: MIT
 EOF
 ```
 
-在 `sources.yaml` 中声明为 native：
+### 添加外部技能
 
-```yaml
-- name: my-skill
-  description: "A brief description"
-  native: true
-  target:
-    category: tools
-    path: template/.claude/skills/my-skill
-  author:
-    name: Your Name
-    github: yourusername
-  license: MIT
-  homepage: https://github.com/yourusername/your-repo
-```
-
-### 2. 外部技能 (External Skill)
-
-编辑 `sources.yaml` 添加外部技能：
+编辑 `sources.yaml`:
 
 ```yaml
 - name: external-skill
-  description: "Skill from external repository"
+  description: "来自外部仓库的技能"
   source:
     repo: owner/repo
     path: skills/external-skill
@@ -147,277 +208,254 @@ EOF
   target:
     category: automation
     path: template/.claude/skills/automation/external-skill
-  author:
-    name: Owner Name
-    github: owner
-  license: MIT
-  homepage: https://github.com/owner/repo
-  verified: false
   sync:
     include:
       - SKILL.md
       - src/
     exclude:
       - node_modules/
-      - "*.lock"
 ```
 
-### 3. 更新注册表
+运行同步：
 
 ```bash
-# 同步外部技能
-npm run sync
-
-# 更新市场注册表
-npm run update-registry
-
-# 或一次性执行
 npm run sync:all
 ```
 
 ---
 
-## 同步机制原理
+## Level 5: 同步机制 (25 分钟)
 
-### sync-external.mjs 工作流程
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ 1. 解析 sources.yaml                                         │
-│    - 读取技能清单                                            │
-│    - 区分 native 和 external 技能                            │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 2. 遍历每个技能                                              │
-│    - 跳过 native 技能                                        │
-│    - 验证 external 技能配置                                  │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 3. 克隆外部仓库                                              │
-│    - git clone --depth 1                                    │
-│    - 使用指定的 ref (branch/tag)                            │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 4. 复制文件到目标目录                                        │
-│    - 根据 sync.include 过滤文件                             │
-│    - 根据 sync.exclude 排除文件                             │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 5. 生成源信息文件                                            │
-│    - 写入 .source.json                                      │
-│    - 记录同步时间和来源                                      │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 6. 清理临时文件                                              │
-│    - 删除克隆的临时目录                                      │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### update-registry.mjs 工作流程
+### 自动同步工作流
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 1. 扫描技能目录                                              │
-│    - 递归查找所有包含 SKILL.md 或 .source.json 的目录        │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
+│  sources.yaml                                               │
+│  ├─ native 技能 (本地)                                      │
+│  └─ external 技能 (GitHub)                                  │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 2. 提取技能元数据                                            │
-│    - 读取 metadata.yaml                                     │
-│    - 读取 .source.json                                      │
-│    - 从 SKILL.md 提取描述                                   │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
+│  sync-external.mjs                                          │
+│  ├─ 克隆外部仓库                                            │
+│  ├─ 过滤文件 (include/exclude)                              │
+│  └─ 复制到 template/.claude/skills/                         │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. 确定技能分类                                              │
-│    - 根据 metadata.category                                 │
-│    - 或根据路径推断                                          │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
+│  update-registry.mjs                                        │
+│  ├─ 扫描技能目录                                            │
+│  ├─ 提取元数据                                              │
+│  └─ 生成 marketplace.json                                   │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 4. 构建插件注册表                                            │
-│    - 按分类组织技能                                          │
-│    - 添加元数据 (版本、时间戳、数量)                         │
+│  .claude-plugin/marketplace.json                            │
+│  (Claude Code 读取的注册表)                                  │
 └─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 5. 写入 marketplace.json                                     │
-│    - 格式化为 JSON                                          │
-│    - 符合 Claude Code 插件规范                              │
-└─────────────────────────────────────────────────────────────┘
+```
+
+### GitHub Actions 自动同步
+
+`.github/workflows/sync-skills.yml`:
+
+```yaml
+name: Sync External Skills
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天运行
+  workflow_dispatch:      # 手动触发
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run sync:all
+      - run: git config user.name "github-actions[bot]"
+      - run: git add .claude-plugin/
+      - run: git commit -m "chore: sync skills"
+      - run: git push
 ```
 
 ---
 
-## 命令开发
+## Level 6: 配置系统 (30 分钟)
 
-### 添加新命令
+### 三层配置
 
-#### 1. 在 `lib/commands.js` 或 `lib/marketplace.js` 添加处理函数
+```
+┌─────────────────────────────────────────────────────────────┐
+│  全局配置 (~/.claude/config.json)                           │
+│  ├─ Agent 定义                                              │
+│  ├─ 默认模型                                                │
+│  └─ 技能列表                                                │
+├─────────────────────────────────────────────────────────────┤
+│  项目配置 (./.claude/settings.json)                         │
+│  ├─ Hook 配置                                               │
+│  └─ 项目覆盖设置                                            │
+├─────────────────────────────────────────────────────────────┤
+│  质量配置 (./.claude/quality-gate.json)                     │
+│  ├─ 规则启用设置                                            │
+│  └─ 门禁触发条件                                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 配置验证流程
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  config-schema.js                                           │
+│  ├─ CONFIG_SCHEMA (JSON Schema)                             │
+│  ├─ SETTINGS_SCHEMA                                         │
+│  └─ QUALITY_GATE_SCHEMA                                     │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────────┐
+│  config-validator.js                                        │
+│  ├─ AJV 验证器                                              │
+│  ├─ validate(config, schema)                                │
+│  └─ validateFile(path, schema)                              │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────────┐
+│  config-manager.js                                          │
+│  ├─ backup() - 创建备份                                     │
+│  ├─ rollback() - 回滚配置                                   │
+│  ├─ diff() - 配置对比                                       │
+│  └─ _expandEnvVars() - 环境变量展开                          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 环境变量展开
+
+配置支持环境变量语法：
+
+```json
+{
+  "apiKey": "${API_KEY:default-key}",
+  "endpoint": "${ENDPOINT:-https://api.example.com}"
+}
+```
+
+---
+
+## Level 7: 质量门禁 (35 分钟)
+
+### 质量检查流程
+
+```
+git commit
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────┐
+│  pre-commit hook                                            │
+│  ├─ 读取 .claude/quality-gate.json                          │
+│  └─ 调用 quality-gate.js                                   │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────────┐
+│  quality-gate.js                                            │
+│  ├─ 加载启用的规则                                          │
+│  ├─ 遍历暂存的文件                                          │
+│  └─ 执行每个规则的 check()                                  │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────────┐
+│  quality-rules.js                                           │
+│  ├─ file-size-limit (文件大小)                              │
+│  ├─ line-count-limit (行数)                                │
+│  ├─ no-console-logs (无 console)                            │
+│  ├─ todo-comments (TODO 检查)                               │
+│  ├─ directory-depth (目录深度)                              │
+│  ├─ no-empty-files (无空文件)                               │
+│  ├─ no-trailing-whitespace (无尾随空格)                      │
+│  └─ function-length (函数长度)                              │
+└──────────────┬──────────────────────────────────────────────┘
+               │
+       ┌───────┴────────┐
+       ▼                 ▼
+    通过 ✅          失败 ❌
+       │                 │
+       ▼                 ▼
+    允许提交        阻止提交
+```
+
+### 添加自定义规则
+
+编辑 `lib/quality-rules.js`:
 
 ```javascript
-const commands = {
-  // ...existing commands...
+RuleRegistry.register('my-rule', {
+  name: 'My Custom Rule',
+  description: '规则描述',
+  severity: 'warn',
 
-  // 新命令
-  'my:command': (arg1, arg2) => {
-    console.log('Executing my:command with:', arg1, arg2);
-    // 命令逻辑
+  check(file, config) {
+    const content = fs.readFileSync(file, 'utf8');
+    const issues = [];
+
+    // 你的检查逻辑
+    if (content.includes('TODO')) {
+      issues.push({
+        line: 1,
+        message: 'Found TODO',
+        fix: 'Resolve TODOs'
+      });
+    }
+
+    return issues;
   }
-};
-```
-
-#### 2. 在 `cli.js` 的 COMMANDS 注册表添加
-
-```javascript
-const COMMANDS = {
-  // ...existing commands...
-
-  'my:command': {
-    help: 'Command description',
-    args: '<arg1> <arg2>'
-  }
-};
-```
-
-#### 3. 添加帮助示例
-
-```javascript
-// 在 showHelp() 函数的 Examples 部分
-console.log('  smc my:command value1 value2');
-```
-
-### 命令分类
-
-- **核心命令**: 直接在 `lib/commands.js` 实现
-- **市场命令**: 在 `lib/marketplace.js` 实现
-- **技能命令**: 在 `lib/commands.js` 的 `skill:*` 组
-
----
-
-## 调试指南
-
-### 启用详细输出
-
-```bash
-# 运行同步脚本并查看完整输出
-node --trace-warnings scripts/sync-external.mjs
-```
-
-### 检查配置
-
-```bash
-# 查看市场状态
-smc marketplace:status
-
-# 列出所有技能
-smc marketplace:list
-```
-
-### 常见问题
-
-#### 1. YAML 解析错误
-
-```bash
-# 验证 YAML 语法
-node -e "const yaml = require('yaml'); console.log(yaml.parse(require('fs').readFileSync('sources.yaml', 'utf8')))"
-```
-
-#### 2. Git 克隆失败
-
-```bash
-# 手动测试克隆
-git clone --depth 1 https://github.com/owner/repo /tmp/test-repo
-```
-
-#### 3. 权限问题
-
-```bash
-# 检查目录权限
-ls -la template/.claude/skills/
-
-# 修复权限
-chmod -R u+rwX template/.claude/skills/
-```
-
-### 调试日志
-
-同步脚本会在 `.tmp/` 目录存储临时克隆的仓库。如果同步失败，检查此目录：
-
-```bash
-ls -la .tmp/
+});
 ```
 
 ---
 
-## 测试
+## 快速参考
 
-### 手动测试
+### 开发工作流
 
 ```bash
-# 测试同步
-npm run sync
+# 1. 修改代码
+vim lib/commands.js
 
-# 测试注册表生成
-npm run update-registry
+# 2. 运行测试
+npm test
 
-# 测试完整流程
+# 3. 本地测试
+node cli.js my-command
+
+# 4. 更新版本
+npm version patch
+
+# 5. 发布
 npm run sync:all
-```
-
-### CI/CD 测试
-
-推送更改到 GitHub，自动触发工作流：
-
-```bash
 git add .
-git commit -m "test: update sources.yaml"
-git push
-```
-
-手动触发工作流：
-1. 进入 GitHub 仓库页面
-2. 点击 "Actions" 标签
-3. 选择 "Sync External Skills" 工作流
-4. 点击 "Run workflow"
-
----
-
-## 发布
-
-### 更新版本号
-
-```bash
-# 更新 package.json
-npm version patch  # 或 minor, major
-
-# 更新 marketplace.json 中的版本
-npm run update-registry
-```
-
-### 发布到 npm
-
-```bash
+git commit -m "chore: release"
+git push --follow-tags
 npm publish
 ```
 
-### 创建 Git 标签
+### 调试技巧
 
 ```bash
-git tag v$(node -p "require('./package.json').version")
-git push --tags
+# 详细输出
+node --trace-warnings cli.js my-command
+
+# 检查配置
+node cli.js config:validate
+
+# 质量检查
+node cli.js qg:check
 ```
+
+---
+
+*更多细节查看 [README.md](../README.md) | [Q&A.md](../Q&A.md) | [AGENTS.md](../AGENTS.md)*
