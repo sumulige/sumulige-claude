@@ -1,23 +1,16 @@
-## [Unreleased] (2026-01-15)
+# Changelog
 
-### ✨ Features
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-- kickoff creates tasks in backlog (d1a6f958)
-- add 'help' command as alias (697d5ef2)
-- add --check-update flag to sync command (b8ab1131)
-- add version update check (stage 1 & 2) (dd116a75)
-- add safety options to smc template command (74441b8f)
-- upgrade todo-manager to v2.0 with R-D-T lifecycle (16e8f7ea)
-- add test-workflow skill and enhance CLI commands (972a6762)
+## [1.2.0](https://github.com/sumulige/sumulige-claude/compare/v1.1.2...v1.2.0) (2026-01-17)
 
-### 📝 Documentation
 
-- add Q4 for version update flow (16c43298)
-- add Q3 for smc template vs sync comparison (346e9a6e)
+### Fixed
 
-### 🧹 Chores
+* make git hooks executable ([e748915](https://github.com/sumulige/sumulige-claude/commits/e748915a2675664885c69d649133d7f8cc354f89))
 
-- **release**: 1.1.0 (ba1afd24)
+
+* add comprehensive regression tests for core modules ([e3b570e](https://github.com/sumulige/sumulige-claude/commits/e3b570ed1998aefd8d75e2767e78f2d7611eb0b9))
 
 ## [1.1.0](https://github.com/sumulige/sumulige-claude/compare/v1.0.11...v1.1.0) (2026-01-15)
 
