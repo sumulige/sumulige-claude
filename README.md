@@ -271,7 +271,7 @@ smc kickoff
 
 ```json
 {
-  "version": "1.1.1",
+  "version": "1.2.0",
   "model": "claude-opus-4.5",
   "agents": {
     "conductor": {
@@ -352,6 +352,21 @@ smc skill:create my-skill
 ---
 
 ## Changelog / 更新日志
+
+### v1.2.0 (2026-01-17)
+
+**English** | Comprehensive regression test suite.
+
+**中文** | 完整的回归测试套件。
+
+- **Test Coverage / 测试覆盖**
+  - 219 new tests across 6 modules / 6 个模块新增 219 个测试
+  - errors.js: 100% statement coverage / 100% 语句覆盖率
+  - quality-gate.js: 95.59% statement coverage / 95.59% 语句覆盖率
+  - quality-rules.js: 86.17% statement coverage / 86.17% 语句覆盖率
+  - config-manager.js: 91.66% statement coverage / 91.66% 语句覆盖率
+  - config-validator.js: 77.41% statement coverage / 77.41% 语句覆盖率
+  - version-check.js: 55.07% statement coverage / 55.07% 语句覆盖率
 
 ### v1.1.1 (2026-01-16)
 
