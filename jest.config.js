@@ -10,6 +10,7 @@ module.exports = {
   // 测试文件匹配模式
   testMatch: [
     '**/tests/**/*.test.js',
+    '**/tests/**/*.test.mjs',
     '**/__tests__/**/*.js'
   ],
 
@@ -51,7 +52,8 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/template/',
-    '/coverage/'
+    '/coverage/',
+    '/development/projects/'
   ],
 
   // 清除 mock

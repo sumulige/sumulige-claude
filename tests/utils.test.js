@@ -31,9 +31,9 @@ describe('Utils Module', () => {
 
     it('should return 0 when source does not exist', () => {
       const nonExistent = path.join(os.tmpdir(), 'non-existent-' + Date.now());
-      const count = utils.copyRecursive(nonExistent, tempDest);
+      const result = utils.copyRecursive(nonExistent, tempDest);
 
-      expect(count).toBe(0);
+      expect(result).toEqual({ copied: 0, skipped: 0, backedup: 0 });
     });
 
     it('should copy files recursively', () => {
@@ -42,9 +42,11 @@ describe('Utils Module', () => {
       fs.writeFileSync(path.join(tempSrc, 'file1.txt'), 'content1');
       fs.writeFileSync(path.join(tempSrc, 'subdir', 'file2.txt'), 'content2');
 
-      const count = utils.copyRecursive(tempSrc, tempDest);
+      const result = utils.copyRecursive(tempSrc, tempDest);
 
-      expect(count).toBe(2);
+      expect(result.copied).toBe(2);
+      expect(result.skipped).toBe(0);
+      expect(result.backedup).toBe(0);
       expect(fs.existsSync(path.join(tempDest, 'file1.txt'))).toBe(true);
       expect(fs.existsSync(path.join(tempDest, 'subdir', 'file2.txt'))).toBe(true);
     });
@@ -73,9 +75,10 @@ describe('Utils Module', () => {
       fs.mkdirSync(tempDest, { recursive: true });
       fs.writeFileSync(path.join(tempDest, 'file.txt'), 'old content');
 
-      const count = utils.copyRecursive(tempSrc, tempDest, false);
+      const result = utils.copyRecursive(tempSrc, tempDest, false);
 
-      expect(count).toBe(0);
+      expect(result.copied).toBe(0);
+      expect(result.skipped).toBe(1);
       const content = fs.readFileSync(path.join(tempDest, 'file.txt'), 'utf-8');
       expect(content).toBe('old content');
     });
@@ -85,9 +88,10 @@ describe('Utils Module', () => {
       fs.mkdirSync(tempDest, { recursive: true });
       fs.writeFileSync(path.join(tempDest, 'file.txt'), 'old content');
 
-      const count = utils.copyRecursive(tempSrc, tempDest, true);
+      const result = utils.copyRecursive(tempSrc, tempDest, true);
 
-      expect(count).toBe(1);
+      expect(result.copied).toBe(1);
+      expect(result.skipped).toBe(0);
       const content = fs.readFileSync(path.join(tempDest, 'file.txt'), 'utf-8');
       expect(content).toBe('new content');
     });
