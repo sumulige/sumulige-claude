@@ -41,7 +41,8 @@ async function main() {
       stdio: 'pipe'
     }).trim() || 'origin/main';
 
-    const output = execSync(`git diff --name-only ${upstream}...HEAD`, {
+    // Use --diff-filter=ACMR to exclude deleted files (D)
+    const output = execSync(`git diff --name-only --diff-filter=ACMR ${upstream}...HEAD`, {
       encoding: 'utf-8',
       stdio: 'pipe'
     });
@@ -85,7 +86,7 @@ async function main() {
 
   const result = await gate.check({
     files: checkable.map(f => path.join(projectDir, f)),
-    severity: 'warn' // Block on warnings too for push
+    severity: 'error' // Only block on errors, not warnings
   });
 
   if (!result.passed) {

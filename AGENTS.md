@@ -437,12 +437,6 @@ Usage notes:
 <available_skills>
 
 <skill>
-<name>123-skill</name>
-<description></description>
-<location>project</location>
-</skill>
-
-<skill>
 <name>algorithmic-art</name>
 <description>Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.</description>
 <location>project</location>
@@ -450,7 +444,7 @@ Usage notes:
 
 <skill>
 <name>api-tester</name>
-<description>API testing and HTTP request validation tool for REST/GraphQL endpoints</description>
+<description></description>
 <location>project</location>
 </skill>
 
@@ -468,6 +462,12 @@ Usage notes:
 
 <skill>
 <name>code-reviewer-123</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>design-brain</name>
 <description></description>
 <location>project</location>
 </skill>
@@ -527,6 +527,18 @@ Usage notes:
 </skill>
 
 <skill>
+<name>quality-guard</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>quick-fix</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>skill-creator</name>
 <description>Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.</description>
 <location>project</location>
@@ -541,6 +553,12 @@ Usage notes:
 <skill>
 <name>template</name>
 <description>Replace with description of the skill and when Claude should use it.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>test-master</name>
+<description></description>
 <location>project</location>
 </skill>
 

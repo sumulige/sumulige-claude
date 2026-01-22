@@ -1,86 +1,61 @@
 ---
-description: Comprehensive code review with security and quality checks
+description: Review current changes before committing
 ---
 
-# /review
+Review the current uncommitted or staged changes.
 
-统一的代码审查命令，合并了代码质量、安全检查、清理建议。
-
-## 使用方式
-
-```bash
-/review              # 快速审查（默认）
-/review --security   # 安全深扫
-/review --clean      # 代码清理建议
-/review --all        # 完整审查
-```
-
-## 关联 Skill
-
-此命令加载 `quality-guard` skill。
-
----
-
-## 工作流程
-
-### Step 1: 获取变更
+## Step 1: Show Changes
 
 ```bash
 git status
+
+# Show unstaged changes
 git diff
+
+# Show staged changes
 git diff --staged
 ```
 
-### Step 2: 代码质量检查
+## Step 2: Code Review Checklist
 
-- [ ] 函数 < 50 行
-- [ ] 文件 < 800 行
-- [ ] 嵌套深度 < 4 层
-- [ ] 命名清晰、语义化
-- [ ] 无 console.log 语句
-- [ ] 错误处理完善
+Review the changes for:
 
-### Step 3: 安全检查（--security）
+### Functionality
+- [ ] Does the change accomplish the intended goal?
+- [ ] Are there any obvious bugs or logic errors?
+- [ ] Are edge cases handled?
 
-- [ ] 无硬编码凭证
-- [ ] 无 SQL 注入风险
-- [ ] 无 XSS 漏洞
-- [ ] 输入验证完整
-- [ ] 无不安全依赖
+### Security
+- [ ] No hardcoded credentials or API keys
+- [ ] No SQL injection, XSS, or other vulnerabilities
+- [ ] Proper input validation
 
-### Step 4: 清理建议（--clean）
+### Code Quality
+- [ ] Code is readable and self-documenting
+- [ ] No unnecessary complexity
+- [ ] Follows DRY (Don't Repeat Yourself)
+- [ ] Proper error handling
 
-```bash
-npx knip           # 未使用的导出
-npx depcheck       # 未使用的依赖
-npx ts-prune       # 未使用的 TS 导出
-```
+### Testing
+- [ ] Tests cover new functionality
+- [ ] No tests are broken
+- [ ] Edge cases are tested
 
-### Step 5: 输出报告
+### Performance
+- [ ] No obvious performance issues
+- [ ] No unnecessary database queries or API calls
+- [ ] Proper use of caching (if applicable)
 
-```markdown
-# Review Report
+## Step 3: Provide Feedback
 
-## Summary
-- 🔴 CRITICAL: X
-- 🟠 HIGH: X
-- 🟡 MEDIUM: X
+For each issue found:
+1. Point out the specific file and line
+2. Explain the issue
+3. Suggest a fix
 
-## Issues
-| File | Line | Severity | Issue | Fix |
-|------|------|----------|-------|-----|
+## Step 4: Summary
 
-## Verdict
-✅ APPROVED / ⚠️ NEEDS ATTENTION / ❌ BLOCKED
-```
-
----
-
-## 严重程度
-
-| 级别 | 处理 |
-|------|------|
-| 🔴 CRITICAL | 必须修复，阻止提交 |
-| 🟠 HIGH | 应该修复 |
-| 🟡 MEDIUM | 建议修复 |
-| 🟢 LOW | 可选 |
+Provide an overall assessment:
+- ✅ Ready to commit
+- ⚠️ Minor issues to address
+- ❌ Major issues that need fixing

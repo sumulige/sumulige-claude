@@ -261,6 +261,63 @@ smc kickoff
 
 ---
 
+## Layer 5.5: Core Skills / 核心技能系统
+
+### 4 Core Skills / 4 个核心技能
+
+> v2.0.0 优化：将 9 个技能合并为 4 个核心技能，成本降低 60-70%
+
+| Skill | 命令 | 模型 | 作用 |
+|-------|------|------|------|
+| `quality-guard` | `/review` | sonnet | 代码审查 + 安全检查 + 清理建议 |
+| `test-master` | `/test` | sonnet | TDD + E2E + 覆盖率分析 |
+| `design-brain` | `/plan` | opus | 规划 + 架构设计 |
+| `quick-fix` | `/fix` | haiku | 快速修复构建/类型/lint 错误 |
+
+### Quick Reference / 命令速查
+
+```bash
+# 代码审查
+/review              # 标准审查
+/review --security   # 安全深扫 (OWASP Top 10)
+/review --clean      # 死代码清理
+
+# 测试
+/test                # 运行测试
+/test --tdd          # TDD 模式
+/test --e2e          # E2E 测试
+/test --coverage     # 覆盖率
+
+# 规划
+/plan                # 快速规划
+/plan --deep         # 深度设计
+
+# 快速修复
+/fix                 # 自动检测修复
+/fix --build         # 构建错误
+/fix --type          # 类型错误
+
+# 重构
+/refactor            # 分析建议
+/refactor --execute  # 执行清理
+```
+
+### Model Cost Strategy / 模型成本策略
+
+```
+┌─────────┬─────────────────────┬──────────┬────────┐
+│  模型   │      使用场景        │ 相对成本 │  速度  │
+├─────────┼─────────────────────┼──────────┼────────┤
+│ haiku   │ /fix 快速修复        │   1x     │  最快  │
+│ sonnet  │ /review, /test      │   5x     │  中等  │
+│ opus    │ /plan --deep        │  15x     │  较慢  │
+└─────────┴─────────────────────┴──────────┴────────┘
+```
+
+详细使用指南: [.claude/USAGE.md](.claude/USAGE.md)
+
+---
+
 ## Layer 6: Advanced / 第六层：高级配置
 
 ### Multi-Agent Configuration / 多 Agent 配置

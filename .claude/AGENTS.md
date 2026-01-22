@@ -6,10 +6,6 @@
 
 This project uses **Sumulige Claude** for multi-agent collaboration.
 
-### conductor
-- **Model**: claude-opus-4-5-20251101
-- **Role**: Task coordination and decomposition
-
 ### architect
 - **Model**: claude-opus-4-5-20251101
 - **Role**: Architecture design and decisions
@@ -18,13 +14,17 @@ This project uses **Sumulige Claude** for multi-agent collaboration.
 - **Model**: claude-opus-4-5-20251101
 - **Role**: Code implementation and testing
 
-### reviewer
+### conductor
 - **Model**: claude-opus-4-5-20251101
-- **Role**: Code review and quality check
+- **Role**: Task coordination and decomposition
 
 ### librarian
 - **Model**: claude-opus-4-5-20251101
 - **Role**: Documentation and knowledge
+
+### reviewer
+- **Model**: claude-opus-4-5-20251101
+- **Role**: Code review and quality check
 
 ## Usage
 

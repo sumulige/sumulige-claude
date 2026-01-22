@@ -1,90 +1,56 @@
 ---
-description: Run tests with TDD workflow, E2E, and coverage support
+description: Run tests and show coverage report
 ---
 
-# /test
+Run the test suite and provide comprehensive results.
 
-统一的测试命令，合并了 TDD、E2E、覆盖率分析。
+## Step 1: Detect Test Framework
 
-## 使用方式
+Check what test framework is being used:
 
 ```bash
-/test              # 运行单元测试（默认）
-/test --e2e        # 运行 E2E 测试
-/test --coverage   # 生成覆盖率报告
-/test --tdd        # TDD 开发模式
-/test --all        # 完整测试套件
+cat package.json | grep -E '"test"|"jest"|"vitest"|"mocha"|"pytest"'
 ```
 
-## 关联 Skill
+## Step 2: Run Tests
 
-此命令加载 `test-master` skill。
-
----
-
-## 工作流程
-
-### Step 1: 检测测试框架
+Run the appropriate test command:
 
 ```bash
-cat package.json | grep -E '"test"|"jest"|"vitest"|"playwright"'
-```
-
-### Step 2: 运行测试
-
-```bash
-# 单元测试
+# Node.js / JavaScript
 npm test
 
-# E2E 测试
-npx playwright test
+# Python
+pytest
 
-# 覆盖率
-npm test -- --coverage
+# Rust
+cargo test
+
+# Go
+go test ./...
 ```
 
-### Step 3: TDD 模式（--tdd）
+## Step 3: Show Coverage
 
-遵循 RED → GREEN → REFACTOR 循环：
+If coverage is available, run:
 
-1. **RED** - 写失败的测试
-2. **GREEN** - 最小实现让测试通过
-3. **REFACTOR** - 优化代码，保持测试通过
-
-### Step 4: E2E 模式（--e2e）
-
-使用 Playwright + Page Object Model：
-
-```
-tests/e2e/
-├── pages/         # Page Objects
-├── fixtures/      # 测试数据
-└── specs/         # 测试用例
+```bash
+npm run test:coverage
+# or
+pytest --cov
 ```
 
-### Step 5: 覆盖率报告（--coverage）
+## Step 4: Analyze Results
 
-```markdown
-# Coverage Report
+Provide a summary:
+- Total tests run
+- Pass/fail counts
+- Coverage percentage
+- Any failing tests with details
 
-| Metric | Current | Target | Status |
-|--------|---------|--------|--------|
-| Statements | 85% | 80% | ✅ |
-| Branches | 72% | 70% | ✅ |
-| Functions | 88% | 80% | ✅ |
-| Lines | 85% | 80% | ✅ |
+## Step 5: Fix Failures (if any)
 
-## Uncovered Code
-[需要添加测试的代码]
-```
-
----
-
-## 覆盖率目标
-
-| 类型 | 目标 | 最低 |
-|------|------|------|
-| 语句 | 90% | 80% |
-| 分支 | 85% | 70% |
-| 函数 | 90% | 80% |
-| 行 | 90% | 80% |
+If tests fail, help the user:
+1. Identify the root cause
+2. Fix the issue
+3. Re-run tests to verify

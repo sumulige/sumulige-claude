@@ -1,8 +1,48 @@
-# Changelog
+## [Unreleased] (2026-01-22)
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+### ✨ New Features
 
-### [1.2.1](https://github.com/sumulige/sumulige-claude/compare/v1.1.2...v1.2.1) (2026-01-18)
+- **4 Core Skills System**: Cost-optimized skill architecture
+  - `quality-guard` (sonnet) - Code review + security + cleanup
+  - `test-master` (sonnet) - TDD + E2E + coverage
+  - `design-brain` (opus) - Planning + architecture
+  - `quick-fix` (haiku) - Fast error resolution
+- **Model Strategy**: Automatic model selection based on task complexity
+- **Workflow Engine**: 4-phase project workflow (research → approve → plan → develop)
+
+### 🐛 Bug Fixes
+
+- make git hooks executable (e748915a)
+- fix pre-push hook for deleted files detection (46cccc6)
+
+### 📝 Documentation
+
+- update CHANGELOG with test coverage improvements (d82cd19f)
+- update README with v1.2.0 changelog entry (aa3cbc1d)
+
+### ♻️ Refactor
+
+- optimize skills system - merge 9 skills into 4 core skills (69a520d7)
+- delete 6 placeholder skills, streamline commands from 17 to 12
+
+### 🧪 Tests
+
+- significantly improve test coverage to 63.53% (0b552e03)
+- add comprehensive regression tests for core modules (e3b570ed)
+- all 575 tests passing
+
+### 🧹 Chores
+
+- global update - add workflows, templates, and development infrastructure (26b2591d)
+- **release**: 1.2.1 (a9cf82b7)
+- **release**: 1.2.0 (03c0c309)
+
+### 📌 Other
+
+- optimize quality gate line-count rule (5b625d82)
+- set quality gate severity to error (66f96e59)
+
+## [1.2.1](https://github.com/sumulige/sumulige-claude/compare/v1.1.2...v1.2.1) (2026-01-18)
 
 
 ### Fixed

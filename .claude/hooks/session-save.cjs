@@ -34,7 +34,7 @@ function getSessionFilename() {
 function saveSession(context) {
   const filename = getSessionFilename();
   const filepath = path.join(SESSIONS_DIR, filename);
-
+  
   const content = `# Session - ${new Date().toISOString()}
 
 > Type: ${context.type || 'chat'}
@@ -79,10 +79,10 @@ ${context.nextSteps || 'None'}
 `;
 
   fs.writeFileSync(filepath, content, 'utf-8');
-
+  
   // Update sessions index
   updateSessionsIndex();
-
+  
   return filename;
 }
 
@@ -94,9 +94,9 @@ function updateSessionsIndex() {
     .filter(f => f.endsWith('.md'))
     .sort()
     .reverse();
-
+  
   const indexPath = path.join(SESSIONS_DIR, 'INDEX.md');
-
+  
   let content = `# Sessions Index
 
 > Total sessions: ${files.length}
@@ -114,7 +114,7 @@ ${files.slice(0, 20).map(f => {
 
 ---
 `;
-
+  
   fs.writeFileSync(indexPath, content, 'utf-8');
 }
 
@@ -123,35 +123,35 @@ ${files.slice(0, 20).map(f => {
  */
 function updateMemory(context) {
   const timestamp = new Date().toISOString();
-
+  
   let content = '';
-
+  
   if (fs.existsSync(MEMORY_FILE)) {
     content = fs.readFileSync(MEMORY_FILE, 'utf-8');
   }
-
+  
   // Check if we need to add a new entry
   const newEntry = `\n## ${timestamp.split('T')[0]}\n\n${
     context.summary || context.keyPoints?.join('\n') || 'No details'
   }\n`;
-
+  
   // Keep only last 7 days
   const entries = content.split('## ').slice(1, 8);
-  content = '# Memory\n\n<!-- Project memory updated by AI -->\n' +
+  content = '# Memory\n\n<!-- Project memory updated by AI -->\n' + 
     '## ' + entries.join('## ') + newEntry;
-
+  
   fs.writeFileSync(MEMORY_FILE, content, 'utf-8');
 }
 
 // Main execution
 if (require.main === module) {
   const args = process.argv.slice(2);
-
+  
   if (args[0] === '--save' && args[1]) {
     const contextData = JSON.parse(fs.readFileSync(args[1], 'utf-8'));
     const filename = saveSession(contextData);
     console.log(`✅ Session saved: ${filename}`);
-
+    
     if (contextData.addToMemory !== false) {
       updateMemory(contextData);
       console.log(`✅ Memory updated`);
