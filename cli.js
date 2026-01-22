@@ -175,6 +175,10 @@ const COMMANDS = {
   notebooklm: {
     help: 'NotebookLM browser automation',
     args: '<auth|ask|status|clear> [args...]'
+  },
+  audit: {
+    help: 'Audit approved commands for security risks',
+    args: '[--global] [--ci] [--report]'
   }
 };
 

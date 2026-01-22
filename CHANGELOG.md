@@ -1,3 +1,28 @@
+## [1.3.1](https://github.com/sumulige/sumulige-claude/compare/v1.3.0...v1.3.1) (2026-01-22)
+
+### ✨ New Features
+
+- **System Prompt Optimization**: Token savings via MCP lazy-loading
+  - `ENABLE_TOOL_SEARCH=true` - MCP tools loaded on demand
+  - `DISABLE_AUTOUPDATER=1` - Reduce startup overhead
+  - ~50% token reduction for system prompts
+- **New Commands**:
+  - `/handoff` - Generate context handoff documents for session continuity
+  - `/gha` - Analyze GitHub Actions CI failures
+  - `/audit` - Security audit for approved commands (cc-safe style)
+- **Permission Audit**: Detect dangerous patterns in approved commands
+  - Critical: `rm -rf /`, disk overwrite, fork bombs
+  - High: `sudo`, `chmod 777`, privileged containers
+  - Medium: global installs, force push
+
+### 📝 Documentation
+
+- Add `/handoff` command guide
+- Add `/gha` CI analysis guide
+- Add `/audit` security audit guide
+
+---
+
 ## [1.3.0](https://github.com/sumulige/sumulige-claude/compare/v1.2.1...v1.3.0) (2026-01-22)
 
 ### ✨ New Features

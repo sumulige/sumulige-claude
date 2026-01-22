@@ -1,7 +1,6 @@
 {
-  "version": "2.0.0",
-  "last_updated": "2026-01-22",
-  "description": "Optimized skill index - merged 9 skills into 4 core skills",
+  "version": "1.0.0",
+  "last_updated": "2026-01-11",
   "skills": [
     {
       "name": "frontend-design",
@@ -47,7 +46,7 @@
     },
     {
       "name": "webapp-testing",
-      "keywords": ["browser", "automation", "screenshot", "puppeteer", "scraping"],
+      "keywords": ["test", "testing", "playwright", "browser", "automation", "e2e", "screenshot"],
       "description": "Toolkit for interacting with and testing local web applications using Playwright",
       "trigger": "when testing frontend functionality, debugging UI behavior, or capturing browser screenshots"
     },
@@ -106,32 +105,22 @@
       "trigger": "for complex artifacts requiring state management, routing, or shadcn/ui components"
     },
     {
-      "name": "quality-guard",
-      "keywords": ["review", "security", "quality", "lint", "code review", "vulnerability", "owasp", "dead code", "refactor", "cleanup"],
-      "description": "Code quality guardian - merged: code review + security check + dead code cleanup. Supports --security, --clean modes.",
-      "trigger": "when reviewing code, checking security, or cleaning up dead code",
-      "model": "sonnet"
+      "name": "dev-browser",
+      "keywords": ["browser", "scraping", "automation", "puppet", "playwright", "web"],
+      "description": "Browser automation with persistent state for testing and scraping",
+      "trigger": "when needing browser automation or web scraping capabilities"
     },
     {
-      "name": "test-master",
-      "keywords": ["test", "tdd", "e2e", "playwright", "coverage", "unit test", "jest", "vitest"],
-      "description": "Test master - merged: TDD workflow + E2E testing. Supports --tdd, --e2e, --coverage modes.",
-      "trigger": "when writing tests, doing TDD, running E2E tests, or checking coverage",
-      "model": "sonnet"
+      "name": "zai-cli",
+      "keywords": ["z.ai", "vision", "search", "github", "exploration", "analysis"],
+      "description": "Z.AI vision, search, and GitHub exploration CLI tools",
+      "trigger": "when needing vision analysis, web search, or GitHub repository exploration"
     },
     {
-      "name": "design-brain",
-      "keywords": ["plan", "design", "architecture", "system design", "technical decision", "strategy"],
-      "description": "Design brain - merged: planner + architect. Supports --quick (default) and --deep modes.",
-      "trigger": "when planning implementation or making architecture decisions",
-      "model": "opus"
-    },
-    {
-      "name": "quick-fix",
-      "keywords": ["fix", "build error", "compile error", "type error", "lint error", "tsc"],
-      "description": "Quick fixer - fast build/lint/type error resolution using haiku model for speed and cost efficiency.",
-      "trigger": "when build fails, type errors occur, or lint errors need fixing",
-      "model": "haiku"
+      "name": "gastown",
+      "keywords": ["gastown", "multi-agent", "orchestrator", "coordination"],
+      "description": "Multi-agent orchestrator for complex task coordination",
+      "trigger": "when orchestrating multiple agents for complex workflows"
     }
   ],
   "auto_load": {
@@ -142,13 +131,5 @@
   "fallback": {
     "enabled": true,
     "skill": "frontend-design"
-  },
-  "model_strategy": {
-    "description": "Cost-optimized model selection",
-    "rules": [
-      { "pattern": "quick-fix", "model": "haiku", "reason": "Fast, simple fixes" },
-      { "pattern": "quality-guard|test-master", "model": "sonnet", "reason": "Standard tasks" },
-      { "pattern": "design-brain", "model": "opus", "reason": "Complex architecture only" }
-    ]
   }
 }
