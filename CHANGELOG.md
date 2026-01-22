@@ -1,3 +1,18 @@
+## [1.3.3](https://github.com/sumulige/sumulige-claude/compare/v1.3.2...v1.3.3) (2026-01-22)
+
+### ✨ New Features
+
+- **`smc sync --hooks`**: Incremental hooks update for existing projects
+  - Adds new lifecycle hooks without overwriting customizations
+  - Merges SessionStart/SessionEnd/PreCompact into existing settings.json
+
+### 📝 Documentation
+
+- Add Layer 7: Lifecycle Hooks section to README
+- Document update methods for other projects
+
+---
+
 ## [1.3.2](https://github.com/sumulige/sumulige-claude/compare/v1.3.1...v1.3.2) (2026-01-22)
 
 ### ✨ New Features
