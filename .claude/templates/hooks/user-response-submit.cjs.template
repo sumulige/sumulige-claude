@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+/**
+ * [Hook Name] - UserResponseSubmit Hook Template
+ *
+ * 触发时机: AI 返回响应后
+ * 环境变量:
+ *   - CLAUDE_PROJECT_DIR: 项目根目录
+ *   - CLAUDE_RESPONSE_CONTENT: 响应内容
+ *
+ * @version 1.0.0
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+// ============================================================
+// 标准头部 - 所有 hooks 必须包含
+// ============================================================
+
+const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+
+// 如果不在 Claude Code 环境中运行，静默退出
+if (!process.env.CLAUDE_PROJECT_DIR) {
+  process.exit(0);
+}
+
+// ============================================================
+// 配置区域
+// ============================================================
+
+const CONFIG = {
+  enabled: true,
+  verbose: false,
+};
+
+// ============================================================
+// 工具函数
+// ============================================================
+
+function log(...args) {
+  if (CONFIG.verbose) {
+    console.error('[Hook]', ...args);
+  }
+}
+
+function safeReadFile(filePath, defaultValue = '') {
+  try {
+    return fs.readFileSync(filePath, 'utf-8');
+  } catch (e) {
+    return defaultValue;
+  }
+}
+
+function safeWriteFile(filePath, content) {
+  try {
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, content, 'utf-8');
+    return true;
+  } catch (e) {
+    log('Write error:', e.message);
+    return false;
+  }
+}
+
+// ============================================================
+// Hook 核心逻辑
+// ============================================================
+
+function main() {
+  try {
+    const responseContent = process.env.CLAUDE_RESPONSE_CONTENT || '';
+
+    log('Response length:', responseContent.length);
+
+    // ===== 在这里实现你的 hook 逻辑 =====
+
+    // 示例: 记录响应统计
+    const statsFile = path.join(PROJECT_DIR, '.claude/hooks/.response-stats.json');
+    const stats = JSON.parse(safeReadFile(statsFile, '{}'));
+    stats.totalResponses = (stats.totalResponses || 0) + 1;
+    stats.totalChars = (stats.totalChars || 0) + responseContent.length;
+    stats.lastUpdate = new Date().toISOString();
+    safeWriteFile(statsFile, JSON.stringify(stats, null, 2));
+
+    // ===== Hook 逻辑结束 =====
+
+  } catch (error) {
+    log('Error:', error.message);
+  }
+
+  process.exit(0);
+}
+
+main();

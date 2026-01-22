@@ -1,0 +1,116 @@
+#!/usr/bin/env node
+/**
+ * [Hook Name] - UserPromptSubmit Hook Template
+ *
+ * 触发时机: 用户每次提交提示时
+ * 环境变量:
+ *   - CLAUDE_PROJECT_DIR: 项目根目录
+ *   - CLAUDE_TOOL_NAME: 当前调用的工具名
+ *   - CLAUDE_TOOL_INPUT: 工具输入内容
+ *
+ * @version 1.0.0
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+// ============================================================
+// 标准头部 - 所有 hooks 必须包含
+// ============================================================
+
+const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+
+// 如果不在 Claude Code 环境中运行，静默退出
+if (!process.env.CLAUDE_PROJECT_DIR) {
+  process.exit(0);
+}
+
+// ============================================================
+// 配置区域
+// ============================================================
+
+const CONFIG = {
+  // 你的 hook 配置
+  enabled: true,
+  verbose: false,  // 设为 true 开启调试输出
+};
+
+// ============================================================
+// 工具函数
+// ============================================================
+
+/**
+ * 安全日志 - 只有 verbose=true 时才输出
+ */
+function log(...args) {
+  if (CONFIG.verbose) {
+    console.error('[Hook]', ...args);
+  }
+}
+
+/**
+ * 安全读取文件
+ */
+function safeReadFile(filePath, defaultValue = '') {
+  try {
+    return fs.readFileSync(filePath, 'utf-8');
+  } catch (e) {
+    return defaultValue;
+  }
+}
+
+/**
+ * 安全写入文件
+ */
+function safeWriteFile(filePath, content) {
+  try {
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, content, 'utf-8');
+    return true;
+  } catch (e) {
+    log('Write error:', e.message);
+    return false;
+  }
+}
+
+// ============================================================
+// Hook 核心逻辑
+// ============================================================
+
+/**
+ * 主处理函数
+ */
+function main() {
+  try {
+    // 获取环境变量
+    const toolName = process.env.CLAUDE_TOOL_NAME || '';
+    const toolInput = process.env.CLAUDE_TOOL_INPUT || '';
+
+    log('Tool:', toolName);
+    log('Project:', PROJECT_DIR);
+
+    // ===== 在这里实现你的 hook 逻辑 =====
+
+    // 示例: 追踪操作
+    const trackerFile = path.join(PROJECT_DIR, '.claude/hooks/.tracker.json');
+    const data = JSON.parse(safeReadFile(trackerFile, '{}'));
+    data.lastRun = new Date().toISOString();
+    data.runs = (data.runs || 0) + 1;
+    safeWriteFile(trackerFile, JSON.stringify(data, null, 2));
+
+    // ===== Hook 逻辑结束 =====
+
+  } catch (error) {
+    // 静默处理错误，不干扰用户对话
+    log('Error:', error.message);
+  }
+
+  // 永远输出成功，不影响 Claude Code 正常运行
+  process.exit(0);
+}
+
+// ============================================================
+// 执行
+// ============================================================
+
+main();

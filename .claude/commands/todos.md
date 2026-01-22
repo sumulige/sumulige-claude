@@ -14,37 +14,12 @@ cat development/todos/INDEX.md
 
 ## Task Operations
 
-### Task Types (v2.0)
-
-任务管理系统支持 R-D-T 三阶段生命周期：
-
-```
-Research (研究) → Develop (开发) → Test (测试) → Done (完成)
-```
-
-| 类型 | 图标 | 目录 | 说明 |
-|------|------|------|------|
-| Research | 📊 | `active/research/` | 调研/设计/探索 |
-| Develop | 💻 | `active/develop/` | 实现/编码/重构 |
-| Test | 🧪 | `active/test/` | 测试/验证/QA |
-
-### Task Templates
-
-使用 `.claude/templates/tasks/` 中的模板创建任务：
-
-- **研究任务**: `.claude/templates/tasks/research.md`
-- **开发任务**: `.claude/templates/tasks/develop.md`
-- **测试任务**: `.claude/templates/tasks/test.md`
-
 ### Create a New Task
 
 When user asks to create a task:
-1. Determine the task type (research/develop/test)
-2. Create file in `development/todos/active/{type}/`
-3. Use kebab-case for filename (e.g., `user-authentication.md`)
-4. Copy from the corresponding template
-
-#### Task Template (Legacy Format)
+1. Create file in `development/todos/active/`
+2. Use kebab-case for filename (e.g., `user-login.md`)
+3. Use the template format:
 
 ```markdown
 # [Task Name]
@@ -84,19 +59,9 @@ When user asks to create a task:
 ### Update Task Status
 
 To move a task:
-- **Complete**: Move from `active/{type}/` to `completed/{type}/`
-- **Backlog**: Move from `active/{type}/` to `backlog/{type}/`
-- **Archive**: Move from `completed/{type}/` to `archived/{type}/`
-
-Example: Move `active/develop/auth.md` → `completed/develop/auth.md`
-
-### Auto-Transition Suggestions
-
-When a develop task is completed, the todo-manager will suggest creating a corresponding test task. Check with:
-
-```bash
-node .claude/hooks/todo-manager.cjs --suggest
-```
+- **Complete**: Move from `active/` to `completed/`
+- **Backlog**: Move from `active/` to `backlog/`
+- **Archive**: Move from `completed/` to `archived/`
 
 ### Update Task Progress
 

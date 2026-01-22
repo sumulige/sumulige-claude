@@ -1,0 +1,36 @@
+{
+  "query": "Rust programming",
+  "results": [
+    {
+      "title": "如何看待 Rust 这门语言？ - 知乎",
+      "url": "https://www.zhihu.com/question/432640008",
+      "excerpt": "Nov 30, 2020  &#0183;&#32;虽然Rust定位于一门系统级编程语言，但它并没走C++兼容C的老路，完全没有历史的包袱，可以轻装上阵，充分吸收各家编程语言之长，避其之短。 Rust的设计目标是非常明确的，提供内存安全、线 …",
+      "source": "bing"
+    },
+    {
+      "title": "2025年了 Rust前景如何? - 知乎",
+      "url": "https://www.zhihu.com/question/8452441330",
+      "excerpt": "Jan 1, 2025  &#0183;&#32;Rust都要赢了，怎么题主没收到通知吗？ 事实是，2025年Rust在多个领域取得关键进展： Rust在Linux里转正成为核心语言了 安卓的新Rust代码量已超新C++代码，并且Rust代码编写效率快25%， …",
+      "source": "bing"
+    },
+    {
+      "title": "Rust语言一般适合用来干啥？ - 知乎",
+      "url": "https://www.zhihu.com/question/497319903",
+      "excerpt": "Nov 22, 2021  &#0183;&#32;使用现状 AWS从2017年开始就用Rust实现了无服务器计算平台： AWS Lambda 和 AWS Fargate, 并且用Rust重写了Bottlerocket OS和AWS Nitro系统，这两个是弹性计算云 (EC2)的重要服务 …",
+      "source": "bing"
+    },
+    {
+      "title": "都说rust是集大成者，他有什么缺点呢？ - 知乎",
+      "url": "https://www.zhihu.com/question/603518666",
+      "excerpt": "May 28, 2023  &#0183;&#32;这一切，可能会在rust未来的某个edition中重新加入，但是肯定将会是一个巨大的breaking change。 我个人不期待edition方式能够解决该问题，只期待更加渺茫的rust 2.0或者其他语言替代品能够 …",
+      "source": "bing"
+    },
+    {
+      "title": "Rust、Go、Zig、Dart、C3、C++、C，仓颉、moonbit、凹 ...",
+      "url": "https://www.zhihu.com/question/13527699012",
+      "excerpt": "May 27, 2025  &#0183;&#32;说句得罪人的： 没有“未来语言”，只有“适配你人生版本的语言”。 有用VB6维护祖传代码的老哥每天准时遛狗，也有追 Rust 热点三年跳槽五次反而薪资倒挂的卷王。 记住： 编程语言是艘船，重要的 …",
+      "source": "bing"
+    }
+  ],
+  "timestamp": 1768583409109
+}

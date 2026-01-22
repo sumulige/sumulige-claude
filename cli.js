@@ -163,6 +163,18 @@ const COMMANDS = {
   changelog: {
     help: 'Generate changelog from git commits',
     args: '[--from <tag>] [--to <tag>] [--json]'
+  },
+  workflow: {
+    help: 'Manage AI development workflow (Phase 1: NotebookLM research)',
+    args: '<start|status|validate|phase> [args...]'
+  },
+  knowledge: {
+    help: 'Manage knowledge base for NotebookLM',
+    args: '<add|list|query|remove|stats|sync> [args...]'
+  },
+  notebooklm: {
+    help: 'NotebookLM browser automation',
+    args: '<auth|ask|status|clear> [args...]'
   }
 };
 
@@ -211,6 +223,14 @@ function showHelp() {
   console.log('  smc skills:search    # Search skills by keyword');
   console.log('  smc changelog        # Generate changelog');
   console.log('  smc init -i         # Interactive setup');
+  console.log('  smc workflow start "Build a REST API"');
+  console.log('  smc workflow status');
+  console.log('  smc workflow validate <report>');
+  console.log('  smc knowledge list');
+  console.log('  smc knowledge query "Best practices?"');
+  console.log('  smc knowledge add ./docs/best-practices.md');
+  console.log('  smc notebooklm auth');
+  console.log('  smc notebooklm ask "What are best practices?"');
 }
 
 // ============================================================================

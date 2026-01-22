@@ -1,0 +1,36 @@
+{
+  "query": "AI code review tools best practices 2024",
+  "results": [
+    {
+      "title": "目前有哪些主流的AI？ - 知乎",
+      "url": "https://www.zhihu.com/question/591009674",
+      "excerpt": "Mar 21, 2023  &#0183;&#32;2、AI 办公类 ①Prezo： prezo.ai 一款AI辅助的演示工具，快速制作PPT ②天工AI搜索： search.tiangong.cn 一款AI搜索引擎，快速查找内容 ③酷表chatExcel： 通过聊天来操作Excel表格的AI工具 …",
+      "source": "bing"
+    },
+    {
+      "title": "人工智能那么火~如今AI的应用场景都有哪些？ - 知乎",
+      "url": "https://www.zhihu.com/question/282715644",
+      "excerpt": "Jun 26, 2018  &#0183;&#32;在这个典型场景中，AI算法部署在云端，而站点通过5G接入网络，进而能获得灵活的AI算力支持。 可以说，5G通信是AI算力得以灵活覆盖到各站点的媒介，设备不需要具备强大算力，只需要加装基础的 …",
+      "source": "bing"
+    },
+    {
+      "title": "人工智能 - 知乎",
+      "url": "https://www.zhihu.com/topic/19551275",
+      "excerpt": "人工智能（Artificial Intelligence），英文缩写为AI。它是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。人工智能是计算机科学的一个分支，它企图了解智能的实质， …",
+      "source": "bing"
+    },
+    {
+      "title": "AI 技术的核心本质是什么？背后的技术原理有哪些？ - 知乎",
+      "url": "https://www.zhihu.com/question/571427849",
+      "excerpt": "Dec 9, 2022  &#0183;&#32;目前的 AI大模型本质是，以统计规律代替逻辑规律，以相关性代替因果性，以海量参数的函数拟合出输入输出算法。 具体的技术原理：1 是通过数据集获得统计规律，2是通过统计规律进行插值输出。 而 …",
+      "source": "bing"
+    },
+    {
+      "title": "有没有大佬帮我解释一下AI infra到底是干啥的？ - 知乎",
+      "url": "https://www.zhihu.com/question/4023337465",
+      "excerpt": "Nov 13, 2024  &#0183;&#32;1.AI Infra 软硬件定义 AI Infra 并非单一技术模块，而是通过硬件与软件的深度协同，构建起支撑 AI 大模型任务全流程的技术底座，其核心特征在于“垂直整合”，从物理硬件到上层工具，各环节形成闭 …",
+      "source": "bing"
+    }
+  ],
+  "timestamp": 1768590277006
+}

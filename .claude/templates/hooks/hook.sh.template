@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+#
+# [Hook Name] - Shell Hook Template
+#
+# 触发时机: [说明触发时机]
+# 环境变量:
+#   - CLAUDE_PROJECT_DIR: 项目根目录
+#
+# @version 1.0.0
+#
+
+set -euo pipefail  # 严格模式
+
+# ============================================================
+# 标准头部 - 所有 hooks 必须包含
+# ============================================================
+
+# 获取项目目录，提供 fallback
+CLAUDE_PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+
+# 如果不在项目环境中，静默退出
+[[ -z "${CLAUDE_PROJECT_DIR:-}" ]] && exit 0
+
+# ============================================================
+# 配置区域
+# ============================================================
+
+VERBOSE="${VERBOSE:-false}"
+HOOKS_DIR="$CLAUDE_PROJECT_DIR/.claude/hooks"
+DATA_DIR="$HOOKS_DIR/.data"
+
+# ============================================================
+# 工具函数
+// ============================================================
+
+# 安全日志
+log() {
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo "[Hook] $*" >&2
+    fi
+}
+
+# 确保目录存在
+ensure_dir() {
+    local dir="$1"
+    mkdir -p "$dir" 2>/dev/null || true
+}
+
+# 安全读取文件
+safe_read() {
+    local file="$1"
+    local default="${2:-}"
+    if [[ -f "$file" ]]; then
+        cat "$file" 2>/dev/null || echo "$default"
+    else
+        echo "$default"
+    fi
+}
+
+# 安全写入文件
+safe_write() {
+    local file="$1"
+    local content="$2"
+    ensure_dir "$(dirname "$file")"
+    echo "$content" > "$file" 2>/dev/null || true
+}
+
+# ============================================================
+# Hook 核心逻辑
+# ============================================================
+
+main() {
+    # 错误处理：任何错误都静默处理，不影响 Claude Code
+    {
+
+        log "Project: $CLAUDE_PROJECT_DIR"
+
+        # ===== 在这里实现你的 hook 逻辑 =====
+
+        # 示例: 记录执行时间
+        local timestamp_file="$DATA_DIR/last-run.txt"
+        safe_write "$timestamp_file" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+        # ===== Hook 逻辑结束 =====
+
+    } || true
+}
+
+# ============================================================
+# 执行
+# ============================================================
+
+main
+exit 0

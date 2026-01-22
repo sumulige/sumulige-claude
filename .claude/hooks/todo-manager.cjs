@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 /**
- * TODO Manager - AI 自动任务管理系统 (v2.0)
+ * TODO Manager - AI 自动任务管理系统
  *
  * 功能：
- * - 支持 Research → Develop → Test 生命周期
- * - 自动任务状态流转
- * - 智能任务创建建议
+ * - 自动追踪项目任务
+ * - 生成可点击的任务索引
  * - 维护任务状态流转
+ * - 静默运行，不打扰工作流
  *
- * 生命周期：
- * Research (研究) → Develop (开发) → Test (测试) → Done (完成)
+ * 目录结构：
+ * development/todos/
+ * ├── INDEX.md       # 任务总览
+ * ├── active/        # 进行中的任务
+ * ├── completed/     # 已完成的任务
+ * ├── backlog/       # 待办任务
+ * └── archived/      # 已归档任务
  */
 
 const fs = require('fs');
@@ -20,81 +25,55 @@ const TODOS_DIR = path.join(PROJECT_DIR, 'development', 'todos');
 const INDEX_FILE = path.join(TODOS_DIR, 'INDEX.md');
 const STATE_FILE = path.join(TODOS_DIR, '.state.json');
 
-// 任务类型和状态
-const TASK_TYPES = {
-  RESEARCH: 'research',
-  DEVELOP: 'develop',
-  TEST: 'test'
-};
-
-const TASK_STAGES = {
+// 任务状态
+const STATUS = {
   ACTIVE: 'active',
   COMPLETED: 'completed',
   BACKLOG: 'backlog',
   ARCHIVED: 'archived'
 };
 
-// 图标映射
-const ICONS = {
-  research: '📊',
-  develop: '💻',
-  test: '🧪'
-};
-
 // 确保目录存在
 function ensureDirectories() {
-  const dirs = [TODOS_DIR];
-
-  // 为每个阶段创建类型子目录
-  for (const stage of Object.values(TASK_STAGES)) {
-    dirs.push(path.join(TODOS_DIR, stage));
-    for (const type of Object.values(TASK_TYPES)) {
-      dirs.push(path.join(TODOS_DIR, stage, type));
-    }
-  }
-
-  dirs.forEach(dir => {
-    try { fs.mkdirSync(dir, { recursive: true }); } catch (e) {}
+  [TODOS_DIR, STATUS.ACTIVE, STATUS.COMPLETED, STATUS.BACKLOG, STATUS.ARCHIVED].forEach(dir => {
+    const fullPath = dir.startsWith('/') ? dir : path.join(TODOS_DIR, dir);
+    try { fs.mkdirSync(fullPath, { recursive: true }); } catch (e) {}
   });
 }
 
 // 扫描任务文件
 function scanTasks() {
   const tasks = {
-    active: { research: [], develop: [], test: [] },
-    completed: { research: [], develop: [], test: [] },
-    backlog: { research: [], develop: [], test: [] },
-    archived: { research: [], develop: [], test: [] }
+    active: [],
+    completed: [],
+    backlog: [],
+    archived: []
   };
 
-  for (const [stage, types] of Object.entries(tasks)) {
-    for (const [type, _] of Object.entries(types)) {
-      const dir = path.join(TODOS_DIR, stage, type);
-      if (!fs.existsSync(dir)) continue;
+  for (const [key, dirName] of Object.entries(STATUS)) {
+    const dir = path.join(TODOS_DIR, dirName);
+    if (!fs.existsSync(dir)) continue;
 
-      const files = fs.readdirSync(dir)
-        .filter(f => f.endsWith('.md') && f !== '_README.md');
+    const files = fs.readdirSync(dir)
+      .filter(f => f.endsWith('.md') && f !== '_README.md');
 
-      tasks[stage][type] = files.map(f => {
-        const filePath = path.join(dir, f);
-        const content = fs.readFileSync(filePath, 'utf-8');
-        const titleMatch = content.match(/^#\s+(.+)$/m);
-        const statusMatch = content.match(/\*\*状态\*\*:\s*([✅🚧📋])/);
-        const priorityMatch = content.match(/\*\*优先级\*\*:\s*(P[0-3])/);
-        const typeMatch = content.match(/\*\*类型\*\*:\s*([📊💻🧪])\s*(\w+)/);
+    tasks[dirName] = files.map(f => {
+      const filePath = path.join(dir, f);
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const titleMatch = content.match(/^#\s+(.+)$/m);
+      const statusMatch = content.match(/\*\*状态\*\*:\s*([\u{1F300}-\u{1F9FF}\s]+)/u);
+      const priorityMatch = content.match(/\*\*优先级\*\*:\s*(P[0-3])/);
+      const branchMatch = content.match(/\*\*分支\*\*:\s*`([^`]+)`/);
 
-        return {
-          file: f,
-          title: titleMatch ? titleMatch[1] : path.basename(f, '.md'),
-          status: statusMatch ? statusMatch[1] : '🚧',
-          priority: priorityMatch ? priorityMatch[1] : 'P2',
-          taskType: typeMatch ? typeMatch[1] : type,
-          icon: typeMatch ? typeMatch[2] : ICONS[type] || '📄',
-          path: `${stage}/${type}/${f}`,
-          stage: stage
-        };
-      });
-    }
+      return {
+        file: f,
+        title: titleMatch ? titleMatch[1] : path.basename(f, '.md'),
+        status: statusMatch ? statusMatch[1].trim() : '🚧 进行中',
+        priority: priorityMatch ? priorityMatch[1] : 'P2',
+        branch: branchMatch ? branchMatch[1] : null,
+        path: `${dirName}/${f}`
+      };
+    });
   }
 
   return tasks;
@@ -104,188 +83,103 @@ function scanTasks() {
 function generateIndex(tasks) {
   const now = new Date().toISOString().split('T')[0];
 
-  // 计算总数
-  const activeCount = tasks.active.research.length + tasks.active.develop.length + tasks.active.test.length;
-  const completedCount = tasks.completed.research.length + tasks.completed.develop.length + tasks.completed.test.length;
-  const backlogCount = tasks.backlog.research.length + tasks.backlog.develop.length + tasks.backlog.test.length;
-
   let md = `# 项目任务追踪系统
 
-> **统一管理**: 研究 → 开发 → 测试
-> **最后更新**: ${now}
+> 本目录由 AI 自动维护，记录项目开发任务和进度
 
-@version: 2.0.0
+**最后更新**: ${now}
 
----
+@version: 1.0.0
 
-## 📊 项目进度
-
-| 阶段 | 进度 | 状态 |
-|------|------|------|
-| Phase 1: MVP 智能监控 | 80% | 🚧 进行中 |
-| Phase 2: V1.5 动态调整 | 0% | 📋 待规划 |
-| Phase 3: V2.0 AI 教练 | 0% | 📋 待规划 |
-
----
-
-## 🔄 任务生命周期
-
-\`\`\`
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│  RESEARCH   │ → │  DEVELOP    │ → │   TEST      │
-│  📊 研究     │    │  💻 开发     │    │  🧪 测试     │
-└─────────────┘    └─────────────┘    └─────────────┘
-\`\`\`
-
----
-
-## 📁 目录结构
+## 目录结构
 
 \`\`\`
 development/todos/
 ├── INDEX.md           # 本文件 - 任务总览
-├── _templates/        # 任务模板
-├── active/            # 进行中的任务 (${activeCount})
-│   ├── research/      # 📊 研究中 (${tasks.active.research.length})
-│   ├── develop/       # 💻 开发中 (${tasks.active.develop.length})
-│   └── test/          # 🧪 测试中 (${tasks.active.test.length})
-├── completed/         # 已完成的任务 (${completedCount})
-│   ├── research/
-│   ├── develop/
-│   └── test/
-├── backlog/           # 待规划的任务 (${backlogCount})
-└── archived/          # 已归档的任务
+├── active/            # 进行中的任务 (${tasks.active.length})
+├── completed/         # 已完成的任务 (${tasks.completed.length})
+├── backlog/           # 待规划的任务 (${tasks.backlog.length})
+└── archived/          # 已归档的任务 (${tasks.archived.length})
 \`\`\`
 
----
+## 快速跳转
 
-## 🚧 当前进行中的任务
-
-### 📊 研究任务
 `;
 
-  // 研究任务
-  if (tasks.active.research.length > 0) {
-    tasks.active.research.forEach(t => {
-      md += `- [${t.priority}] [${t.title}](./${t.path}) - ${t.status}\n`;
+  // 进行中的任务
+  md += `## 🚧 进行中的任务 (${tasks.active.length})\n\n`;
+  if (tasks.active.length > 0) {
+    tasks.active.forEach(t => {
+      md += `- [${t.priority}] [${t.title}](./${t.path}) - ${t.status}${t.branch ? ` \`branch: ${t.branch}\`` : ''}\n`;
     });
   } else {
-    md += `暂无\n`;
+    md += `*暂无进行中的任务*\n`;
   }
-  md += `\n### 💻 开发任务\n`;
+  md += `\n`;
 
-  // 开发任务
-  if (tasks.active.develop.length > 0) {
-    tasks.active.develop.forEach(t => {
-      md += `- [${t.priority}] [${t.title}](./${t.path}) - ${t.status}\n`;
+  // 最近完成的任务（最多5个）
+  md += `## ✅ 最近完成的任务\n\n`;
+  const recentCompleted = tasks.completed.slice(0, 5);
+  if (recentCompleted.length > 0) {
+    recentCompleted.forEach(t => {
+      md += `- [${t.title}](./${t.path})\n`;
     });
+    if (tasks.completed.length > 5) {
+      md += `- ...还有 ${tasks.completed.length - 5} 个已完成任务\n`;
+    }
   } else {
-    md += `暂无\n`;
+    md += `*暂无已完成的任务*\n`;
   }
-  md += `\n### 🧪 测试任务\n`;
+  md += `\n`;
 
-  // 测试任务
-  if (tasks.active.test.length > 0) {
-    tasks.active.test.forEach(t => {
-      md += `- [${t.priority}] [${t.title}](./${t.path}) - ${t.status}\n`;
+  // 待办任务
+  md += `## 📋 待办任务 (${tasks.backlog.length})\n\n`;
+  if (tasks.backlog.length > 0) {
+    tasks.backlog.slice(0, 10).forEach(t => {
+      md += `- [${t.priority}] [${t.title}](./${t.path})\n`;
     });
+    if (tasks.backlog.length > 10) {
+      md += `- ...还有 ${tasks.backlog.length - 10} 个待办任务\n`;
+    }
   } else {
-    md += `暂无\n`;
+    md += `*暂无待办任务*\n`;
   }
+  md += `\n`;
 
-  md += `\n---\n\n## ✅ 最近完成的任务\n\n### 💻 开发任务\n`;
+  // 全部目录链接
+  md += `## 全部目录\n\n`;
+  md += `- [🚧 所有进行中的任务](./active/) - 当前开发重点\n`;
+  md += `- [✅ 所有已完成的任务](./completed/) - 完整历史\n`;
+  md += `- [📋 所有待办任务](./backlog/) - 待规划\n`;
+  md += `- [📦 所有已归档任务](./archived/) - 历史记录\n`;
+  md += `\n`;
 
-  // 最近完成的开发任务
-  if (tasks.completed.develop.length > 0) {
-    tasks.completed.develop.slice(0, 5).forEach(t => {
-      md += `- [${t.title}](./${t.path}) ${t.status}\n`;
-    });
-  } else {
-    md += `暂无\n`;
-  }
-
-  md += `\n### 🧪 测试任务\n`;
-
-  // 最近完成的测试任务
-  if (tasks.completed.test.length > 0) {
-    tasks.completed.test.slice(0, 3).forEach(t => {
-      md += `- [${t.title}](./${t.path}) ${t.status}\n`;
-    });
-  } else {
-    md += `暂无\n`;
-  }
-
-  md += `\n---\n\n## 📋 待办任务\n\n`;
-  md += `暂无\n`;
-
-  md += `\n---\n\n## 🎯 使用方式\n\n`;
-  md += `### 查看任务\n\`\`\`bash\n`;
-  md += `# 按类型查看\n`;
-  md += `ls development/todos/active/research/   # 研究任务\n`;
-  md += `ls development/todos/active/develop/    # 开发任务\n`;
-  md += `ls development/todos/active/test/       # 测试任务\n`;
+  // 使用说明
+  md += `## 使用方式\n\n`;
+  md += `### 查看任务\n`;
+  md += `点击上方链接跳转到对应目录，或使用：\n`;
+  md += `\`\`\`bash\n`;
+  md += `# 查看进行中的任务\n`;
+  md += `cat development/todos/active/*.md\n\n`;
+  md += `# 查看特定任务\n`;
+  md += `cat development/todos/active/feature-name.md\n`;
   md += `\`\`\`\n\n`;
-
   md += `### 创建新任务\n`;
-  md += `在 Claude Code 中：\n\`\`\`\n`;
-  md += `创建一个新任务：\n`;
-  md += `- 类型：测试\n`;
-  md += `- 标题：Dashboard 功能测试\n\`\`\`\n\n`;
+  md += `在 Claude Code 中：\n`;
+  md += `\`\`\`\n`;
+  md += `创建一个新任务：实现用户登录功能\n`;
+  md += `\`\`\`\n\n`;
+  md += `AI 会自动在 \`active/\` 目录创建对应的任务文件。\n\n`;
+  md += `### 更新任务状态\n`;
+  md += `\`\`\`\n`;
+  md += `将 [任务名] 标记为完成\n`;
+  md += `\`\`\`\n\n`;
+  md += `AI 会自动将任务移动到 \`completed/\` 目录。\n\n`;
 
-  md += `### 更新任务状态\n\`\`\`\n`;
-  md += `将 [任务名] 标记为完成\n\`\`\`\n\n`;
-
-  md += `---\n\n> **维护说明**: 本系统由 AI 自动维护\n`;
+  md += `---\n\n`;
+  md += `> **维护说明**: 本系统由 AI 自动维护，请勿手动编辑（除非你知道自己在做什么）\n`;
 
   return md;
-}
-
-// 加载和保存状态
-function loadState() {
-  if (fs.existsSync(STATE_FILE)) {
-    try {
-      return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
-    } catch (e) {
-      return { tasks: {}, transitions: [] };
-    }
-  }
-  return { tasks: {}, transitions: [] };
-}
-
-function saveState(state) {
-  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
-}
-
-// 检查是否需要自动流转
-function checkAutoTransition(tasks, state) {
-  const suggestions = [];
-
-  // 检查刚完成的开发任务，建议创建测试任务
-  const completedDevelop = tasks.completed.develop.filter(t => {
-    const key = `completed_develop_${t.file}`;
-    return !state.tasks[key]; // 首次完成
-  });
-
-  completedDevelop.forEach(t => {
-    const testTaskName = t.file.replace('.md', '-test.md');
-    const testPath = path.join(TODOS_DIR, 'active', 'test', testTaskName);
-
-    if (!fs.existsSync(testPath)) {
-      suggestions.push({
-        type: 'create_test',
-        message: `💡 建议为 "${t.title}" 创建测试任务`,
-        developTask: t,
-        testTask: testTaskName,
-        template: `_templates/test.md`
-      });
-    }
-
-    // 标记已处理
-    const key = `completed_develop_${t.file}`;
-    state.tasks[key] = { completed: true, notified: true };
-  });
-
-  return { suggestions, state };
 }
 
 // 更新索引
@@ -293,22 +187,34 @@ function updateIndex() {
   try {
     ensureDirectories();
     const tasks = scanTasks();
-    const state = loadState();
-
-    // 检查自动流转
-    const { suggestions, state: newState } = checkAutoTransition(tasks, state);
-
-    // 生成索引
     const index = generateIndex(tasks);
-    fs.writeFileSync(INDEX_FILE, index);
 
-    // 保存状态
-    saveState(newState);
+    // 检查是否需要更新 - 比较任务总数
+    let needsUpdate = true;
+    if (fs.existsSync(INDEX_FILE)) {
+      const existing = fs.readFileSync(INDEX_FILE, 'utf-8');
+      // 从现有索引中提取任务数量
+      const activeMatch = existing.match(/## 🚧 进行中的任务 \((\d+)\)/);
+      const completedMatch = existing.match(/## ✅ 最近完成的任务/);
+      const existingActive = activeMatch ? parseInt(activeMatch[1], 10) : 0;
+      const newActive = tasks.active.length;
 
-    return { tasks, suggestions, updated: true };
+      // 如果活跃任务数量相同且没有完成任务内容变化，则不更新
+      if (existingActive === newActive && tasks.completed.length === 0) {
+        // 检查现有索引是否已有完成任务
+        const hasCompletedInExisting = existing.includes('[completed/') || existing.includes('./completed/');
+        const hasCompletedNow = tasks.completed.length > 0;
+        needsUpdate = hasCompletedInExisting !== hasCompletedNow;
+      }
+    }
+
+    if (needsUpdate) {
+      fs.writeFileSync(INDEX_FILE, index);
+    }
+
+    return { tasks, updated: needsUpdate };
   } catch (e) {
-    console.error('[TODO Manager] Error:', e.message);
-    return { tasks: { active: { research: [], develop: [], test: [] }, completed: { research: [], develop: [], test: [] } }, suggestions: [], updated: false };
+    return { tasks: { active: [], completed: [], backlog: [], archived: [] }, updated: false };
   }
 }
 
@@ -316,28 +222,13 @@ function updateIndex() {
 function main() {
   const result = updateIndex();
 
-  // 输出建议
-  if (result.suggestions && result.suggestions.length > 0) {
-    console.log('\n📋 [任务流转] 检测到 ' + result.suggestions.length + ' 个自动流转建议:\n');
-    result.suggestions.forEach((s, i) => {
-      console.log(`   ${i + 1}. ${s.message}`);
-    });
-    console.log('');
-  }
-
-  // 在 AgentStop 时输出摘要
+  // 在 AgentStop 或特定事件时输出摘要
   const eventType = process.env.CLAUDE_EVENT_TYPE || '';
   if (eventType === 'AgentStop') {
-    const active = result.tasks.active;
-    const activeTotal = active.research.length + active.develop.length + active.test.length;
-    const completed = result.tasks.completed;
-    const completedTotal = completed.research.length + completed.develop.length + completed.test.length;
-
-    if (activeTotal > 0 || completedTotal > 0) {
-      console.log(`\n📋 [任务追踪]`);
-      console.log(`   进行中: ${activeTotal} 个 (📊 ${active.research.length} | 💻 ${active.develop.length} | 🧪 ${active.test.length})`);
-      console.log(`   已完成: ${completedTotal} 个`);
-      console.log(`   查看: ${path.relative(PROJECT_DIR, INDEX_FILE)}\n`);
+    const { active, completed } = result.tasks;
+    if (active.length > 0) {
+      console.log(`\n📋 [任务追踪] ${active.length} 个进行中, ${completed.length} 个已完成`);
+      console.log(`   查看: development/todos/INDEX.md\n`);
     }
   }
 
@@ -349,18 +240,6 @@ if (require.main === module) {
   if (process.argv[2] === '--force') {
     updateIndex();
     console.log('✅ Task index updated');
-  } else if (process.argv[2] === '--suggest') {
-    const result = updateIndex();
-    if (result.suggestions.length > 0) {
-      console.log('\n💡 自动流转建议:\n');
-      result.suggestions.forEach((s, i) => {
-        console.log(`${i + 1}. ${s.message}`);
-        console.log(`   开发任务: ${s.developTask.file}`);
-        console.log(`   测试任务: ${s.testTask}`);
-      });
-    } else {
-      console.log('✅ 无待处理的流转建议');
-    }
   } else {
     main();
   }

@@ -1,0 +1,36 @@
+{
+  "query": "TypeScript async await",
+  "results": [
+    {
+      "title": "Why use triple-equal (===) in TypeScript? - Stack Overflow",
+      "url": "https://stackoverflow.com/questions/57125700/why-use-triple-equal-in-typescript",
+      "excerpt": "Jul 20, 2019  &#0183;&#32;TypeScript cannot redefine == without breaking all JavaScript code that relies on its behavior (despite this having sad implications for 3). This also implies that TypeScript cannot change …",
+      "source": "bing"
+    },
+    {
+      "title": "如何看待 2025 年 3 月 11 日微软公开的 TypeScript-Go 项目？",
+      "url": "https://www.zhihu.com/question/14718005119",
+      "excerpt": "Mar 12, 2025  &#0183;&#32;能够改进TypeScript的编译速度自然是好事情，tsc的编译器性能已经非常慢了 以我统计的数据为例，下面是我的Gentoo Linux系统自2024年以来所有平均编译时间大于10分钟（600秒）的包。我使用 …",
+      "source": "bing"
+    },
+    {
+      "title": "What is TypeScript and why should I use it instead of JavaScript?",
+      "url": "https://stackoverflow.com/questions/12694530/what-is-typescript-and-why-should-i-use-it-instead-of-javascript",
+      "excerpt": "What is the TypeScript language? What can it do that JavaScript or available libraries cannot do, that would give me reason to consider it?",
+      "source": "bing"
+    },
+    {
+      "title": "Does Typescript support the ?. operator? (And, what's it called?)",
+      "url": "https://stackoverflow.com/questions/15260732/does-typescript-support-the-operator-and-whats-it-called",
+      "excerpt": "Jan 17, 2017  &#0183;&#32;Prior to version 3.7, this was not supported in TypeScript, although it was requested as early as Issue #16 on the TypeScript repo (dating back to 2014). As far as what to call this operator, …",
+      "source": "bing"
+    },
+    {
+      "title": "What's the meaning of \"=>\" in TypeScript? (Fat Arrow)",
+      "url": "https://stackoverflow.com/questions/34274520/whats-the-meaning-of-in-typescript-fat-arrow",
+      "excerpt": "In TypeScript, everything that comes after the : but before an = (assignment) is the type information. So your example is saying that the type of MakePoint is a function that takes 0 arguments and returns an …",
+      "source": "bing"
+    }
+  ],
+  "timestamp": 1768582224065
+}

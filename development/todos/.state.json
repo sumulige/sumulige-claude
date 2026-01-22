@@ -1,4 +1,17 @@
 {
-  "tasks": {},
+  "tasks": {
+    "completed_develop_local-knowledge-index.md": {
+      "completed": true,
+      "notified": true
+    },
+    "completed_develop_web-search-integration.md": {
+      "completed": true,
+      "notified": true
+    },
+    "completed_develop_todo-system.md": {
+      "completed": true,
+      "notified": true
+    }
+  },
   "transitions": []
 }
