@@ -1,0 +1,27 @@
+name: quality-guard
+version: 2.0.0
+description: |
+  代码质量守护者。合并了代码审查、安全检查、死代码清理三大功能。
+  支持快速审查、安全深扫、代码清理三种模式。
+  自动在代码变更后触发，确保代码质量和安全性。
+
+triggers:
+  - code review
+  - security check
+  - clean code
+  - dead code
+  - refactor
+  - vulnerability
+  - 代码审查
+  - 安全检查
+  - 清理代码
+
+tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+
+model: sonnet
+
+source: merged from code-reviewer + security-reviewer + refactor-cleaner

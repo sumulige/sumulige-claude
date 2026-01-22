@@ -1,0 +1,26 @@
+name: design-brain
+version: 2.0.0
+description: |
+  设计大脑。合并了规划和架构设计功能。
+  支持快速规划和深度设计两种模式。
+  仅在复杂任务时使用 opus 模型，日常规划使用 sonnet。
+
+triggers:
+  - plan
+  - design
+  - architecture
+  - system design
+  - technical decision
+  - 规划
+  - 设计
+  - 架构
+
+tools:
+  - Read
+  - Grep
+  - Glob
+  - Task
+
+model: opus
+
+source: merged from planner + architect-design

@@ -1,0 +1,29 @@
+name: test-master
+version: 2.0.0
+description: |
+  测试大师。合并了 TDD 工作流和 E2E 测试功能。
+  支持单元测试、E2E 测试、覆盖率分析三种模式。
+  遵循 RED-GREEN-REFACTOR 循环，目标覆盖率 80%+。
+
+triggers:
+  - write test
+  - tdd
+  - test-driven
+  - e2e test
+  - playwright
+  - coverage
+  - unit test
+  - 写测试
+  - 测试覆盖
+
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+
+model: sonnet
+
+source: merged from tdd-workflow + e2e-runner

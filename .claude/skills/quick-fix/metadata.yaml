@@ -1,0 +1,26 @@
+name: quick-fix
+version: 2.0.0
+description: |
+  快速修复者。专注于构建错误、lint 错误、类型错误的快速修复。
+  使用 haiku 模型确保响应快速、成本低。
+  遵循最小变更原则，不做复杂重构。
+
+triggers:
+  - build error
+  - compile error
+  - type error
+  - lint error
+  - tsc error
+  - 构建错误
+  - 编译错误
+  - 类型错误
+
+tools:
+  - Read
+  - Edit
+  - Bash
+  - Grep
+
+model: haiku
+
+source: optimized from build-error-resolver
