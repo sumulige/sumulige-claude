@@ -106,24 +106,6 @@
       "trigger": "for complex artifacts requiring state management, routing, or shadcn/ui components"
     },
     {
-      "name": "dev-browser",
-      "keywords": ["browser", "scraping", "automation", "puppet", "playwright", "web"],
-      "description": "Browser automation with persistent state for testing and scraping",
-      "trigger": "when needing browser automation or web scraping capabilities"
-    },
-    {
-      "name": "zai-cli",
-      "keywords": ["z.ai", "vision", "search", "github", "exploration", "analysis"],
-      "description": "Z.AI vision, search, and GitHub exploration CLI tools",
-      "trigger": "when needing vision analysis, web search, or GitHub repository exploration"
-    },
-    {
-      "name": "gastown",
-      "keywords": ["gastown", "multi-agent", "orchestrator", "coordination"],
-      "description": "Multi-agent orchestrator for complex task coordination",
-      "trigger": "when orchestrating multiple agents for complex workflows"
-    },
-    {
       "name": "quality-guard",
       "keywords": ["review", "security", "quality", "lint", "code review", "vulnerability", "owasp", "dead code", "refactor", "cleanup"],
       "description": "Code quality guardian - merged: code review + security check + dead code cleanup. Supports --security, --clean modes.",
