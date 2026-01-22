@@ -30,7 +30,7 @@ const COMMANDS = {
   },
   sync: {
     help: 'Sync to current project (auto-migrates old format)',
-    args: '[--check-update]'
+    args: '[--check-update] [--hooks]'
   },
   migrate: {
     help: 'Migrate old hooks format to new',

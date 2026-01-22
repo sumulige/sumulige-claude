@@ -400,6 +400,68 @@ smc skill:create my-skill
 
 ---
 
+## Layer 7: Lifecycle Hooks / 第七层：生命周期钩子
+
+### Auto-Sync System / 自动同步系统
+
+> v1.3.2: 利用 Claude Code 官方 Hook 事件实现记忆自动同步
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  SessionStart ──► memory-loader.cjs                         │
+│    └─ 自动加载 MEMORY.md, ANCHORS.md, TODO 状态              │
+│                                                              │
+│  PreCompact ──► auto-handoff.cjs                            │
+│    └─ 上下文压缩前自动生成 handoff 文档                       │
+│                                                              │
+│  SessionEnd ──► memory-saver.cjs                            │
+│    └─ 会话结束自动保存摘要到 MEMORY.md                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Hook Files / 钩子文件
+
+| Hook | 文件 | 触发时机 | 功能 |
+|------|------|----------|------|
+| `SessionStart` | `memory-loader.cjs` | 会话开始 | 加载记忆、锚点、TODO |
+| `SessionEnd` | `memory-saver.cjs` | 会话结束 | 保存摘要、归档会话 |
+| `PreCompact` | `auto-handoff.cjs` | 上下文压缩前 | 生成 handoff 保护上下文 |
+
+### Handoff Documents / 交接文档
+
+当上下文即将被压缩时，自动生成交接文档：
+
+```
+.claude/handoffs/
+├── LATEST.md           # 最新交接文档
+├── INDEX.md            # 交接文档索引
+└── handoff_*.md        # 历史交接文档
+```
+
+每个交接文档包含：
+- 会话信息（项目、版本、开始时间）
+- 活跃 TODOs 列表
+- 最近修改的文件
+- 恢复命令
+
+### Update Hooks / 更新钩子
+
+其他项目如何获取新 hooks：
+
+```bash
+# 方式 1: 完整更新（推荐）
+smc template --force
+
+# 方式 2: 增量同步（仅更新 hooks）
+smc sync --hooks
+
+# 方式 3: 手动安装
+npm update -g sumulige-claude
+smc template
+```
+
+---
+
 ## Documentation / 文档
 
 - **[Development Guide / 开发指南](docs/DEVELOPMENT.md)** - Architecture, adding skills / 架构、添加技能
