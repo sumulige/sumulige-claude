@@ -1,4 +1,44 @@
 {
+  "env": {
+    "ENABLE_TOOL_SEARCH": "true",
+    "DISABLE_AUTOUPDATER": "1"
+  },
+  "SessionStart": [
+    {
+      "matcher": {},
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/memory-loader.cjs",
+          "timeout": 2000
+        }
+      ]
+    }
+  ],
+  "SessionEnd": [
+    {
+      "matcher": {},
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/memory-saver.cjs",
+          "timeout": 3000
+        }
+      ]
+    }
+  ],
+  "PreCompact": [
+    {
+      "matcher": {},
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/auto-handoff.cjs",
+          "timeout": 5000
+        }
+      ]
+    }
+  ],
   "UserPromptSubmit": [
     {
       "matcher": {},

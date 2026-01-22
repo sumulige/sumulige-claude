@@ -1,3 +1,23 @@
+## [1.3.2](https://github.com/sumulige/sumulige-claude/compare/v1.3.1...v1.3.2) (2026-01-22)
+
+### ✨ New Features
+
+- **Official Hooks Integration**: Claude Code lifecycle auto-sync
+  - `SessionStart` → `memory-loader.cjs`: Auto-load MEMORY.md, ANCHORS.md, restore TODO state
+  - `SessionEnd` → `memory-saver.cjs`: Auto-save session summary, archive session, sync TODO
+  - `PreCompact` → `auto-handoff.cjs`: Auto-generate handoff before context compression
+- **Context Preservation**: Automatic handoff documents in `.claude/handoffs/`
+  - Includes active TODOs, recently modified files, recovery commands
+  - `LATEST.md` always points to most recent handoff
+
+### 🔧 Improvements
+
+- Session state tracking via `.session-state.json`
+- Automatic session archiving to `.claude/sessions/`
+- Memory entries kept for 7 days with auto-cleanup
+
+---
+
 ## [1.3.1](https://github.com/sumulige/sumulige-claude/compare/v1.3.0...v1.3.1) (2026-01-22)
 
 ### ✨ New Features
