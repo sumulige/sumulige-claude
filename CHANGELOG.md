@@ -1,4 +1,4 @@
-## [Unreleased] (2026-01-22)
+## [1.3.0](https://github.com/sumulige/sumulige-claude/compare/v1.2.1...v1.3.0) (2026-01-22)
 
 ### ✨ New Features
 
@@ -9,6 +9,7 @@
   - `quick-fix` (haiku) - Fast error resolution
 - **Model Strategy**: Automatic model selection based on task complexity
 - **Workflow Engine**: 4-phase project workflow (research → approve → plan → develop)
+- **Usage Manual**: Comprehensive `.claude/USAGE.md` documentation
 
 ### 🐛 Bug Fixes
 
@@ -17,30 +18,25 @@
 
 ### 📝 Documentation
 
-- update CHANGELOG with test coverage improvements (d82cd19f)
-- update README with v1.2.0 changelog entry (aa3cbc1d)
+- add `.claude/USAGE.md` with complete skills guide
+- add Layer 5.5 Core Skills section to README
+- update CHANGELOG with test coverage improvements
 
 ### ♻️ Refactor
 
-- optimize skills system - merge 9 skills into 4 core skills (69a520d7)
-- delete 6 placeholder skills, streamline commands from 17 to 12
+- **BREAKING**: merge 9 skills into 4 core skills (60-70% cost reduction)
+- delete 6 placeholder skills
+- streamline commands from 17 to 12
 
 ### 🧪 Tests
 
-- significantly improve test coverage to 63.53% (0b552e03)
-- add comprehensive regression tests for core modules (e3b570ed)
+- improve test coverage to 63.53%
 - all 575 tests passing
 
 ### 🧹 Chores
 
-- global update - add workflows, templates, and development infrastructure (26b2591d)
-- **release**: 1.2.1 (a9cf82b7)
-- **release**: 1.2.0 (03c0c309)
-
-### 📌 Other
-
-- optimize quality gate line-count rule (5b625d82)
-- set quality gate severity to error (66f96e59)
+- add workflows, templates, and development infrastructure
+- add hook templates for customization
 
 ## [1.2.1](https://github.com/sumulige/sumulige-claude/compare/v1.1.2...v1.2.1) (2026-01-18)
 
