@@ -13,6 +13,10 @@ const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const RAG_DIR = path.join(PROJECT_DIR, '.claude/rag');
 const SKILL_INDEX_FILE = path.join(RAG_DIR, 'skill-index.json');
 const SKILLS_DIR = path.join(PROJECT_DIR, '.claude/skills');
+const CACHE_FILE = path.join(RAG_DIR, '.match-cache.json');
+
+// 缓存配置
+const CACHE_TTL = 300000; // 5分钟缓存有效期
 
 // 技能关键词匹配权重
 const KEYWORD_WEIGHTS = {
@@ -20,6 +24,67 @@ const KEYWORD_WEIGHTS = {
   partial: 0.8,    // 部分匹配
   related: 0.5     // 相关匹配
 };
+
+// 简单哈希函数
+function hashInput(input) {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    const char = input.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return hash.toString(16);
+}
+
+// 加载缓存
+function loadCache() {
+  if (!fs.existsSync(CACHE_FILE)) {
+    return {};
+  }
+  try {
+    return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+  } catch (e) {
+    return {};
+  }
+}
+
+// 保存缓存
+function saveCache(cache) {
+  try {
+    // 清理过期条目
+    const now = Date.now();
+    const cleaned = {};
+    for (const [key, value] of Object.entries(cache)) {
+      if (now - value.timestamp < (value.ttl || CACHE_TTL)) {
+        cleaned[key] = value;
+      }
+    }
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cleaned, null, 2));
+  } catch (e) {
+    // 忽略保存错误
+  }
+}
+
+// 从缓存获取结果
+function getCachedResult(inputHash) {
+  const cache = loadCache();
+  const cached = cache[inputHash];
+  if (cached && Date.now() - cached.timestamp < (cached.ttl || CACHE_TTL)) {
+    return cached.result;
+  }
+  return null;
+}
+
+// 保存结果到缓存
+function setCachedResult(inputHash, result) {
+  const cache = loadCache();
+  cache[inputHash] = {
+    result,
+    timestamp: Date.now(),
+    ttl: CACHE_TTL
+  };
+  saveCache(cache);
+}
 
 // 加载技能索引
 function loadSkillIndex() {
@@ -134,12 +199,27 @@ function main() {
       process.exit(0);
     }
 
-    const analysis = analyzeInput(toolInput);
-    if (analysis.keywords.length === 0) {
-      process.exit(0);
+    // 检查缓存
+    const inputHash = hashInput(toolInput);
+    const cachedResult = getCachedResult(inputHash);
+
+    let matches;
+    if (cachedResult) {
+      // 使用缓存结果
+      matches = cachedResult;
+    } else {
+      // 分析并匹配
+      const analysis = analyzeInput(toolInput);
+      if (analysis.keywords.length === 0) {
+        process.exit(0);
+      }
+
+      matches = matchSkills(analysis, skillIndex);
+
+      // 缓存结果
+      setCachedResult(inputHash, matches);
     }
 
-    const matches = matchSkills(analysis, skillIndex);
     if (matches.length === 0) {
       process.exit(0);
     }

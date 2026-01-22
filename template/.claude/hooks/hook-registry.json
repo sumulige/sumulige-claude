@@ -1,0 +1,73 @@
+{
+  "$schema": "hook-registry-schema.json",
+  "$comment": "Hook Dispatcher Registry - Controls which hooks run and when",
+
+  "thinking-silent": {
+    "events": ["AgentStop"],
+    "debounce": 5000,
+    "enabled": true,
+    "description": "Silent thinking/flow tracking"
+  },
+
+  "multi-session": {
+    "events": ["UserPromptSubmit", "AgentStop"],
+    "debounce": 3000,
+    "condition": "sessions > 1",
+    "enabled": true,
+    "description": "Multi-session tracking (only when multiple sessions)"
+  },
+
+  "todo-manager": {
+    "events": ["AgentStop"],
+    "debounce": 10000,
+    "enabled": true,
+    "description": "Task index management"
+  },
+
+  "rag-skill-loader": {
+    "events": ["UserPromptSubmit"],
+    "cache": true,
+    "cacheTTL": 300000,
+    "enabled": true,
+    "description": "RAG skill matching with cache"
+  },
+
+  "project-kickoff": {
+    "events": ["UserPromptSubmit"],
+    "runOnce": true,
+    "enabled": true,
+    "description": "Project initialization (once per session)"
+  },
+
+  "memory-loader": {
+    "events": ["SessionStart"],
+    "runOnce": true,
+    "enabled": true,
+    "description": "Load memory at session start"
+  },
+
+  "memory-saver": {
+    "events": ["SessionEnd"],
+    "enabled": true,
+    "description": "Save memory at session end"
+  },
+
+  "auto-handoff": {
+    "events": ["PreCompact"],
+    "enabled": true,
+    "description": "Auto-generate handoff before compaction"
+  },
+
+  "verify-work": {
+    "events": ["AgentStop"],
+    "enabled": true,
+    "description": "Verify work completion"
+  },
+
+  "code-formatter": {
+    "events": ["PostToolUse"],
+    "toolMatch": ["Write", "Edit"],
+    "enabled": true,
+    "description": "Format code after writes (only for Write/Edit tools)"
+  }
+}
