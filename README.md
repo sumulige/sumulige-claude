@@ -18,7 +18,8 @@
 6. [Layer 6: Advanced / 第六层：高级配置](#layer-6-advanced--第六层高级配置)
 7. [Layer 7: Lifecycle Hooks / 第七层：生命周期钩子](#layer-7-lifecycle-hooks--第七层生命周期钩子)
 8. [Layer 8: Data Flow Architecture / 第八层：数据流转架构](#layer-8-data-flow-architecture--第八层数据流转架构)
-9. [Documentation / 文档](#documentation--文档)
+9. [Layer 9: Config Inheritance / 第九层：配置分层继承](#layer-9-config-inheritance--第九层配置分层继承)
+10. [Documentation / 文档](#documentation--文档)
 
 ---
 
@@ -554,6 +555,69 @@ smc template
 | `.dispatcher-state.json` | Hook 执行状态 | 会话级 |
 | `.match-cache.json` | RAG 匹配缓存 | 5 分钟 TTL |
 | `.sumulige-claude-version` | 项目版本标记 | 永久 |
+
+---
+
+## Layer 9: Config Inheritance / 第九层：配置分层继承
+
+> v1.4.1: 单一真相源架构，零维护成本的多项目配置管理
+
+### 架构图
+
+```
+sumulige-claude/.claude/          ~/.claude/              项目/.claude/
+(Git 仓库 - 版本控制)             (运行时 - 符号链接)      (项目特定)
+        │                              │                       │
+        ├── hooks/ ─────→ symlink ────→│                       │
+        ├── skills/ ────→ symlink ────→│        自动继承       │
+        ├── templates/ ─→ symlink ────→│ ─────────────────────→│
+        ├── commands/ ──→ symlink ────→│                       │
+        │                              │                       │
+        └── *.md ────────→ 复制 ──────→│                       │
+                                       │                       │
+                                       ├── cache/              ├── MEMORY.md
+                                       ├── debug/              ├── PROJECT_LOG.md
+                                       └── history.jsonl       └── thinking-routes/
+```
+
+### 使用方式
+
+```bash
+# 首次设置：建立符号链接
+cd ~/Documents/Antigravity/sumulige-claude
+./scripts/sync-to-home.sh
+
+# 日常更新：修改 sumulige-claude 后自动生效
+git pull  # 所有项目自动获得最新配置！
+
+# 更新模板文件（CLAUDE.md, MEMORY.md 等）
+./scripts/sync-to-home.sh --copy
+```
+
+### 项目配置精简
+
+**之前**：每个项目复制完整 `.claude/` (~300 个文件)
+
+**之后**：项目只保留特定内容 (~10 个文件)
+
+```
+项目/.claude/
+├── MEMORY.md           # 项目记忆
+├── PROJECT_LOG.md      # 项目日志
+├── ANCHORS.md          # 项目锚点
+├── CLAUDE.md           # 项目配置 (继承+覆盖)
+├── thinking-routes/    # 思维轨迹
+└── rag/                # 项目 RAG 索引
+```
+
+### 收益
+
+| 指标 | 传统方式 | 分层继承 |
+|------|---------|---------|
+| 配置同步 | 手动复制到每个项目 | 自动（符号链接） |
+| 更新成本 | O(n) 项目数 | O(1) |
+| 配置漂移 | 容易发生 | 不可能 |
+| 存储空间 | 每项目 ~5MB | 每项目 ~50KB |
 
 ---
 
