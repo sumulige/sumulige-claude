@@ -1,0 +1,30 @@
+name: web-artifacts-builder
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts
+  using modern frontend web technologies (React, Tailwind CSS, shadcn/ui).
+  Use for complex artifacts requiring state management, routing, or shadcn/ui components.
+
+tags:
+  - react
+  - artifacts
+  - frontend
+  - tailwind
+  - shadcn
+
+triggers:
+  - web artifact
+  - React artifact
+  - complex frontend
+  - shadcn component
+  - bundled HTML
+
+dependencies:
+  - react
+  - vite
+  - parcel
+  - tailwindcss
+  - shadcn-ui
+
+difficulty: advanced

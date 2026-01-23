@@ -1,0 +1,56 @@
+name: react-node-practices
+version: 1.0.0
+author: "@sumulige"
+description: React & Node.js 最佳实践 - AI Agent 编写正确代码的知识包
+
+tags:
+  - react
+  - nodejs
+  - typescript
+  - best-practices
+  - security
+  - performance
+
+triggers:
+  - react
+  - node
+  - typescript
+  - frontend
+  - backend
+  - fullstack
+
+dependencies: []
+
+difficulty: intermediate
+
+# 规则优先级分布
+rule_categories:
+  critical:
+    - SEC-001  # 环境变量处理
+    - SEC-002  # 用户输入验证
+    - SEC-003  # 敏感数据不入日志
+    - SEC-004  # XSS 防护
+    - PERF-001 # 避免 useEffect 瀑布
+    - PERF-002 # 大列表虚拟化
+    - PERF-003 # 避免 N+1 查询
+  high:
+    - ARCH-001 # 组件职责单一
+    - ARCH-002 # 错误边界
+    - ARCH-003 # API 路由分层
+  medium:
+    - QUAL-001 # 类型安全优先
+    - QUAL-002 # 避免魔法值
+    - QUAL-003 # 不可变更新
+  low:
+    - STYLE-001 # 导入顺序
+    - STYLE-002 # 命名约定
+
+# 兼容工具
+compatible_with:
+  - claude-code
+  - cursor
+  - github-copilot
+  - windsurf
+
+# 灵感来源
+inspired_by: "https://supabase.com/blog/postgres-best-practices-for-ai-agents"

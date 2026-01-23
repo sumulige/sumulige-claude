@@ -1,0 +1,26 @@
+name: theme-factory
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Toolkit for styling artifacts with a theme. Supports slides, docs, reportings,
+  HTML landing pages, etc. Includes 10 pre-set themes with colors/fonts that can
+  be applied to any artifact, or generate a new theme on-the-fly.
+
+tags:
+  - theme
+  - styling
+  - design
+  - colors
+  - fonts
+  - presentation
+
+triggers:
+  - apply theme
+  - theme styling
+  - color palette
+  - font pairing
+  - presentation theme
+
+dependencies: []
+
+difficulty: beginner

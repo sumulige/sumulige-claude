@@ -1,0 +1,27 @@
+name: doc-coauthoring
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Guide users through a structured workflow for co-authoring documentation.
+  Use when user wants to write documentation, proposals, technical specs, decision docs,
+  or similar structured content. Three stages: Context Gathering, Refinement, Reader Testing.
+
+tags:
+  - documentation
+  - writing
+  - collaboration
+  - technical-writing
+  - workflow
+
+triggers:
+  - write docs
+  - draft proposal
+  - create spec
+  - technical spec
+  - decision doc
+  - PRD
+  - RFC
+
+dependencies: []
+
+difficulty: intermediate

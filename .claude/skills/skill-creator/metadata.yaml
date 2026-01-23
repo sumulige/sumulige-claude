@@ -1,0 +1,25 @@
+name: skill-creator
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Guide for creating effective skills that extend Claude's capabilities.
+  Use when users want to create a new skill or update an existing skill
+  with specialized knowledge, workflows, or tool integrations.
+
+tags:
+  - skills
+  - development
+  - workflow
+  - meta
+  - tooling
+
+triggers:
+  - create skill
+  - new skill
+  - update skill
+  - skill development
+  - extend capabilities
+
+dependencies: []
+
+difficulty: intermediate

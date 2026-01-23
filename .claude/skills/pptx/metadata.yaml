@@ -1,0 +1,29 @@
+name: pptx
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Presentation creation, editing, and analysis for .pptx files.
+  Use for creating new presentations, modifying content, working with layouts,
+  adding comments or speaker notes, or any other presentation tasks.
+
+tags:
+  - presentation
+  - powerpoint
+  - pptx
+  - slides
+  - office
+
+triggers:
+  - PowerPoint
+  - pptx file
+  - create presentation
+  - edit slides
+  - slide deck
+
+dependencies:
+  - pptxgenjs
+  - playwright
+  - LibreOffice
+  - defusedxml
+
+difficulty: intermediate

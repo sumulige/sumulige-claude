@@ -1,0 +1,29 @@
+name: pdf
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs,
+  merging/splitting documents, and handling forms. Use when programmatically processing,
+  generating, or analyzing PDF documents at scale, or filling in PDF forms.
+
+tags:
+  - pdf
+  - document
+  - extraction
+  - forms
+  - manipulation
+
+triggers:
+  - PDF file
+  - merge PDF
+  - split PDF
+  - extract PDF
+  - fill PDF form
+  - create PDF
+
+dependencies:
+  - pypdf
+  - pdfplumber
+  - reportlab
+
+difficulty: intermediate

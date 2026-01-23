@@ -443,6 +443,12 @@ Usage notes:
 </skill>
 
 <skill>
+<name>api-tester</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>brand-guidelines</name>
 <description>Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.</description>
 <location>project</location>
@@ -451,6 +457,12 @@ Usage notes:
 <skill>
 <name>canvas-design</name>
 <description>Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>code-reviewer-123</name>
+<description></description>
 <location>project</location>
 </skill>
 
@@ -497,6 +509,12 @@ Usage notes:
 </skill>
 
 <skill>
+<name>my-skill</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>pdf</name>
 <description>Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.</description>
 <location>project</location>
@@ -516,6 +534,18 @@ Usage notes:
 
 <skill>
 <name>quick-fix</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>react-best-practices</name>
+<description>React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>react-node-practices</name>
 <description></description>
 <location>project</location>
 </skill>
@@ -545,6 +575,12 @@ Usage notes:
 </skill>
 
 <skill>
+<name>test-skill-name</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>test-workflow</name>
 <description>Automated testing workflow that combines Playwright testing, Slack GIF recording, and test report generation. Use when user mentions "测试"、"test"、"Playwright" or asks for QA/testing workflows. Automatically generates: (1) Test execution with Playwright, (2) Slack-optimized GIF of test process, (3) Screenshot at each verification point, (4) Markdown test report with embedded screenshots.</description>
 <location>project</location>
@@ -557,8 +593,20 @@ Usage notes:
 </skill>
 
 <skill>
+<name>threejs-fundamentals</name>
+<description>Three.js scene setup, cameras, renderer, Object3D hierarchy, coordinate systems. Use when setting up 3D scenes, creating cameras, configuring renderers, managing object hierarchies, or working with transforms.</description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>web-artifacts-builder</name>
 <description>Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>web-design-guidelines</name>
+<description>Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".</description>
 <location>project</location>
 </skill>
 

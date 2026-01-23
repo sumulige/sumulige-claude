@@ -1,0 +1,27 @@
+name: canvas-design
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Create beautiful visual art in .png and .pdf documents using design philosophy.
+  Use when the user asks to create a poster, piece of art, design, or other static piece.
+  Creates original visual designs with museum-quality craftsmanship.
+
+tags:
+  - design
+  - visual-art
+  - poster
+  - pdf
+  - png
+  - creative
+
+triggers:
+  - create poster
+  - visual art
+  - canvas design
+  - pdf design
+  - art creation
+  - graphic design
+
+dependencies: []
+
+difficulty: advanced

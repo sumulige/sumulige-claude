@@ -1,0 +1,29 @@
+name: xlsx
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Comprehensive spreadsheet creation, editing, and analysis with support for formulas,
+  formatting, data analysis, and visualization. Use when working with spreadsheets
+  (.xlsx, .xlsm, .csv, .tsv) for creating, modifying, analyzing, or recalculating formulas.
+
+tags:
+  - excel
+  - spreadsheet
+  - xlsx
+  - data-analysis
+  - formulas
+
+triggers:
+  - Excel file
+  - xlsx file
+  - spreadsheet
+  - create spreadsheet
+  - analyze data
+  - Excel formulas
+
+dependencies:
+  - pandas
+  - openpyxl
+  - LibreOffice
+
+difficulty: intermediate

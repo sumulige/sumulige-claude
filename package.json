@@ -1,12 +1,22 @@
 {
   "name": "sumulige-claude",
-  "version": "1.5.1",
-  "description": "The Best Agent Harness for Claude Code",
+  "version": "1.5.2",
+  "description": "The Best Agent Harness for Claude Code - AI Agent Skills, Rules & Best Practices",
   "main": "cli.js",
   "bin": {
     "smc": "cli.js",
     "sumulige-claude": "cli.js"
   },
+  "files": [
+    "cli.js",
+    "template/",
+    ".claude/skills/",
+    ".claude/rules/",
+    ".claude/commands/",
+    ".claude/hooks/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -15,6 +25,8 @@
     "sync": "node scripts/sync-external.mjs",
     "update-registry": "node scripts/update-registry.mjs",
     "sync:all": "npm run sync && npm run update-registry",
+    "prepublish:check": "node scripts/prepublish-check.js",
+    "prepublishOnly": "npm run prepublish:check",
     "release": "standard-version",
     "release:patch": "standard-version --release-as patch",
     "release:minor": "standard-version --release-as minor",
@@ -28,7 +40,17 @@
     "skills",
     "mcp",
     "marketplace",
-    "plugin"
+    "plugin",
+    "best-practices",
+    "react",
+    "nodejs",
+    "typescript",
+    "rules",
+    "security",
+    "testing",
+    "cursor",
+    "copilot",
+    "anthropic"
   ],
   "author": "sumulige",
   "license": "MIT",

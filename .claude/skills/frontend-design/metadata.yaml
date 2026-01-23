@@ -1,0 +1,28 @@
+name: frontend-design
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Create distinctive, production-grade frontend interfaces with high design quality.
+  Use when building web components, pages, artifacts, dashboards, React components,
+  or styling any web UI. Generates creative, polished code avoiding generic AI aesthetics.
+
+tags:
+  - frontend
+  - design
+  - ui
+  - web
+  - react
+  - css
+
+triggers:
+  - build website
+  - landing page
+  - dashboard
+  - React component
+  - web design
+  - UI design
+  - frontend interface
+
+dependencies: []
+
+difficulty: intermediate

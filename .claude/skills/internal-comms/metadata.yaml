@@ -1,0 +1,28 @@
+name: internal-comms
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Resources to write all kinds of internal communications using company formats.
+  Use for status reports, leadership updates, 3P updates, company newsletters,
+  FAQs, incident reports, project updates, and similar internal content.
+
+tags:
+  - communications
+  - internal
+  - reports
+  - newsletter
+  - updates
+  - business
+
+triggers:
+  - 3P update
+  - company newsletter
+  - status report
+  - leadership update
+  - incident report
+  - internal comms
+  - weekly update
+
+dependencies: []
+
+difficulty: beginner

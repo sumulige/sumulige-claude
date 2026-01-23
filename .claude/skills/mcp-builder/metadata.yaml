@@ -1,0 +1,26 @@
+name: mcp-builder
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Guide for creating high-quality MCP (Model Context Protocol) servers that enable
+  LLMs to interact with external services through well-designed tools.
+  Use when building MCP servers in Python (FastMCP) or Node/TypeScript (MCP SDK).
+
+tags:
+  - mcp
+  - server
+  - api
+  - integration
+  - typescript
+  - python
+
+triggers:
+  - MCP server
+  - Model Context Protocol
+  - build MCP
+  - API integration
+  - tool integration
+
+dependencies: []
+
+difficulty: advanced

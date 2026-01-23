@@ -1,0 +1,32 @@
+name: test-workflow
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Automated testing workflow that combines Playwright testing, Slack GIF recording,
+  and test report generation. Use when user mentions testing, QA workflows, or Playwright.
+  Automatically generates test execution, Slack-optimized GIF, screenshots, and Markdown report.
+
+tags:
+  - testing
+  - automation
+  - playwright
+  - gif
+  - report
+
+triggers:
+  - test
+  - Playwright
+  - QA workflow
+  - automated testing
+  - test report
+
+dependencies:
+  - playwright
+  - pillow
+
+difficulty: intermediate
+
+see_also:
+  - webapp-testing
+  - slack-gif-creator
+  - doc-coauthoring

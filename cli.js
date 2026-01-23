@@ -9,7 +9,7 @@
  * - Built-in Claude Code project template
  * - ThinkingLens conversation tracking
  *
- * @version 1.0.7
+ * @version 1.5.2
  */
 
 const { runCommand } = require('./lib/commands');

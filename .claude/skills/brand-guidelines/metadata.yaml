@@ -1,0 +1,26 @@
+name: brand-guidelines
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Applies Anthropic's official brand colors and typography to any sort of artifact.
+  Use when brand colors, style guidelines, visual formatting, or company design standards apply.
+  Supports smart font application and accent colors for shapes.
+
+tags:
+  - branding
+  - design
+  - typography
+  - colors
+  - anthropic
+
+triggers:
+  - brand colors
+  - brand guidelines
+  - Anthropic style
+  - corporate identity
+  - visual identity
+  - typography
+
+dependencies: []
+
+difficulty: beginner

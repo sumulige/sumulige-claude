@@ -51,20 +51,7 @@
       ]
     }
   ],
-  "PreToolUse": [
-    {
-      "matcher": {
-        "tool_name": "^(Write|Edit)$"
-      },
-      "hooks": [
-        {
-          "type": "command",
-          "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/plan-gate.cjs",
-          "timeout": 2000
-        }
-      ]
-    }
-  ],
+  "PreToolUse": [],
   "PostToolUse": [
     {
       "matcher": {
@@ -75,11 +62,6 @@
           "type": "command",
           "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/code-formatter.cjs",
           "timeout": 5000
-        },
-        {
-          "type": "command",
-          "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/live-quality.cjs",
-          "timeout": 3000
         }
       ]
     }
