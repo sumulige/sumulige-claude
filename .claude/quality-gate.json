@@ -1,6 +1,18 @@
 {
   "enabled": true,
-  "severity": "error",
+  "severity": "warn",
+
+  "planGate": {
+    "enabled": true,
+    "mode": "block",
+    "exempt": [".md", ".json", ".test.", ".spec.", "__tests__", ".claude/"]
+  },
+
+  "liveQuality": {
+    "enabled": true,
+    "maxFileLines": 800,
+    "maxFunctionLines": 50
+  },
   "rules": [
     {
       "id": "line-count-limit",
@@ -46,13 +58,16 @@
     },
     {
       "id": "no-console-logs",
-      "enabled": false,
+      "enabled": true,
       "severity": "warn"
     },
     {
       "id": "function-length",
-      "enabled": false,
-      "severity": "warn"
+      "enabled": true,
+      "severity": "warn",
+      "config": {
+        "maxLines": 50
+      }
     }
   ],
   "gates": {

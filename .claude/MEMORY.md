@@ -1,3 +1,29 @@
+## 2026-01-23
+
+### Session: 前端设计灵感 & 3D 可视化
+
+- **主题**: 从 skills.sh 获取前端创意设计灵感
+- **产出**:
+  - `demos/power-3d-scatter.html` - Three.js 功率-时间-心率 3D 散点图 demo
+  - 安装了 5 个设计相关 skills (web-design-guidelines, react-best-practices, threejs-fundamentals 等)
+
+- **关联项目**: SynapseFlow / ApexOS
+  - 优化路线图: `synapseflow/docs/FRONTEND_OPTIMIZATION_ROADMAP.md`
+
+- **核心改进方向**:
+  1. Typography: tabular-nums, text-wrap, 字体升级
+  2. 数据可视化: 曲线动画, hover 精确值, 历史对比
+  3. 3D 散点图: 接入真实数据, 区间筛选, 时间刷选
+  4. 交互: URL 状态同步, focus states, loading states
+  5. 品牌: 避免 AI 审美, 生成式视觉元素
+
+- **待办**:
+  - [ ] 3D 散点图接入 ApexOS 真实 FIT 数据
+  - [ ] Power Duration 曲线添加绘制动画
+  - [ ] iLevels 进度条动画优化
+
+---
+
 ## 2026-01-22
 
 ### Session 2026-01-22T13:07:26.622Z

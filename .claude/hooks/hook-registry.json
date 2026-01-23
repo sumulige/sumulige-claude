@@ -2,6 +2,21 @@
   "$schema": "hook-registry-schema.json",
   "$comment": "Hook Dispatcher Registry - Controls which hooks run and when",
 
+  "plan-gate": {
+    "events": ["PreToolUse"],
+    "toolMatch": ["Write", "Edit"],
+    "enabled": true,
+    "description": "强制规划检查 - 无批准计划阻止 Write/Edit"
+  },
+
+  "live-quality": {
+    "events": ["PostToolUse"],
+    "toolMatch": ["Write", "Edit"],
+    "debounce": 1000,
+    "enabled": true,
+    "description": "实时质量检查 - 写入后立即检查代码质量"
+  },
+
   "thinking-silent": {
     "events": ["AgentStop"],
     "debounce": 5000,

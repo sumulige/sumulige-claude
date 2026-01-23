@@ -66,18 +66,29 @@ async function main() {
     config
   });
 
+  // Use severity from config, default to 'warn' for stricter checking
+  const severity = config.severity || 'warn';
+
   const result = await gate.check({
     files: checkable.map(f => path.join(projectDir, f)),
-    severity: 'error' // Block on errors and critical only
+    severity: severity // Block on configured severity (now 'warn' by default)
   });
 
   if (!result.passed) {
-    console.error('\nPre-commit quality gate failed.');
-    console.error('Fix issues or use --no-verify to bypass (not recommended).\n');
+    console.error('\n╔══════════════════════════════════════════════════════════════╗');
+    console.error('║  ⛔ Pre-commit Quality Gate: 提交被阻止                       ║');
+    console.error('╠══════════════════════════════════════════════════════════════╣');
+    console.error('║                                                              ║');
+    console.error('║  请修复上述问题后重新提交。                                   ║');
+    console.error('║                                                              ║');
+    console.error('║  如确需绕过检查（不推荐）:                                     ║');
+    console.error('║    git commit --no-verify                                    ║');
+    console.error('║                                                              ║');
+    console.error('╚══════════════════════════════════════════════════════════════╝\n');
     process.exit(1);
   }
 
-  console.log('Pre-commit quality checks passed.\n');
+  console.log('\n✅ Pre-commit quality checks passed.\n');
 }
 
 main().catch(err => {

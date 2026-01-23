@@ -443,12 +443,6 @@ Usage notes:
 </skill>
 
 <skill>
-<name>api-tester</name>
-<description></description>
-<location>project</location>
-</skill>
-
-<skill>
 <name>brand-guidelines</name>
 <description>Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.</description>
 <location>project</location>
@@ -457,12 +451,6 @@ Usage notes:
 <skill>
 <name>canvas-design</name>
 <description>Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.</description>
-<location>project</location>
-</skill>
-
-<skill>
-<name>code-reviewer-123</name>
-<description></description>
 <location>project</location>
 </skill>
 
@@ -505,12 +493,6 @@ Usage notes:
 <skill>
 <name>mcp-builder</name>
 <description>Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).</description>
-<location>project</location>
-</skill>
-
-<skill>
-<name>my-skill</name>
-<description></description>
 <location>project</location>
 </skill>
 
@@ -563,12 +545,6 @@ Usage notes:
 </skill>
 
 <skill>
-<name>test-skill-name</name>
-<description></description>
-<location>project</location>
-</skill>
-
-<skill>
 <name>test-workflow</name>
 <description>Automated testing workflow that combines Playwright testing, Slack GIF recording, and test report generation. Use when user mentions "测试"、"test"、"Playwright" or asks for QA/testing workflows. Automatically generates: (1) Test execution with Playwright, (2) Slack-optimized GIF of test process, (3) Screenshot at each verification point, (4) Markdown test report with embedded screenshots.</description>
 <location>project</location>
@@ -596,36 +572,6 @@ Usage notes:
 <name>xlsx</name>
 <description>"Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas"</description>
 <location>project</location>
-</skill>
-
-<skill>
-<name>architect</name>
-<description>|</description>
-<location>global</location>
-</skill>
-
-<skill>
-<name>builder</name>
-<description>|</description>
-<location>global</location>
-</skill>
-
-<skill>
-<name>conductor</name>
-<description>|</description>
-<location>global</location>
-</skill>
-
-<skill>
-<name>librarian</name>
-<description>|</description>
-<location>global</location>
-</skill>
-
-<skill>
-<name>reviewer</name>
-<description>|</description>
-<location>global</location>
 </skill>
 
 </available_skills>
