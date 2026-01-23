@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexOS - 3D Power Analysis</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      background: #0a0a0a;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    #info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      max-width: 320px;
+    }
+
+    #info h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    #info p {
+      font-size: 12px;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .legend-label {
+      color: #aaa;
+    }
+
+    .legend-value {
+      margin-left: auto;
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+    }
+
+    #stats {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 8px;
+    }
+
+    .stat-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 14px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-value.power { color: #667eea; }
+    .stat-value.hr { color: #f56565; }
+    .stat-value.time { color: #48bb78; }
+
+    #tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.9);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 200;
+    }
+
+    #tooltip.visible {
+      opacity: 1;
+    }
+
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .control-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
+    }
+
+    /* Axis labels */
+    .axis-label {
+      position: absolute;
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #x-label { bottom: 60px; left: 50%; transform: translateX(-50%); }
+    #y-label { left: 20px; top: 50%; transform: rotate(-90deg) translateX(-50%); transform-origin: left center; }
+    #z-label { right: 60px; bottom: 50%; }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <div id="info">
+    <h1>3D Power Analysis</h1>
+    <p>Visualizing the relationship between Power, Time, and Heart Rate during your ride.</p>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background: #667eea;"></div>
+        <span class="legend-label">X-Axis: Time</span>
+        <span class="legend-value">0-60 min</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #48bb78;"></div>
+        <span class="legend-label">Y-Axis: Power</span>
+        <span class="legend-value">0-400 W</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #f56565;"></div>
+        <span class="legend-label">Z-Axis: Heart Rate</span>
+        <span class="legend-value">100-180 bpm</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="stats">
+    <div class="stat-row">
+      <span class="stat-label">Avg Power</span>
+      <span class="stat-value power" id="avg-power">--</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Avg HR</span>
+      <span class="stat-value hr" id="avg-hr">--</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Duration</span>
+      <span class="stat-value time" id="duration">--</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Data Points</span>
+      <span class="stat-value" id="points">--</span>
+    </div>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <div id="controls">
+    <button class="control-btn active" data-view="perspective">Perspective</button>
+    <button class="control-btn" data-view="top">Top (Time-Power)</button>
+    <button class="control-btn" data-view="front">Front (Power-HR)</button>
+    <button class="control-btn" data-view="side">Side (Time-HR)</button>
+    <button class="control-btn" data-action="animate">Auto Rotate</button>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ============ Configuration ============
+    const CONFIG = {
+      pointCount: 600,        // 10 points per minute for 60 min
+      pointSize: 0.08,
+      axisSize: 8,
+      gridDivisions: 10,
+      colors: {
+        power: 0x667eea,      // Purple-blue
+        hr: 0xf56565,         // Red
+        time: 0x48bb78,       // Green
+        grid: 0x333333,
+        background: 0x0a0a0a
+      }
+    };
+
+    // ============ Generate Cycling Data ============
+    function generateCyclingData(pointCount) {
+      const data = [];
+      const duration = 60; // 60 minutes
+
+      // Simulate a structured workout:
+      // 0-10 min: Warmup
+      // 10-20 min: Intervals (high power)
+      // 20-35 min: Steady state
+      // 35-50 min: More intervals
+      // 50-60 min: Cooldown
+
+      for (let i = 0; i < pointCount; i++) {
+        const t = (i / pointCount) * duration;
+
+        let basePower, baseHR;
+
+        if (t < 10) {
+          // Warmup: gradually increasing
+          basePower = 150 + (t / 10) * 50;
+          baseHR = 110 + (t / 10) * 20;
+        } else if (t < 20) {
+          // Intervals: high power spikes
+          const intervalPhase = ((t - 10) % 2) / 2;
+          basePower = intervalPhase < 0.5 ? 320 : 180;
+          baseHR = intervalPhase < 0.5 ? 165 : 140;
+        } else if (t < 35) {
+          // Steady state
+          basePower = 240;
+          baseHR = 150;
+        } else if (t < 50) {
+          // More intense intervals
+          const intervalPhase = ((t - 35) % 1.5) / 1.5;
+          basePower = intervalPhase < 0.6 ? 350 : 200;
+          baseHR = intervalPhase < 0.6 ? 175 : 145;
+        } else {
+          // Cooldown
+          const cooldownProgress = (t - 50) / 10;
+          basePower = 200 - cooldownProgress * 80;
+          baseHR = 145 - cooldownProgress * 30;
+        }
+
+        // Add realistic noise
+        const noise = () => (Math.random() - 0.5) * 2;
+        const power = Math.max(50, basePower + noise() * 30);
+        const hr = Math.max(90, Math.min(190, baseHR + noise() * 8));
+
+        data.push({
+          time: t,
+          power: power,
+          hr: hr,
+          // Calculate intensity zone for coloring
+          intensity: power > 300 ? 'high' : power > 220 ? 'medium' : 'low'
+        });
+      }
+
+      return data;
+    }
+
+    // ============ Scene Setup ============
+    const container = document.getElementById('container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(CONFIG.colors.background);
+
+    const camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(12, 10, 12);
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 5;
+    controls.maxDistance = 30;
+
+    // ============ Create Axes ============
+    function createAxes() {
+      const axisGroup = new THREE.Group();
+      const size = CONFIG.axisSize;
+
+      // Axis lines with glow effect
+      const axisMaterial = (color) => new THREE.LineBasicMaterial({
+        color,
+        linewidth: 2,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      // X-axis (Time) - Blue-purple
+      const xGeom = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(size, 0, 0)
+      ]);
+      axisGroup.add(new THREE.Line(xGeom, axisMaterial(CONFIG.colors.power)));
+
+      // Y-axis (Power) - Green
+      const yGeom = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0, size, 0)
+      ]);
+      axisGroup.add(new THREE.Line(yGeom, axisMaterial(CONFIG.colors.time)));
+
+      // Z-axis (HR) - Red
+      const zGeom = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0, 0, size)
+      ]);
+      axisGroup.add(new THREE.Line(zGeom, axisMaterial(CONFIG.colors.hr)));
+
+      // Grid on XZ plane (bottom)
+      const gridXZ = new THREE.GridHelper(size, CONFIG.gridDivisions, CONFIG.colors.grid, CONFIG.colors.grid);
+      gridXZ.position.set(size/2, 0, size/2);
+      gridXZ.material.transparent = true;
+      gridXZ.material.opacity = 0.3;
+      axisGroup.add(gridXZ);
+
+      // Grid on XY plane (back)
+      const gridXY = new THREE.GridHelper(size, CONFIG.gridDivisions, CONFIG.colors.grid, CONFIG.colors.grid);
+      gridXY.rotation.x = Math.PI / 2;
+      gridXY.position.set(size/2, size/2, 0);
+      gridXY.material.transparent = true;
+      gridXY.material.opacity = 0.2;
+      axisGroup.add(gridXY);
+
+      // Grid on YZ plane (left)
+      const gridYZ = new THREE.GridHelper(size, CONFIG.gridDivisions, CONFIG.colors.grid, CONFIG.colors.grid);
+      gridYZ.rotation.z = Math.PI / 2;
+      gridYZ.position.set(0, size/2, size/2);
+      gridYZ.material.transparent = true;
+      gridYZ.material.opacity = 0.2;
+      axisGroup.add(gridYZ);
+
+      return axisGroup;
+    }
+
+    // ============ Create Data Points ============
+    function createScatterPoints(data) {
+      const geometry = new THREE.BufferGeometry();
+      const positions = [];
+      const colors = [];
+      const sizes = [];
+
+      const size = CONFIG.axisSize;
+      const color = new THREE.Color();
+
+      // Normalize data ranges
+      const timeRange = { min: 0, max: 60 };
+      const powerRange = { min: 50, max: 400 };
+      const hrRange = { min: 100, max: 180 };
+
+      data.forEach((point, i) => {
+        // Map to 3D coordinates
+        const x = THREE.MathUtils.mapLinear(point.time, timeRange.min, timeRange.max, 0, size);
+        const y = THREE.MathUtils.mapLinear(point.power, powerRange.min, powerRange.max, 0, size);
+        const z = THREE.MathUtils.mapLinear(point.hr, hrRange.min, hrRange.max, 0, size);
+
+        positions.push(x, y, z);
+
+        // Color based on power intensity
+        const powerNorm = (point.power - powerRange.min) / (powerRange.max - powerRange.min);
+        color.setHSL(
+          0.7 - powerNorm * 0.5, // Hue: blue to red
+          0.8,
+          0.5 + powerNorm * 0.2
+        );
+        colors.push(color.r, color.g, color.b);
+
+        // Size based on HR (higher HR = larger point)
+        const hrNorm = (point.hr - hrRange.min) / (hrRange.max - hrRange.min);
+        sizes.push(CONFIG.pointSize * (0.8 + hrNorm * 0.4));
+      });
+
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      geometry.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+
+      // Custom shader material for better looking points
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) }
+        },
+        vertexShader: `
+          attribute float size;
+          attribute vec3 color;
+          varying vec3 vColor;
+          uniform float uPixelRatio;
+
+          void main() {
+            vColor = color;
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            gl_PointSize = size * uPixelRatio * (300.0 / -mvPosition.z);
+            gl_Position = projectionMatrix * mvPosition;
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vColor;
+
+          void main() {
+            float dist = length(gl_PointCoord - vec2(0.5));
+            if (dist > 0.5) discard;
+
+            // Soft edge with glow
+            float alpha = 1.0 - smoothstep(0.3, 0.5, dist);
+            float glow = exp(-dist * 4.0) * 0.5;
+
+            gl_FragColor = vec4(vColor + glow, alpha);
+          }
+        `,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+
+      return new THREE.Points(geometry, material);
+    }
+
+    // ============ Create Trail Lines ============
+    function createTrailLines(data) {
+      const size = CONFIG.axisSize;
+      const timeRange = { min: 0, max: 60 };
+      const powerRange = { min: 50, max: 400 };
+      const hrRange = { min: 100, max: 180 };
+
+      const points = data.map(point => new THREE.Vector3(
+        THREE.MathUtils.mapLinear(point.time, timeRange.min, timeRange.max, 0, size),
+        THREE.MathUtils.mapLinear(point.power, powerRange.min, powerRange.max, 0, size),
+        THREE.MathUtils.mapLinear(point.hr, hrRange.min, hrRange.max, 0, size)
+      ));
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const material = new THREE.LineBasicMaterial({
+        color: 0x667eea,
+        transparent: true,
+        opacity: 0.3,
+        linewidth: 1
+      });
+
+      return new THREE.Line(geometry, material);
+    }
+
+    // ============ Initialize Scene ============
+    const cyclingData = generateCyclingData(CONFIG.pointCount);
+
+    // Add elements to scene
+    const axes = createAxes();
+    scene.add(axes);
+
+    const scatterPoints = createScatterPoints(cyclingData);
+    scene.add(scatterPoints);
+
+    const trailLine = createTrailLines(cyclingData);
+    scene.add(trailLine);
+
+    // Ambient light
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+    // ============ Update Stats ============
+    function updateStats() {
+      const avgPower = cyclingData.reduce((sum, d) => sum + d.power, 0) / cyclingData.length;
+      const avgHR = cyclingData.reduce((sum, d) => sum + d.hr, 0) / cyclingData.length;
+      const duration = cyclingData[cyclingData.length - 1].time;
+
+      document.getElementById('avg-power').textContent = `${Math.round(avgPower)} W`;
+      document.getElementById('avg-hr').textContent = `${Math.round(avgHR)} bpm`;
+      document.getElementById('duration').textContent = `${Math.round(duration)} min`;
+      document.getElementById('points').textContent = cyclingData.length.toLocaleString();
+    }
+    updateStats();
+
+    // ============ View Controls ============
+    const viewPositions = {
+      perspective: { pos: [12, 10, 12], target: [4, 4, 4] },
+      top: { pos: [4, 15, 4], target: [4, 0, 4] },
+      front: { pos: [4, 4, 15], target: [4, 4, 0] },
+      side: { pos: [15, 4, 4], target: [0, 4, 4] }
+    };
+
+    let isAutoRotating = false;
+
+    document.querySelectorAll('.control-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        const action = btn.dataset.action;
+
+        if (action === 'animate') {
+          isAutoRotating = !isAutoRotating;
+          controls.autoRotate = isAutoRotating;
+          controls.autoRotateSpeed = 1;
+          btn.classList.toggle('active', isAutoRotating);
+          return;
+        }
+
+        if (view && viewPositions[view]) {
+          const { pos, target } = viewPositions[view];
+
+          // Animate camera transition
+          const startPos = camera.position.clone();
+          const startTarget = controls.target.clone();
+          const endPos = new THREE.Vector3(...pos);
+          const endTarget = new THREE.Vector3(...target);
+
+          let t = 0;
+          const animateView = () => {
+            t += 0.05;
+            if (t >= 1) {
+              camera.position.copy(endPos);
+              controls.target.copy(endTarget);
+              return;
+            }
+
+            const easeT = 1 - Math.pow(1 - t, 3); // Ease out cubic
+            camera.position.lerpVectors(startPos, endPos, easeT);
+            controls.target.lerpVectors(startTarget, endTarget, easeT);
+            requestAnimationFrame(animateView);
+          };
+          animateView();
+
+          // Update button states
+          document.querySelectorAll('.control-btn[data-view]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        }
+      });
+    });
+
+    // ============ Animation Loop ============
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const elapsed = clock.getElapsedTime();
+
+      // Subtle point animation
+      const positions = scatterPoints.geometry.attributes.position.array;
+      const sizes = scatterPoints.geometry.attributes.size.array;
+
+      for (let i = 0; i < sizes.length; i++) {
+        const baseSize = CONFIG.pointSize * (0.8 + Math.random() * 0.4);
+        sizes[i] = baseSize * (1 + Math.sin(elapsed * 2 + i * 0.1) * 0.1);
+      }
+      scatterPoints.geometry.attributes.size.needsUpdate = true;
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ============ Resize Handler ============
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      scatterPoints.material.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+    });
+
+    // ============ Raycaster for Hover ============
+    const raycaster = new THREE.Raycaster();
+    raycaster.params.Points.threshold = 0.2;
+    const mouse = new THREE.Vector2();
+    const tooltip = document.getElementById('tooltip');
+
+    window.addEventListener('mousemove', (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(scatterPoints);
+
+      if (intersects.length > 0) {
+        const idx = intersects[0].index;
+        const point = cyclingData[idx];
+
+        tooltip.innerHTML = `
+          <div style="color: #667eea; font-weight: 600;">Point #${idx + 1}</div>
+          <div style="margin-top: 6px;">
+            <span style="color: #888;">Time:</span>
+            <span style="color: #48bb78;">${point.time.toFixed(1)} min</span>
+          </div>
+          <div>
+            <span style="color: #888;">Power:</span>
+            <span style="color: #667eea;">${Math.round(point.power)} W</span>
+          </div>
+          <div>
+            <span style="color: #888;">HR:</span>
+            <span style="color: #f56565;">${Math.round(point.hr)} bpm</span>
+          </div>
+        `;
+        tooltip.style.left = event.clientX + 15 + 'px';
+        tooltip.style.top = event.clientY + 15 + 'px';
+        tooltip.classList.add('visible');
+      } else {
+        tooltip.classList.remove('visible');
+      }
+    });
+
+    console.log('ApexOS 3D Power Analysis initialized');
+    console.log(`Rendered ${cyclingData.length} data points`);
+  </script>
+</body>
+</html>
