@@ -9,7 +9,7 @@
  * - Built-in Claude Code project template
  * - ThinkingLens conversation tracking
  *
- * @version 1.5.2
+ * @version 1.6.0
  */
 
 const { runCommand } = require('./lib/commands');
@@ -37,8 +37,8 @@ const COMMANDS = {
     args: ''
   },
   template: {
-    help: 'Deploy Claude Code project template',
-    args: '[path] [--safe] [--force] [--help]'
+    help: 'Deploy AI CLI project template (Claude/Codex)',
+    args: '[path] [--codex] [--all] [--safe] [--force]'
   },
   kickoff: {
     help: 'Start project planning workflow (Manus-style)',
@@ -179,6 +179,22 @@ const COMMANDS = {
   audit: {
     help: 'Audit approved commands for security risks',
     args: '[--global] [--ci] [--report]'
+  },
+  'platform:detect': {
+    help: 'Detect AI CLI platforms in current project',
+    args: ''
+  },
+  'platform:list': {
+    help: 'List supported AI CLI platforms',
+    args: ''
+  },
+  'platform:convert': {
+    help: 'Convert config between platforms (claude ↔ codex)',
+    args: '<from> <to> [--dry-run]'
+  },
+  'platform:sync': {
+    help: 'Sync configuration to all platforms',
+    args: '[--platforms <list>]'
   }
 };
 

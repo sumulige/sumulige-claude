@@ -1,6 +1,6 @@
 {
   "name": "sumulige-claude",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "The Best Agent Harness for Claude Code - AI Agent Skills, Rules & Best Practices",
   "main": "cli.js",
   "bin": {
@@ -35,6 +35,9 @@
   "keywords": [
     "claude",
     "claude-code",
+    "codex",
+    "codex-cli",
+    "openai",
     "agent",
     "ai",
     "skills",
@@ -63,6 +66,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "patchright": "^1.57.0"
