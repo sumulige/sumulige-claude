@@ -1,0 +1,7 @@
+{
+  "timestamp": 1769425981216,
+  "level": "summary",
+  "itemsKept": 1,
+  "itemsDropped": 0,
+  "summary": "# Context Summary (Strategic Compact)\n\n## Active Tasks\n- _README.md: # 进行中的任务\n\n> 当前正在开发的任务\n\n@version: 1.0.0\n\n本目录包含所有进行中的任务。每个任务是一个独立的 Markdown 文件。\n\n## 任务模板\n\n```markdown\n\n"
+}

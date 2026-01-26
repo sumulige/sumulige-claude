@@ -58,6 +58,21 @@
     "description": "Auto-generate handoff before compaction"
   },
 
+  "strategic-compact": {
+    "events": ["PreCompact"],
+    "enabled": true,
+    "priority": 1,
+    "description": "Strategic context compression before compaction"
+  },
+
+  "handoff-loader": {
+    "events": ["SessionStart"],
+    "runOnce": true,
+    "after": ["memory-loader"],
+    "enabled": true,
+    "description": "Load recent handoff if available"
+  },
+
   "verify-work": {
     "events": ["AgentStop"],
     "enabled": true,

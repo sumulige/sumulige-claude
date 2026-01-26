@@ -1,19 +1,31 @@
 {
-  "tasks": {
-    "completed_develop_local-knowledge-index.md": {
-      "completed": true,
-      "notified": true
-    },
-    "completed_develop_web-search-integration.md": {
-      "completed": true,
-      "notified": true
-    },
-    "completed_develop_todo-system.md": {
-      "completed": true,
-      "notified": true
+  "timestamp": "2026-01-26T12:22:30.130Z",
+  "completed": [
+    {
+      "file": "boris-optimizations.md",
+      "title": "Boris 最佳实践集成"
     }
-  },
-  "transitions": [],
-  "lastSynced": "2026-01-22T13:07:26.625Z",
-  "sessionId": "unknown"
+  ],
+  "active": [
+    {
+      "file": "daimashencha和anquan检cha.md",
+      "title": "代码审查和安全检查"
+    },
+    {
+      "file": "shejiyonghu反馈xitongjiagou.md",
+      "title": "设计用户反馈系统架构"
+    },
+    {
+      "file": "shixian反馈提交-api.md",
+      "title": "实现反馈提交 API"
+    },
+    {
+      "file": "shixian管理员cha看和回fugongneng.md",
+      "title": "实现管理员查看和回复功能"
+    },
+    {
+      "file": "编写单元ceshi和集成ceshi.md",
+      "title": "编写单元测试和集成测试"
+    }
+  ]
 }

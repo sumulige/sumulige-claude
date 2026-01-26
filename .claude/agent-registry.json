@@ -1,0 +1,54 @@
+{
+  "$schema": "agent-registry-schema.json",
+  "$comment": "Agent Registry - Defines agent capabilities and routing rules",
+
+  "agents": {
+    "conductor": {
+      "role": "任务协调与分解",
+      "description": "理解需求并分配给合适的 Agent",
+      "capabilities": ["task-decomposition", "routing", "coordination"],
+      "model": "opus"
+    },
+    "architect": {
+      "role": "架构设计",
+      "description": "设计系统架构和技术选型",
+      "capabilities": ["system-design", "api-design", "tech-selection"],
+      "model": "opus"
+    },
+    "builder": {
+      "role": "代码实现",
+      "description": "编写高质量代码和测试",
+      "capabilities": ["coding", "testing", "debugging"],
+      "model": "sonnet"
+    },
+    "reviewer": {
+      "role": "代码审查",
+      "description": "检查代码质量和安全问题",
+      "capabilities": ["code-review", "security-check", "performance"],
+      "model": "opus"
+    },
+    "librarian": {
+      "role": "文档管理",
+      "description": "整理文档和知识库",
+      "capabilities": ["documentation", "knowledge-update"],
+      "model": "haiku"
+    }
+  },
+
+  "routing": {
+    "default": "conductor",
+    "patterns": [
+      { "match": "设计|架构|design|architect", "agent": "architect", "priority": 10 },
+      { "match": "实现|编写|implement|code|build|fix", "agent": "builder", "priority": 10 },
+      { "match": "审查|review|检查|audit|check", "agent": "reviewer", "priority": 10 },
+      { "match": "文档|document|记录|归档", "agent": "librarian", "priority": 10 },
+      { "match": "分析|plan|规划|分解", "agent": "conductor", "priority": 5 }
+    ]
+  },
+
+  "execution": {
+    "logDir": ".claude/agent-logs",
+    "timeout": 300000,
+    "retries": 1
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "version": "1.2.0",
-  "last_updated": "2026-01-23",
+  "version": "1.0.0",
+  "last_updated": "2026-01-11",
   "skills": [
     {
       "name": "frontend-design",
@@ -51,6 +51,12 @@
       "trigger": "when testing frontend functionality, debugging UI behavior, or capturing browser screenshots"
     },
     {
+      "name": "orchestration",
+      "keywords": ["agent", "multi-agent", "workflow", "coordination", "parallel", "distributed"],
+      "description": "Multi-agent orchestration with cc-mirror tasks and domain-specific workflows",
+      "trigger": "when coordinating multiple agents or workflows for complex tasks"
+    },
+    {
       "name": "algorithmic-art",
       "keywords": ["p5.js", "generative", "algorithmic", "art", "creative", "random", "flow field", "particle"],
       "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration",
@@ -99,64 +105,22 @@
       "trigger": "for complex artifacts requiring state management, routing, or shadcn/ui components"
     },
     {
-      "name": "design-brain",
-      "keywords": ["design", "architecture", "planning", "system design", "technical design"],
-      "description": "Design and architecture planning skill for complex systems",
-      "trigger": "when planning system architecture or technical design"
+      "name": "dev-browser",
+      "keywords": ["browser", "scraping", "automation", "puppet", "playwright", "web"],
+      "description": "Browser automation with persistent state for testing and scraping",
+      "trigger": "when needing browser automation or web scraping capabilities"
     },
     {
-      "name": "manus-kickoff",
-      "keywords": ["kickoff", "project", "planning", "manus", "workflow", "start"],
-      "description": "Manus-style project kickoff workflow for structured project planning",
-      "trigger": "when starting a new project with structured planning"
+      "name": "zai-cli",
+      "keywords": ["z.ai", "vision", "search", "github", "exploration", "analysis"],
+      "description": "Z.AI vision, search, and GitHub exploration CLI tools",
+      "trigger": "when needing vision analysis, web search, or GitHub repository exploration"
     },
     {
-      "name": "quality-guard",
-      "keywords": ["quality", "review", "security", "code review", "audit", "refactor"],
-      "description": "Code quality guardian - code review, security check, and cleanup",
-      "trigger": "when reviewing code quality, security, or performing cleanup"
-    },
-    {
-      "name": "quick-fix",
-      "keywords": ["fix", "bug", "error", "quick", "hotfix", "patch"],
-      "description": "Quick fix for build, lint, and type errors",
-      "trigger": "when quickly fixing build, lint, or type errors"
-    },
-    {
-      "name": "react-best-practices",
-      "keywords": ["react", "nextjs", "performance", "optimization", "vercel", "hooks"],
-      "description": "React and Next.js performance optimization guidelines from Vercel Engineering",
-      "trigger": "when writing, reviewing, or refactoring React/Next.js code"
-    },
-    {
-      "name": "react-node-practices",
-      "keywords": ["react", "nodejs", "typescript", "best practices", "security", "performance", "fullstack"],
-      "description": "React & Node.js best practices - AI Agent knowledge pack for writing correct code",
-      "trigger": "when writing React/Node.js code, need security or performance guidance"
-    },
-    {
-      "name": "test-master",
-      "keywords": ["test", "tdd", "unit test", "integration test", "jest", "vitest"],
-      "description": "Testing master skill for TDD and comprehensive test coverage",
-      "trigger": "when writing tests or implementing TDD workflow"
-    },
-    {
-      "name": "test-workflow",
-      "keywords": ["test", "workflow", "ci", "pipeline", "automation"],
-      "description": "Test workflow automation and CI integration",
-      "trigger": "when setting up test workflows or CI pipelines"
-    },
-    {
-      "name": "threejs-fundamentals",
-      "keywords": ["threejs", "3d", "webgl", "scene", "camera", "renderer", "object3d"],
-      "description": "Three.js scene setup, cameras, renderer, Object3D hierarchy, coordinate systems",
-      "trigger": "when setting up 3D scenes, creating cameras, configuring renderers"
-    },
-    {
-      "name": "web-design-guidelines",
-      "keywords": ["web design", "ui guidelines", "accessibility", "ux", "best practices"],
-      "description": "Review UI code for Web Interface Guidelines compliance",
-      "trigger": "when asked to review UI, check accessibility, audit design, or review UX"
+      "name": "gastown",
+      "keywords": ["gastown", "multi-agent", "orchestrator", "coordination"],
+      "description": "Multi-agent orchestrator for complex task coordination",
+      "trigger": "when orchestrating multiple agents for complex workflows"
     }
   ],
   "auto_load": {

@@ -13,6 +13,20 @@
     "maxFileLines": 800,
     "maxFunctionLines": 50
   },
+
+  "verify": {
+    "enabled": true,
+    "coverageMinimum": 80,
+    "phases": {
+      "sanity": true,
+      "format": true,
+      "test": true,
+      "security": true,
+      "diff": true
+    },
+    "blockOn": ["sanity-fail", "test-fail", "coverage-low", "secrets-found"],
+    "warnOn": ["format-issues", "console-logs", "todo-comments"]
+  },
   "rules": [
     {
       "id": "line-count-limit",

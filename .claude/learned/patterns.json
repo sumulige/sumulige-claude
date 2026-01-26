@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "last_updated": null,
+  "stats": {
+    "total_patterns": 0,
+    "by_type": {
+      "error_resolution": 0,
+      "user_correction": 0,
+      "workaround": 0,
+      "debugging": 0,
+      "convention": 0
+    },
+    "ready_for_promotion": 0
+  },
+  "patterns": []
+}

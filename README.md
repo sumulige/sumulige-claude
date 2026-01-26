@@ -67,10 +67,39 @@ claude
 ### Core Capabilities
 
 - **Memory System** - AI remembers decisions across sessions
-- **Multi-Agent** - Specialized AI agents (Architect, Builder, Reviewer)
+- **Agent Orchestration** - 5 specialized agents with intelligent routing
+- **Workflow Integration** - kickoff → agent → todo → tdd pipeline
 - **Skills Marketplace** - Install and share reusable AI capabilities
 - **Quality Gate** - Automatic code quality enforcement
 - **Slash Commands** - `/commit`, `/test`, `/review`, `/fix`
+
+### Agent Orchestration
+
+```
+smc agent "实现用户登录"
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Router: Pattern Matching                                    │
+│  "实现" → Builder | "设计" → Architect | "审查" → Reviewer   │
+└─────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
+│ Conductor │ │ Architect │ │  Builder  │ │ Reviewer  │ │ Librarian │
+│   Opus    │ │   Opus    │ │  Sonnet   │ │   Opus    │ │   Haiku   │
+│ 任务协调   │ │ 架构设计   │ │ 代码实现   │ │ 代码审查   │ │ 文档归档   │
+└───────────┘ └───────────┘ └───────────┘ └───────────┘ └───────────┘
+```
+
+### Workflow Pipeline
+
+```bash
+# Complete workflow: kickoff → agent → todo → tdd
+smc workflow kickoff "实现用户认证" --dry-run  # Generate analysis prompt
+smc workflow kickoff --parse                    # Parse output, create todos
+/tdd --from-todo                                # Start TDD from todo
+```
 
 ---
 
@@ -209,6 +238,39 @@ Available in Claude Code after template deployment:
 | `/fix` | Haiku | Quick fix for build/lint errors |
 | `/plan` | Opus | Architecture and planning |
 | `/commit` | - | Git commit with message |
+| `/tdd` | - | Test-driven development workflow |
+| `/todos` | - | Task management |
+
+## Agent Commands
+
+```bash
+# List available agents
+smc agent --list
+
+# Route task to appropriate agent
+smc agent "设计 REST API"              # → Architect
+smc agent "实现登录功能"               # → Builder
+smc agent "审查代码质量"               # → Reviewer
+
+# Options
+smc agent "任务" --dry-run             # Preview only
+smc agent "任务" --create-todo         # Create todo from output
+smc agent "任务" --verbose             # Detailed output
+```
+
+## Workflow Commands
+
+```bash
+# Task kickoff and analysis
+smc workflow kickoff "实现用户反馈功能"           # Create placeholder todo
+smc workflow kickoff "任务" --dry-run             # Show Conductor prompt
+smc workflow kickoff --parse                       # Parse Claude output to todos
+
+# Project workflow
+smc workflow start "Build a REST API"             # Start Phase 1
+smc workflow status                                # Show all projects
+smc workflow next                                  # Advance to next phase
+```
 
 ---
 
@@ -391,30 +453,30 @@ smc platform:convert claude codex
 
 ## Changelog
 
+### v1.7.0 (2026-01-26)
+
+**Agent Orchestration & Workflow Integration**
+
+- **5-Agent System** - Conductor, Architect, Builder, Reviewer, Librarian
+- **Intelligent Routing** - Auto-route tasks based on pattern matching
+- **Workflow Pipeline** - kickoff → agent → todo → tdd
+- **Todo Bridge** - Auto-create todos from agent analysis
+- **Strategic Compact** - Smart context compression before compaction
+- **New Commands**:
+  - `smc agent <task>` - Route task to agent
+  - `smc workflow kickoff` - Task analysis and planning
+  - `--create-todo`, `--parse` options
+
 ### v1.6.0 (2026-01-24)
 
 **Multi-Platform Support** - OpenAI Codex CLI compatibility
 
-- **Platform Adapters** - Abstract layer for multi-CLI support
-- **Config Converter** - JSON ↔ TOML conversion
-- **Instruction Converter** - CLAUDE.md ↔ AGENTS.md
-- **New Commands**:
-  - `platform:detect` - Detect configured platforms
-  - `platform:list` - List supported platforms
-  - `platform:convert` - Convert between platforms
-  - `platform:sync` - Sync to all platforms
-- **Template Extensions**:
-  - `--codex` flag for Codex-only deployment
-  - `--all` flag for both platforms
+- Platform Adapters, Config Converter, Instruction Converter
+- `platform:detect`, `platform:convert`, `platform:sync` commands
 
 ### v1.5.2 (2026-01-23)
 
 - Architecture refactoring and code cleanup
-- Design standards system + 3 new skills
-
-### v1.5.0 (2026-01-22)
-
-- Three-tier quality gate system
 
 [Full Changelog](CHANGELOG.md)
 
