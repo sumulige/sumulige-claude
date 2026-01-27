@@ -502,6 +502,19 @@ smc platform:convert claude codex
 
 ## Changelog
 
+### v1.10.2 (2026-01-27)
+
+**Quality Gate + SEO Skill**
+
+- **changelog-version-sync** - Pre-commit 检查 CHANGELOG 是否包含当前版本
+- **seo-optimization skill** - Git/README/Release/Technical SEO 最佳实践
+
+### v1.10.1 (2026-01-27)
+
+**Cleanup** - 清理测试产物 (-7,604 行)
+
+- 删除 4 个空 Skills、3 个测试项目、demo 文件
+
 ### v1.10.0 (2026-01-27)
 
 **New Platform Support** - Windsurf + Antigravity (8 → 10 platforms)
