@@ -1,3 +1,70 @@
+## [1.9.2](https://github.com/sumulige/sumulige-claude/compare/v1.9.0...v1.9.2) (2026-01-27)
+
+### 🏗️ Multi-Platform Architecture Refactoring
+
+**插件式架构** - 添加新平台只需一个目录
+
+```
+lib/platforms/                    # 新架构
+├── _base/
+│   ├── adapter.js               # 基类 + static meta
+│   ├── unified-instruction.js   # 统一指令格式
+│   └── index.js                 # 自动发现注册表
+├── claude/index.js              # 自包含适配器
+├── codex/index.js
+├── cursor/index.js
+├── aider/index.js
+├── cline/index.js
+├── opencode/index.js
+├── trae/index.js
+└── zed/index.js
+```
+
+#### 核心变化
+
+| 变化 | 说明 |
+|------|------|
+| **UnifiedInstruction** | 统一指令格式，N×M → 2N 转换方法 |
+| **PlatformRegistry** | 自动发现注册，无需手动修改 index.js |
+| **Static Metadata** | 平台元数据内聚到 adapter 类 |
+| **向后兼容** | `lib/adapters/index.js` 重导出新架构 |
+
+#### 删除的旧文件
+
+| 目录 | 文件数 | 行数 |
+|------|--------|------|
+| `lib/adapters/*.js` | 9 个 | -898 行 |
+| `lib/converters/` | 3 个 | -991 行 |
+
+#### 收益
+
+| 指标 | 重构前 | 重构后 |
+|------|--------|--------|
+| 添加新平台需改文件 | 4+ 个 | 1 个目录 |
+| 转换方法数 | N×M (32+) | 2N (16) |
+| 代码量 | ~1957 行 | ~1050 行 |
+
+---
+
+## [1.8.0](https://github.com/sumulige/sumulige-claude/compare/v1.7.2...v1.8.0) (2026-01-27)
+
+### ✨ Features
+
+- Add support for 6 new AI coding platforms (5cd8547b)
+
+### 🐛 Bug Fixes
+
+- 更换 npm 版本徽章为 shields.io (更快更新) (1a7a34e5)
+
+### 📝 Documentation
+
+- SEO 优化 - 添加 README 首段描述 (cf3424e3)
+
+### 🧹 Chores
+
+- bump version to v1.7.7 (315f947f)
+- bump version to v1.7.6 (2624247d)
+
 ## [1.7.2](https://github.com/sumulige/sumulige-claude/compare/v1.7.0...v1.7.2) (2026-01-27)
 
 ### 🧠 Dual-Layer Memory System

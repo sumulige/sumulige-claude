@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/sumulige-claude"><img src="https://img.shields.io/npm/v/sumulige-claude.svg" alt="npm version"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="#"><img src="https://img.shields.io/badge/platforms-Claude%20%7C%20Codex-blue.svg" alt="Platforms"></a>
+  <a href="#"><img src="https://img.shields.io/badge/platforms-8%20AI%20CLIs-blue.svg" alt="Platforms"></a>
 </p>
 
 **Sumulige Claude** is a universal agent harness that transforms Claude Code and OpenAI Codex CLI into intelligent, memory-aware development teams. Features include 5-agent orchestration system (Conductor, Architect, Builder, Reviewer, Librarian), dual-layer memory (daily notes + long-term), TDD workflow integration, and cross-platform support.
@@ -491,6 +491,23 @@ smc platform:convert claude codex
 ---
 
 ## Changelog
+
+### v1.9.2 (2026-01-27)
+
+**Multi-Platform Architecture Refactoring** - Plugin-style architecture
+
+- **UnifiedInstruction** - Unified instruction format, N×M → 2N conversion methods
+- **PlatformRegistry** - Auto-discovery registration, no manual index.js changes
+- **Self-contained Adapters** - Each platform in single directory (`lib/platforms/xxx/`)
+- **Backward Compatible** - `lib/adapters/` re-exports new architecture
+- **Code Reduction** - Removed ~1900 lines of legacy code
+
+### v1.8.0 (2026-01-27)
+
+**6 New Platforms** - Aider, Cursor, Cline, OpenCode, Trae, Zed
+
+- Support for 8 total AI coding platforms
+- Platform-specific configuration and instruction formats
 
 ### v1.7.2 (2026-01-27)
 
