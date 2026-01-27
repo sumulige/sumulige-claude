@@ -314,7 +314,7 @@ codex "Fix the login bug"
 
 ```json
 {
-  "version": "1.6.0",
+  "version": "1.7.2",
   "model": "claude-sonnet-4",
   "agents": {
     "architect": { "model": "claude-opus-4" },
@@ -489,6 +489,15 @@ smc platform:convert claude codex
 ---
 
 ## Changelog
+
+### v1.7.2 (2026-01-27)
+
+**Dual-Layer Memory System** - Inspired by Clawdbot
+
+- **Two-Layer Architecture** - Daily notes (`memory/YYYY-MM-DD.md`) + Long-term (`MEMORY.md`)
+- **Pre-compaction Flush** - Save important info before context compression
+- **Content-Aware Save** - Save insights, not just metadata
+- **14-Day Rolling** - Auto-cleanup of old daily notes
 
 ### v1.7.0 (2026-01-26)
 
