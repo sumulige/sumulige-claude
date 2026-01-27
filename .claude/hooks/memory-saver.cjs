@@ -22,20 +22,119 @@ const path = require('path');
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const CLAUDE_DIR = path.join(PROJECT_DIR, '.claude');
 const MEMORY_FILE = path.join(CLAUDE_DIR, 'MEMORY.md');
+const MEMORY_DIR = path.join(CLAUDE_DIR, 'memory');
 const SESSION_STATE_FILE = path.join(CLAUDE_DIR, '.session-state.json');
 const SESSIONS_DIR = path.join(CLAUDE_DIR, 'sessions');
 const STATE_FILE = path.join(PROJECT_DIR, 'development', 'todos', '.state.json');
 const SESSION_ID = process.env.CLAUDE_SESSION_ID || 'unknown';
+const DAILY_MEMORY_RETENTION_DAYS = 14;
 
 /**
  * Ensure directories exist
  */
 function ensureDirectories() {
-  [CLAUDE_DIR, SESSIONS_DIR].forEach(dir => {
+  [CLAUDE_DIR, SESSIONS_DIR, MEMORY_DIR].forEach(dir => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
   });
+}
+
+/**
+ * Clean old daily memory files (keep last N days)
+ */
+function cleanOldMemoryFiles(retentionDays = DAILY_MEMORY_RETENTION_DAYS) {
+  if (!fs.existsSync(MEMORY_DIR)) {
+    return;
+  }
+
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+
+  try {
+    const files = fs.readdirSync(MEMORY_DIR)
+      .filter(f => /^\d{4}-\d{2}-\d{2}\.md$/.test(f));
+
+    files.forEach(filename => {
+      const dateStr = filename.replace('.md', '');
+      const fileDate = new Date(dateStr);
+
+      if (fileDate < cutoffDate) {
+        try {
+          fs.unlinkSync(path.join(MEMORY_DIR, filename));
+        } catch (e) {
+          // Ignore deletion errors
+        }
+      }
+    });
+  } catch (e) {
+    // Ignore cleanup errors
+  }
+}
+
+/**
+ * Save session summary to daily memory file (memory/YYYY-MM-DD.md)
+ */
+function saveToDailyMemory(sessionState) {
+  ensureDirectories();
+
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+  const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  const dailyFile = path.join(MEMORY_DIR, `${dateStr}.md`);
+
+  const duration = sessionState?.session?.startTime
+    ? calculateDuration(sessionState.session.startTime)
+    : 'unknown';
+
+  // Build entry content
+  let entry = `## ${timeStr} - Session End\n\n`;
+  entry += `- **Duration**: ${duration}\n`;
+  entry += `- **Project**: ${sessionState?.session?.project || 'unknown'}\n`;
+
+  // Add insights if available
+  const insights = sessionState?.insights || {};
+
+  if (insights.keyDecisions?.length > 0) {
+    entry += `\n### 关键决策\n`;
+    insights.keyDecisions.forEach(d => {
+      entry += `- ${d}\n`;
+    });
+  }
+
+  if (insights.newKnowledge?.length > 0) {
+    entry += `\n### 学到的新东西\n`;
+    insights.newKnowledge.forEach(k => {
+      entry += `- ${k}\n`;
+    });
+  }
+
+  if (insights.nextSteps?.length > 0) {
+    entry += `\n### 下一步\n`;
+    insights.nextSteps.forEach(s => {
+      entry += `- [ ] ${s}\n`;
+    });
+  }
+
+  entry += '\n';
+
+  // Read or create daily file
+  let content = '';
+  if (fs.existsSync(dailyFile)) {
+    content = fs.readFileSync(dailyFile, 'utf-8');
+  } else {
+    content = `# ${dateStr}\n\n`;
+  }
+
+  // Append entry
+  content += entry;
+
+  fs.writeFileSync(dailyFile, content);
+
+  // Clean old files
+  cleanOldMemoryFiles();
+
+  return dailyFile;
 }
 
 /**
@@ -207,7 +306,7 @@ function cleanupSessionState() {
 /**
  * Format session end summary
  */
-function formatEndSummary(sessionState, archiveFile) {
+function formatEndSummary(sessionState, archiveFile, dailyFile) {
   let summary = '';
 
   const duration = sessionState?.session?.startTime
@@ -215,7 +314,13 @@ function formatEndSummary(sessionState, archiveFile) {
     : 'unknown';
 
   summary += `\n✅ Session ended (${duration})\n`;
-  summary += `💾 Memory saved to MEMORY.md\n`;
+
+  if (dailyFile) {
+    const dailyFilename = path.basename(dailyFile);
+    summary += `📝 Daily notes: memory/${dailyFilename}\n`;
+  }
+
+  summary += `💾 Long-term: MEMORY.md\n`;
   summary += `📁 Archived: ${archiveFile}\n`;
 
   return summary;
@@ -229,7 +334,10 @@ function main() {
     const sessionState = loadSessionState();
 
     if (sessionState) {
-      // Save to memory
+      // Save to daily memory (new: date-sharded files)
+      const dailyFile = saveToDailyMemory(sessionState);
+
+      // Save to long-term memory (existing: MEMORY.md)
       saveToMemory(sessionState);
 
       // Archive session
@@ -239,7 +347,7 @@ function main() {
       syncTodoState();
 
       // Output summary
-      console.log(formatEndSummary(sessionState, archiveFile));
+      console.log(formatEndSummary(sessionState, archiveFile, dailyFile));
     }
 
     // Clean up
@@ -261,6 +369,8 @@ if (require.main === module) {
 module.exports = {
   loadSessionState,
   saveToMemory,
+  saveToDailyMemory,
+  cleanOldMemoryFiles,
   archiveSession,
   syncTodoState,
   calculateDuration,

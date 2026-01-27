@@ -86,3 +86,44 @@ Librarian   → Haiku (文档整理)
 2. 启用 **Plan Mode** 进行结构化方案
 3. 多轮自我批判优化
 4. 使用分角色 sub-agents 进行多角度分析
+
+## 🔴 CRITICAL: Pre-compaction Memory Flush [PERF-006]
+
+当 context 使用率接近上限时，**必须先保存再压缩**：
+
+### 执行顺序
+
+```
+1. 先刷盘 → 将重要信息写入 memory/YYYY-MM-DD.md
+2. 再压缩 → 让系统执行 compaction
+3. 后恢复 → 读取 LATEST.md 和 memory/ 恢复上下文
+```
+
+### 触发信号
+
+| 信号 | 阈值 | 动作 |
+|------|------|------|
+| 对话轮数 | > 15 轮 | 主动总结写入 |
+| 工具调用 | > 30 次 | 记录关键结果 |
+| 文件修改 | > 10 个 | 记录修改清单 |
+| 系统提示 | 即将 compact | 立即 flush |
+
+### 保存内容优先级
+
+```
+1. 未完成任务状态 (最高)
+2. 关键决策及理由
+3. 用户新偏好
+4. 技术约束发现
+5. 调试线索 (最低)
+```
+
+### 恢复流程
+
+```bash
+# 压缩后恢复上下文
+1. 读取 .claude/handoffs/LATEST.md
+2. 读取 .claude/memory/今日.md
+3. 读取 .claude/memory/昨日.md
+4. 继续任务
+```

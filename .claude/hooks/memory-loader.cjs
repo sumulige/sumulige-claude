@@ -22,25 +22,77 @@ const path = require('path');
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const CLAUDE_DIR = path.join(PROJECT_DIR, '.claude');
 const MEMORY_FILE = path.join(CLAUDE_DIR, 'MEMORY.md');
+const MEMORY_DIR = path.join(CLAUDE_DIR, 'memory');
 const ANCHORS_FILE = path.join(CLAUDE_DIR, 'ANCHORS.md');
 const STATE_FILE = path.join(PROJECT_DIR, 'development', 'todos', '.state.json');
 const SESSION_ID = process.env.CLAUDE_SESSION_ID || 'unknown';
 
 /**
- * Load memory file content (recent entries only)
+ * Load daily memory files (today + yesterday)
  */
-function loadMemory(days = 7) {
+function loadDailyMemory(days = 2) {
+  const memories = [];
+
+  if (!fs.existsSync(MEMORY_DIR)) {
+    return { exists: false, files: [], entries: 0 };
+  }
+
+  const today = new Date();
+  for (let i = 0; i < days; i++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    const filePath = path.join(MEMORY_DIR, `${dateStr}.md`);
+
+    if (fs.existsSync(filePath)) {
+      memories.push({
+        date: dateStr,
+        content: fs.readFileSync(filePath, 'utf-8')
+      });
+    }
+  }
+
+  return {
+    exists: memories.length > 0,
+    files: memories.map(m => m.date),
+    entries: memories.length,
+    content: memories.map(m => m.content).join('\n\n---\n\n')
+  };
+}
+
+/**
+ * Load long-term memory file (MEMORY.md)
+ */
+function loadLongTermMemory() {
   if (!fs.existsSync(MEMORY_FILE)) {
     return { exists: false, content: '', entries: 0 };
   }
 
   const content = fs.readFileSync(MEMORY_FILE, 'utf-8');
-  const entries = content.split('## ').slice(1, days + 1);
+  const entries = content.split('## ').slice(1);
 
   return {
     exists: true,
-    content: entries.length > 0 ? '## ' + entries.join('## ') : '',
+    content: content,
     entries: entries.length
+  };
+}
+
+/**
+ * Load memory file content (combined: daily + long-term)
+ */
+function loadMemory(days = 7) {
+  // Load daily memory (today + yesterday)
+  const daily = loadDailyMemory(2);
+
+  // Load long-term memory
+  const longTerm = loadLongTermMemory();
+
+  return {
+    exists: daily.exists || longTerm.exists,
+    daily: daily,
+    longTerm: longTerm,
+    entries: daily.entries + longTerm.entries
   };
 }
 
@@ -124,7 +176,16 @@ function generateSessionContext() {
     },
     memory: {
       loaded: memory.exists,
-      entries: memory.entries
+      entries: memory.entries,
+      daily: {
+        loaded: memory.daily?.exists || false,
+        files: memory.daily?.files || [],
+        entries: memory.daily?.entries || 0
+      },
+      longTerm: {
+        loaded: memory.longTerm?.exists || false,
+        entries: memory.longTerm?.entries || 0
+      }
     },
     anchors: {
       loaded: anchors.exists,
@@ -134,6 +195,13 @@ function generateSessionContext() {
       loaded: todos.exists,
       active: todos.active,
       completed: todos.completed
+    },
+    // New: placeholder for AI-filled insights
+    insights: {
+      keyDecisions: [],
+      newKnowledge: [],
+      openQuestions: [],
+      nextSteps: []
     }
   };
 
@@ -156,8 +224,15 @@ function formatSessionSummary(context) {
 
   summary += `\n📂 Session: ${context.session.project} v${context.session.version}\n`;
 
-  if (context.memory.loaded && context.memory.entries > 0) {
-    summary += `💾 Memory: ${context.memory.entries} entries loaded\n`;
+  // Daily memory (temporary notes)
+  if (context.memory.daily?.loaded && context.memory.daily.entries > 0) {
+    const files = context.memory.daily.files.join(', ');
+    summary += `📝 Daily notes: ${context.memory.daily.entries} files (${files})\n`;
+  }
+
+  // Long-term memory
+  if (context.memory.longTerm?.loaded && context.memory.longTerm.entries > 0) {
+    summary += `💾 Long-term: ${context.memory.longTerm.entries} entries\n`;
   }
 
   if (context.anchors.loaded && context.anchors.modules > 0) {
@@ -201,6 +276,8 @@ if (require.main === module) {
 
 module.exports = {
   loadMemory,
+  loadDailyMemory,
+  loadLongTermMemory,
   loadAnchors,
   loadTodoState,
   generateSessionContext,
