@@ -33,6 +33,12 @@ const STATUS = {
   ARCHIVED: 'archived'
 };
 
+// 完成回调配置
+const COMPLETION_CALLBACK = {
+  enabled: true,
+  triggerLibrarian: true
+};
+
 // 确保目录存在
 function ensureDirectories() {
   [TODOS_DIR, STATUS.ACTIVE, STATUS.COMPLETED, STATUS.BACKLOG, STATUS.ARCHIVED].forEach(dir => {
@@ -182,12 +188,97 @@ development/todos/
   return md;
 }
 
+// 检测新完成的任务
+function detectNewlyCompleted(previousState, currentTasks) {
+  if (!previousState || !previousState.completed) return [];
+
+  const prevCompletedFiles = new Set(previousState.completed.map(t => t.file));
+  return currentTasks.completed.filter(t => !prevCompletedFiles.has(t.file));
+}
+
+// 加载之前的状态
+function loadPreviousState() {
+  try {
+    if (fs.existsSync(STATE_FILE)) {
+      return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
+    }
+  } catch (e) {}
+  return null;
+}
+
+// 保存当前状态
+function saveCurrentState(tasks) {
+  try {
+    const state = {
+      timestamp: new Date().toISOString(),
+      completed: tasks.completed.map(t => ({ file: t.file, title: t.title })),
+      active: tasks.active.map(t => ({ file: t.file, title: t.title }))
+    };
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+  } catch (e) {}
+}
+
+// 触发完成回调
+async function triggerCompletionCallback(completedTask) {
+  if (!COMPLETION_CALLBACK.enabled) return;
+
+  // 记录完成日志
+  const logDir = path.join(PROJECT_DIR, '.claude', 'agent-logs');
+  const logFile = path.join(logDir, 'completed-tasks.jsonl');
+
+  try {
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+
+    const logEntry = {
+      event: 'task_completed',
+      timestamp: new Date().toISOString(),
+      task: completedTask.title,
+      file: completedTask.file
+    };
+
+    fs.appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
+  } catch (e) {}
+
+  // 可选：触发 Librarian 归档（异步，不阻塞）
+  if (COMPLETION_CALLBACK.triggerLibrarian) {
+    try {
+      const orchestratorPath = path.join(PROJECT_DIR, 'lib', 'agent-orchestrator');
+      if (fs.existsSync(orchestratorPath)) {
+        // 仅记录，实际触发需要在合适的上下文中
+        const pendingFile = path.join(logDir, 'pending-archival.jsonl');
+        fs.appendFileSync(pendingFile, JSON.stringify({
+          task: completedTask.title,
+          file: completedTask.file,
+          timestamp: new Date().toISOString()
+        }) + '\n');
+      }
+    } catch (e) {}
+  }
+}
+
 // 更新索引
 function updateIndex() {
   try {
     ensureDirectories();
+
+    // 加载之前的状态以检测新完成
+    const previousState = loadPreviousState();
+
     const tasks = scanTasks();
     const index = generateIndex(tasks);
+
+    // 检测新完成的任务
+    const newlyCompleted = detectNewlyCompleted(previousState, tasks);
+    if (newlyCompleted.length > 0) {
+      newlyCompleted.forEach(task => {
+        triggerCompletionCallback(task);
+      });
+    }
+
+    // 保存当前状态
+    saveCurrentState(tasks);
 
     // 检查是否需要更新 - 比较任务总数
     let needsUpdate = true;
@@ -212,9 +303,9 @@ function updateIndex() {
       fs.writeFileSync(INDEX_FILE, index);
     }
 
-    return { tasks, updated: needsUpdate };
+    return { tasks, updated: needsUpdate, newlyCompleted };
   } catch (e) {
-    return { tasks: { active: [], completed: [], backlog: [], archived: [] }, updated: false };
+    return { tasks: { active: [], completed: [], backlog: [], archived: [] }, updated: false, newlyCompleted: [] };
   }
 }
 
@@ -226,6 +317,17 @@ function main() {
   const eventType = process.env.CLAUDE_EVENT_TYPE || '';
   if (eventType === 'AgentStop') {
     const { active, completed } = result.tasks;
+    const { newlyCompleted } = result;
+
+    // 报告新完成的任务
+    if (newlyCompleted && newlyCompleted.length > 0) {
+      console.log(`\n✅ [任务完成] ${newlyCompleted.length} 个任务已完成:`);
+      newlyCompleted.forEach(t => {
+        console.log(`   - ${t.title}`);
+      });
+      console.log(`   📦 待归档: .claude/agent-logs/pending-archival.jsonl\n`);
+    }
+
     if (active.length > 0) {
       console.log(`\n📋 [任务追踪] ${active.length} 个进行中, ${completed.length} 个已完成`);
       console.log(`   查看: development/todos/INDEX.md\n`);

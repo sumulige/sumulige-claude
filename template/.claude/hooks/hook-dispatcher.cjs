@@ -39,52 +39,87 @@ function loadRegistry() {
 
 /**
  * Default registry configuration
+ *
+ * NOTE: This is a FALLBACK only. Primary config is hook-registry.json
+ * Keep in sync with hook-registry.json!
+ *
+ * Optimized: 2026-01-27
+ * - Removed redundant hooks (session-save, session-restore, etc.)
+ * - Merged handoff-loader into auto-handoff
+ * - Disabled strategic-compact (broken dependencies)
  */
 function getDefaultRegistry() {
   return {
-    "thinking-silent": {
-      "events": ["AgentStop"],
-      "debounce": 5000,
-      "enabled": true
+    // === Core Hooks (与 hook-registry.json 同步) ===
+    "memory-loader": {
+      "events": ["SessionStart"],
+      "runOnce": true,
+      "enabled": true,
+      "description": "加载记忆和上下文"
     },
-    "multi-session": {
-      "events": ["UserPromptSubmit", "AgentStop"],
-      "debounce": 3000,
-      "condition": "always",
-      "enabled": true
+    "memory-saver": {
+      "events": ["SessionEnd"],
+      "enabled": true,
+      "description": "保存会话记忆"
+    },
+    "auto-handoff": {
+      "events": ["PreCompact", "SessionStart"],
+      "enabled": true,
+      "description": "Handoff 保存和恢复"
     },
     "todo-manager": {
       "events": ["AgentStop"],
       "debounce": 10000,
-      "enabled": true
+      "enabled": true,
+      "description": "任务索引更新"
+    },
+    "verify-work": {
+      "events": ["AgentStop"],
+      "enabled": true,
+      "description": "工作验证提醒"
+    },
+    "thinking-silent": {
+      "events": ["AgentStop"],
+      "debounce": 5000,
+      "enabled": true,
+      "description": "静默思考模式"
+    },
+    "multi-session": {
+      "events": ["UserPromptSubmit", "AgentStop"],
+      "debounce": 3000,
+      "condition": "sessions > 1",
+      "enabled": true,
+      "description": "多会话管理"
     },
     "rag-skill-loader": {
       "events": ["UserPromptSubmit"],
       "cache": true,
       "cacheTTL": 300000,
-      "enabled": true
+      "enabled": true,
+      "description": "技能自动加载"
     },
     "project-kickoff": {
       "events": ["UserPromptSubmit"],
       "runOnce": true,
-      "enabled": true
+      "enabled": true,
+      "description": "项目初始化"
     },
-    "memory-loader": {
-      "events": ["SessionStart"],
-      "runOnce": true,
-      "enabled": true
+    "code-formatter": {
+      "events": ["PostToolUse"],
+      "enabled": true,
+      "description": "代码自动格式化"
     },
-    "memory-saver": {
-      "events": ["SessionEnd"],
-      "enabled": true
-    },
-    "auto-handoff": {
+
+    // === Disabled Hooks ===
+    "strategic-compact": {
       "events": ["PreCompact"],
-      "enabled": true
+      "enabled": false,
+      "description": "DISABLED: 依赖已弃用模块"
     },
-    "verify-work": {
-      "events": ["AgentStop"],
-      "enabled": true
+    "handoff-loader": {
+      "events": ["SessionStart"],
+      "enabled": false,
+      "description": "DISABLED: 已合并到 auto-handoff"
     }
   };
 }

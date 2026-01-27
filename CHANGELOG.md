@@ -1,3 +1,44 @@
+## [1.11.0](https://github.com/sumulige/sumulige-claude/compare/v1.10.2...v1.11.0) (2026-01-27)
+
+### 🔧 Hook System Refactor
+
+- **修复 hook-dispatcher**: 移除硬编码 registry，统一使用 `hook-registry.json`
+- **删除 9 个弃用 hooks**: conversation-recorder, session-save, context-analyzer, session-restore, handoff-loader, strategic-compact, conversation-logger, priority-scorer, code-tracer
+- **修复 settings.local.json**: 移除对已弃用 hooks 的引用
+
+### 🧠 Memory System Migration
+
+- **MEMORY.md → memory/current.md**: 新的双层记忆架构
+  - `memory/current.md` - 持久状态（项目信息、用户偏好）
+  - `memory/YYYY-MM-DD.md` - 日志（当日会话记录）
+- **更新 15+ 文件引用**: handoffs, commands, thinking-routes, README 等
+
+### 🧹 Skills Cleanup
+
+- **归档 3 个重叠 skills** 到 `_archived/`:
+  - `react-node-practices` (保留 `react-best-practices`)
+  - `test-master`, `test-workflow` (保留 `rules/testing.md`)
+
+### 📦 Template Sync
+
+- **全量同步 template/** 到最新状态 (50+ 文件)
+- **新增文件**: rules/, prompts/, commands/, hooks 等
+- **修复 init.sh**: 创建 `memory/current.md` 而非 `MEMORY.md`
+
+### 📝 Documentation
+
+- **删除冗余**: 3 个 `CLAUDE-template.md` 副本
+- **新增**: `prompts/project-paradigm.md` (协作范式说明)
+- **更新**: `PROJECT_LOG.md` (完整构建历史)
+
+### 统计
+
+- **删除**: 4,682 行代码 (弃用 hooks + 重复 skills)
+- **新增**: 2,389 行代码 (template sync + 新功能)
+- **净减少**: ~2,300 行
+
+---
+
 ## [1.10.2](https://github.com/sumulige/sumulige-claude/compare/v1.10.1...v1.10.2) (2026-01-27)
 
 ### Features

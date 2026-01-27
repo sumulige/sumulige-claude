@@ -32,7 +32,7 @@ smc sync --hooks
 
 ### `/workflow sync` - 同步文档
 更新项目文档和记忆：
-- MEMORY.md - 最新变更
+- memory/current.md - 持久状态
 - PROJECT_LOG.md - 历史记录
 - CHANGELOG.md - 版本日志
 
@@ -77,5 +77,5 @@ Git 提交工作流：
 
 - 任务执行前会自动检查更新
 - 增量同步只更新变更的文件
-- 文档同步包括 MEMORY.md 和 PROJECT_LOG.md
+- 文档同步包括 memory/current.md 和 PROJECT_LOG.md
 - 提交前会自动运行测试（如配置）

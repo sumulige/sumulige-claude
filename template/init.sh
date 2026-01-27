@@ -41,18 +41,19 @@ chmod +x "$TARGET_DIR/.claude/hooks/session-end.sh"
 
 # 创建空文件
 echo "📝 创建记忆文件..."
-touch "$TARGET_DIR/.claude/MEMORY.md"
+mkdir -p "$TARGET_DIR/.claude/memory"
+touch "$TARGET_DIR/.claude/memory/current.md"
 touch "$TARGET_DIR/.claude/PROJECT_LOG.md"
 
-# 初始化 Oh My Claude
-echo "🤖 初始化 Oh My Claude..."
-if command -v oh-my-claude &> /dev/null; then
+# 初始化 Sumulige Claude
+echo "🤖 初始化 Sumulige Claude..."
+if command -v smc &> /dev/null; then
     cd "$TARGET_DIR"
-    oh-my-claude sync 2>/dev/null || echo "   (Oh My Claude 未安装，跳过)"
+    smc sync 2>/dev/null || echo "   (smc sync 跳过)"
     cd - > /dev/null
 else
-    echo "   💡 提示: 安装 Oh My Claude 获得更多功能"
-    echo "      npm install -g oh-my-claude"
+    echo "   💡 提示: 安装 Sumulige Claude 获得更多功能"
+    echo "      npm install -g sumulige-claude"
 fi
 
 # 初始化 RAG 技能索引
@@ -97,7 +98,7 @@ cat > "$TARGET_DIR/.claude/ANCHORS.md" << 'EOF'
 ```
 1. ANCHORS.md (本文件)     → 快速定位模块
 2. PROJECT_LOG.md          → 了解完整构建历史
-3. MEMORY.md               → 查看最新变更
+3. memory/current.md       → 查看当前状态
 4. CLAUDE.md               → 加载核心知识
 5. prompts/                → 查看教学指南
 6. .claude/rag/skills.md   → RAG 技能索引 ⭐

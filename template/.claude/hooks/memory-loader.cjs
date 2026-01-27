@@ -6,10 +6,15 @@
  * Triggered: Once at the beginning of each session
  *
  * Features:
- * - Auto-load MEMORY.md for recent context
+ * - Auto-load memory/current.md for recent context (primary)
+ * - Auto-load memory/YYYY-MM-DD.md for daily notes
  * - Auto-load ANCHORS.md for module navigation
  * - Restore TODO state from .state.json
  * - Inject session context summary
+ *
+ * Optimized: 2026-01-27
+ * - Replaced MEMORY.md with memory/current.md
+ * - Simplified load priority
  *
  * Environment Variables:
  * - CLAUDE_PROJECT_DIR: Project directory path
@@ -21,26 +26,79 @@ const path = require('path');
 
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const CLAUDE_DIR = path.join(PROJECT_DIR, '.claude');
-const MEMORY_FILE = path.join(CLAUDE_DIR, 'MEMORY.md');
+const MEMORY_DIR = path.join(CLAUDE_DIR, 'memory');
+const CURRENT_FILE = path.join(MEMORY_DIR, 'current.md');
 const ANCHORS_FILE = path.join(CLAUDE_DIR, 'ANCHORS.md');
 const STATE_FILE = path.join(PROJECT_DIR, 'development', 'todos', '.state.json');
 const SESSION_ID = process.env.CLAUDE_SESSION_ID || 'unknown';
 
 /**
- * Load memory file content (recent entries only)
+ * Load daily memory files (today + yesterday)
  */
-function loadMemory(days = 7) {
-  if (!fs.existsSync(MEMORY_FILE)) {
+function loadDailyMemory(days = 2) {
+  const memories = [];
+
+  if (!fs.existsSync(MEMORY_DIR)) {
+    return { exists: false, files: [], entries: 0 };
+  }
+
+  const today = new Date();
+  for (let i = 0; i < days; i++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    const filePath = path.join(MEMORY_DIR, `${dateStr}.md`);
+
+    if (fs.existsSync(filePath)) {
+      memories.push({
+        date: dateStr,
+        content: fs.readFileSync(filePath, 'utf-8')
+      });
+    }
+  }
+
+  return {
+    exists: memories.length > 0,
+    files: memories.map(m => m.date),
+    entries: memories.length,
+    content: memories.map(m => m.content).join('\n\n---\n\n')
+  };
+}
+
+/**
+ * Load current memory file (memory/current.md)
+ * This is the primary memory source (replaces MEMORY.md)
+ */
+function loadCurrentMemory() {
+  if (!fs.existsSync(CURRENT_FILE)) {
     return { exists: false, content: '', entries: 0 };
   }
 
-  const content = fs.readFileSync(MEMORY_FILE, 'utf-8');
-  const entries = content.split('## ').slice(1, days + 1);
+  const content = fs.readFileSync(CURRENT_FILE, 'utf-8');
+  const sections = content.split('## ').slice(1);
 
   return {
     exists: true,
-    content: entries.length > 0 ? '## ' + entries.join('## ') : '',
-    entries: entries.length
+    content: content,
+    entries: sections.length
+  };
+}
+
+/**
+ * Load memory file content (combined: current + daily)
+ */
+function loadMemory() {
+  // Load current memory (primary)
+  const current = loadCurrentMemory();
+
+  // Load daily memory (today + yesterday)
+  const daily = loadDailyMemory(2);
+
+  return {
+    exists: current.exists || daily.exists,
+    current: current,
+    daily: daily,
+    entries: current.entries + daily.entries
   };
 }
 
@@ -124,7 +182,16 @@ function generateSessionContext() {
     },
     memory: {
       loaded: memory.exists,
-      entries: memory.entries
+      entries: memory.entries,
+      current: {
+        loaded: memory.current?.exists || false,
+        entries: memory.current?.entries || 0
+      },
+      daily: {
+        loaded: memory.daily?.exists || false,
+        files: memory.daily?.files || [],
+        entries: memory.daily?.entries || 0
+      }
     },
     anchors: {
       loaded: anchors.exists,
@@ -134,6 +201,13 @@ function generateSessionContext() {
       loaded: todos.exists,
       active: todos.active,
       completed: todos.completed
+    },
+    // New: placeholder for AI-filled insights
+    insights: {
+      keyDecisions: [],
+      newKnowledge: [],
+      openQuestions: [],
+      nextSteps: []
     }
   };
 
@@ -156,8 +230,15 @@ function formatSessionSummary(context) {
 
   summary += `\n📂 Session: ${context.session.project} v${context.session.version}\n`;
 
-  if (context.memory.loaded && context.memory.entries > 0) {
-    summary += `💾 Memory: ${context.memory.entries} entries loaded\n`;
+  // Current memory (primary)
+  if (context.memory.current?.loaded && context.memory.current.entries > 0) {
+    summary += `💾 Current: memory/current.md (${context.memory.current.entries} sections)\n`;
+  }
+
+  // Daily memory (temporary notes)
+  if (context.memory.daily?.loaded && context.memory.daily.entries > 0) {
+    const files = context.memory.daily.files.join(', ');
+    summary += `📝 Daily: ${context.memory.daily.entries} files (${files})\n`;
   }
 
   if (context.anchors.loaded && context.anchors.modules > 0) {
@@ -201,8 +282,12 @@ if (require.main === module) {
 
 module.exports = {
   loadMemory,
+  loadDailyMemory,
+  loadCurrentMemory,
   loadAnchors,
   loadTodoState,
   generateSessionContext,
-  formatSessionSummary
+  formatSessionSummary,
+  // Constants
+  CURRENT_FILE
 };

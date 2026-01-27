@@ -174,7 +174,7 @@ Claude: [再次测试，通过]
 your-project/
 ├── .claude/
 │   ├── CLAUDE.md           # ⭐ Claude 首先阅读，描述项目
-│   ├── MEMORY.md           # AI 增量记忆（自动更新）
+│   ├── memory/current.md   # AI 持久状态（自动更新）
 │   ├── ANCHORS.md          # 重要参考点
 │   ├── settings.json       # Claude Code 配置
 │   ├── settings.local.json # 本地配置（不提交）
@@ -198,7 +198,7 @@ your-project/
 | 文件 | 重要性 | 说明 |
 |------|--------|------|
 | `CLAUDE.md` | ⭐⭐⭐ | Claude 首先阅读，定义项目规范 |
-| `MEMORY.md` | ⭐⭐ | AI 自动记录的项目记忆 |
+| `memory/current.md` | ⭐⭐ | AI 持久状态文件 |
 | `settings.json` | ⭐⭐ | Claude Code 配置 |
 | `hooks/` | ⭐⭐ | 自动化脚本 |
 | `commands/` | ⭐ | 自定义 Slash 命令 |

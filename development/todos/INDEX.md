@@ -2,7 +2,7 @@
 
 > 本目录由 AI 自动维护，记录项目开发任务和进度
 
-**最后更新**: 2026-01-26
+**最后更新**: 2026-01-27
 
 @version: 1.0.0
 
@@ -11,7 +11,7 @@
 ```
 development/todos/
 ├── INDEX.md           # 本文件 - 任务总览
-├── active/            # 进行中的任务 (5)
+├── active/            # 进行中的任务 (1)
 ├── completed/         # 已完成的任务 (1)
 ├── backlog/           # 待规划的任务 (1)
 └── archived/          # 已归档的任务 (0)
@@ -19,13 +19,9 @@ development/todos/
 
 ## 快速跳转
 
-## 🚧 进行中的任务 (5)
+## 🚧 进行中的任务 (1)
 
-- [P1] [代码审查和安全检查](./active/daimashencha和anquan检cha.md) - 🚧
-- [P0] [设计用户反馈系统架构](./active/shejiyonghu反馈xitongjiagou.md) - 🚧
-- [P1] [实现反馈提交 API](./active/shixian反馈提交-api.md) - 🚧
-- [P1] [实现管理员查看和回复功能](./active/shixian管理员cha看和回fugongneng.md) - 🚧
-- [P1] [编写单元测试和集成测试](./active/编写单元ceshi和集成ceshi.md) - 🚧
+- [P1] [Hooks 优化方案](./active/hooks-optimization.md) - 
 
 ## ✅ 最近完成的任务
 

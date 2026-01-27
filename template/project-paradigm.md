@@ -43,7 +43,7 @@
 .claude/
 ├── CLAUDE.md              # AI 启动检查清单 + 核心知识
 ├── ANCHORS.md            # 技能锚点索引（快速定位）
-├── MEMORY.md             # 增量记忆日志（变更记录）
+├── memory/current.md     # 持久状态文件
 ├── PROJECT_LOG.md        # 完整项目构建历史
 ├── settings.json         # Claude Code 配置
 ├── hooks/                # 自动化钩子
@@ -55,11 +55,11 @@
 ### AI 启动流程
 
 ```
-1. ANCHORS.md      → 快速定位模块
-2. PROJECT_LOG.md   → 理解完整历史和决策
-3. MEMORY.md        → 查看最新变更
-4. CLAUDE.md        → 加载核心知识
-5. 具体文件         → 深入实现
+1. ANCHORS.md           → 快速定位模块
+2. PROJECT_LOG.md       → 理解完整历史和决策
+3. memory/current.md    → 查看当前状态
+4. CLAUDE.md            → 加载核心知识
+5. 具体文件             → 深入实现
 ```
 
 ### 锚点系统
@@ -149,7 +149,7 @@ EVENT_TYPE="$2"
 if [[ "$REL_PATH" =~ server/.*\.ts$ ]]; then
   MODULE=$(basename "$REL_PATH" .ts)
   echo "🧠 新模块: [$MODULE] → $REL_PATH"
-  echo "   请更新 ANCHORS.md 和 MEMORY.md"
+  echo "   请更新 ANCHORS.md 和 memory/今日.md"
 fi
 ```
 
@@ -219,10 +219,10 @@ interface ThinkingNode {
 
 ### 当 AI 接收任务时
 
-1. **加载上下文**: 读取 CLAUDE.md、ANCHORS.md、MEMORY.md
+1. **加载上下文**: 读取 CLAUDE.md、ANCHORS.md、memory/current.md
 2. **任务分解**: 将任务分解为具体的子任务
 3. **实现与测试**: 实现功能并编写测试
-4. **文档更新**: 更新 MEMORY.md、ANCHORS.md
+4. **文档更新**: 更新 ANCHORS.md、memory/今日.md
 5. **记录决策**: 在 thinking-routes/ 中记录关键决策
 
 ### 人类确认点
@@ -276,7 +276,7 @@ cp project-paradigm.md prompts/
 # 3. 创建基础配置文件
 # - CLAUDE.md（项目核心知识）
 # - ANCHORS.md（模块索引）
-# - MEMORY.md（增量日志）
+# - memory/（日志目录）
 
 # 4. 配置 settings.json
 ```
@@ -289,7 +289,7 @@ cp project-paradigm.md prompts/
 ## AI 启动检查清单
 
 1. 加载 ANCHORS.md（快速索引）
-2. 加载 MEMORY.md（最新变更）
+2. 加载 memory/current.md（当前状态）
 3. 加载 CLAUDE.md（核心知识）
 
 ## 受保护目录

@@ -1,618 +1,622 @@
-# Sumulige Claude
+<p align="center">
+  <h1 align="center">Sumulige Claude</h1>
+  <p align="center">
+    <strong>The Universal Agent Harness for AI Coding Assistants</strong>
+  </p>
+  <p align="center">
+    Transform Claude Code, Codex CLI, Cursor, and 5 more AI assistants into intelligent development teams
+  </p>
+</p>
 
-**The Best Agent Harness for Claude Code**
-**Claude Code 的终极 Agent 编排框架**
+<p align="center">
+  <a href="https://www.npmjs.com/package/sumulige-claude"><img src="https://img.shields.io/npm/v/sumulige-claude.svg" alt="npm version"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="#supported-platforms"><img src="https://img.shields.io/badge/platforms-10%20AI%20CLIs-blue.svg" alt="Platforms"></a>
+</p>
 
-[![npm version](https://badge.fury.io/js/sumulige-claude.svg)](https://www.npmjs.com/package/sumulige-claude)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
----
-
-## Table of Contents / 目录
-
-1. [Layer 1: What is it? / 第一层：它是什么？](#layer-1-what-is-it--第一层它是什么)
-2. [Layer 2: Why use it? / 第二层：为什么使用它？](#layer-2-why-use-it--第二层为什么使用它)
-3. [Layer 3: Core Concepts / 第三层：核心概念](#layer-3-core-concepts--第三层核心概念)
-4. [Layer 4: Quick Start / 第四层：快速开始](#layer-4-quick-start--第四层快速开始)
-5. [Layer 5: Commands / 第五层：命令参考](#layer-5-commands--第五层命令参考)
-6. [Layer 6: Advanced / 第六层：高级配置](#layer-6-advanced--第六层高级配置)
-7. [Layer 7: Lifecycle Hooks / 第七层：生命周期钩子](#layer-7-lifecycle-hooks--第七层生命周期钩子)
-8. [Layer 8: Data Flow Architecture / 第八层：数据流转架构](#layer-8-data-flow-architecture--第八层数据流转架构)
-9. [Documentation / 文档](#documentation--文档)
+**Sumulige Claude** is a universal agent harness for AI coding assistants. Supports **10 platforms** including Claude Code, Codex CLI, Cursor, Windsurf, Antigravity, and more. Features 5-agent orchestration, dual-layer memory, TDD workflow, and cross-platform config sync.
 
 ---
 
-## Layer 1: What is it? / 第一层：它是什么？
+## Quick Start
 
-### The 30-Second Version / 30 秒版本
+```bash
+# Install
+npm install -g sumulige-claude
 
-**English** | Sumulige Claude is a CLI tool that makes Claude Code smarter by:
-- Adding specialized AI agents (like a team of experts)
-- Providing ready-to-use project templates
-- Managing reusable "skills" for common tasks
+# Initialize in your project
+smc template
 
-**中文** | Sumulige Claude 是一个让 Claude Code 更聪明的 CLI 工具：
-- 添加专业的 AI Agent（像专家团队）
-- 提供开箱即用的项目模板
-- 管理可复用的"技能"
+# Start Claude Code
+claude
+```
 
-### The 5-Minute Version / 5 分钟版本
+**That's it.** Your project now has AI memory, slash commands, and quality gates.
+
+---
+
+## Why Sumulige Claude?
+
+| Problem | Before | After |
+|---------|--------|-------|
+| AI forgets context every session | Repeat project structure constantly | Automatic memory via ThinkingLens |
+| Inconsistent code quality | Manual reviews, missed issues | Quality Gate auto-checks |
+| Works with multiple AI CLIs | Maintain separate configs | One config, 8 platforms |
+
+---
+
+## Features
+
+### Multi-Platform Support
+
+#### Supported Platforms
+
+| Platform | Vendor | Config | Instructions |
+|----------|--------|--------|--------------|
+| **Claude Code** | Anthropic | JSON | CLAUDE.md |
+| **Codex CLI** | OpenAI | TOML | AGENTS.md |
+| **Cursor** | cursor.com | MDC | .cursorrules |
+| **Aider** | aider.chat | YAML | CONVENTIONS.md |
+| **Cline/Roo** | VS Code | Markdown | .clinerules |
+| **OpenCode** | opencode.ai | JSONC | instructions |
+| **Trae** | ByteDance | YAML | agents config |
+| **Zed** | Zed Industries | JSON | settings |
+| **Windsurf** | Codeium | Markdown | .windsurfrules |
+| **Antigravity** | Google | JSON + MD | .agent/rules/ |
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Without Sumulige Claude                  │
+│                    smc CLI                                   │
 ├─────────────────────────────────────────────────────────────┤
-│  你 ──▶ Claude ──▶ 写代码                                    │
-│  │                                                          │
-│  └─ 每次都要解释项目结构                                     │
-│  └─ 要重复告诉 Claude 代码风格                               │
-│  └─ Claude 不知道你的团队约定                                │
+│  Claude  │  Codex  │  Cursor │  Aider  │  Cline │  ...     │
+│    ↓         ↓         ↓         ↓         ↓                │
+│  .claude/  .codex/  .cursor/  .aider    .cline              │
+├─────────────────────────────────────────────────────────────┤
+│         Shared: Skills, Rules, Memory, Instructions          │
 └─────────────────────────────────────────────────────────────┘
+```
 
+### Core Capabilities
+
+- **Memory System** - Dual-layer memory (daily notes + long-term) with pre-compaction flush
+- **Agent Orchestration** - 5 specialized agents with intelligent routing
+- **Workflow Integration** - kickoff → agent → todo → tdd pipeline
+- **Skills Marketplace** - Install and share reusable AI capabilities
+- **Quality Gate** - Automatic code quality enforcement
+- **Slash Commands** - `/commit`, `/test`, `/review`, `/fix`
+
+### Agent Orchestration
+
+```
+smc agent "实现用户登录"
+     │
+     ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    With Sumulige Claude                     │
-├─────────────────────────────────────────────────────────────┤
-│  你 ──▶ Conductor ──▶ Architect ──▶ Builder ──▶ 代码        │
-│       (协调)        (架构)         (实现)                    │
-│                                                             │
-│  ✓ 自动理解项目结构                                          │
-│  ✓ 知道团队代码风格                                          │
-│  ✓ 记住所有历史决策                                          │
+│  Router: Pattern Matching                                    │
+│  "实现" → Builder | "设计" → Architect | "审查" → Reviewer   │
 └─────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
+│ Conductor │ │ Architect │ │  Builder  │ │ Reviewer  │ │ Librarian │
+│   Opus    │ │   Opus    │ │  Sonnet   │ │   Opus    │ │   Haiku   │
+│ 任务协调   │ │ 架构设计   │ │ 代码实现   │ │ 代码审查   │ │ 文档归档   │
+└───────────┘ └───────────┘ └───────────┘ └───────────┘ └───────────┘
+```
+
+### Workflow Pipeline
+
+```bash
+# Complete workflow: kickoff → agent → todo → tdd
+smc workflow kickoff "实现用户认证" --dry-run  # Generate analysis prompt
+smc workflow kickoff --parse                    # Parse output, create todos
+/tdd --from-todo                                # Start TDD from todo
 ```
 
 ---
 
-## Layer 2: Why use it? / 第二层：为什么使用它？
+## Installation
 
-### Problem vs Solution / 问题 vs 解决方案
+### Requirements
 
-| 问题 | 传统方式 | Sumulige Claude |
-|------|---------|-----------------|
-| **每次都要解释项目结构** | 复制粘贴 README 内容 | `.claude/rag/` 自动存储项目知识 |
-| **代码风格不一致** | 手动告诉 Claude 规则 | Quality Gate 自动检查 |
-| **AI 不记得之前的决策** | 翻聊天记录找答案 | ThinkingLens 记忆所有对话 |
-| **团队成员配置不同** | 各自配置 Claude | `smc sync` 统一环境 |
-| **重复性任务** | 每次重新写 Prompt | Skills 系统，一键调用 |
+- Node.js 16+
+- Claude Code or Codex CLI installed
 
-### Three Key Benefits / 三大核心价值
-
-```
-1. 记忆 (Memory)
-   ┌─────────────────────────────────────────────┐
-   │  ThinkingLens                                │
-   │  ├─ 记住每次对话的上下文                      │
-   │  ├─ 记住项目的架构决策                        │
-   │  └─ 记住代码风格约定                          │
-   └─────────────────────────────────────────────┘
-
-2. 分工 (Specialization)
-   ┌─────────────────────────────────────────────┐
-   │  Multi-Agent System                          │
-   │  ├─ Conductor  → 任务分解                    │
-   │  ├─ Architect  → 架构设计                    │
-   │  ├─ Builder    → 代码实现                    │
-   │  ├─ Reviewer   → 质量检查                    │
-   │  └─ Librarian  → 文档整理                    │
-   └─────────────────────────────────────────────┘
-
-3. 复用 (Reuse)
-   ┌─────────────────────────────────────────────┐
-   │  Skills System                               │
-   │  ├─ 安装社区技能                             │
-   │  ├─ 创建自己的技能                           │
-   │  └─ 团队共享技能库                           │
-   └─────────────────────────────────────────────┘
-```
-
----
-
-## Layer 3: Core Concepts / 第三层：核心概念
-
-### Concept 1: What is an "Agent"? / 什么是 "Agent"？
-
-**English** | An Agent is like a virtual team member with a specific role. Instead of one AI doing everything, you have specialized AIs working together.
-
-**中文** | Agent 就像是一个有特定职责的虚拟团队成员。不是让一个 AI 做所有事，而是让专业的 AI 协作。
-
-```
-传统方式：
-┌─────────────────────────────────────┐
-│         Claude (通用 AI)             │
-│  写代码 + 审查 + 架构 + 文档         │
-└─────────────────────────────────────┘
-
-Agent 方式：
-┌─────────┐  ┌─────────┐  ┌─────────┐
-│Conductor│─▶│Architect│─▶│ Builder │
-│ 分解任务 │  │ 设计架构 │  │ 实现代码 │
-└─────────┘  └─────────┘  └─────────┘
-                    │
-                    ▼
-              ┌─────────┐
-              │Reviewer │
-              │ 审查代码 │
-              └─────────┘
-```
-
-### Concept 2: What is a "Skill"? / 什么是 "Skill"？
-
-**English** | A Skill is a reusable set of instructions for Claude. Think of it as a "plugin" that gives Claude new capabilities.
-
-**中文** | Skill 是一组可复用的指令，就像是给 Claude 安装"插件"，赋予它新的能力。
-
-```
-Skill = 上下文 + 指令 + 资源
-
-┌─────────────────────────────────────┐
-│  Skill: api-tester                  │
-├─────────────────────────────────────┤
-│  上下文: REST/GraphQL API 测试知识   │
-│  指令: 如何验证 API 响应             │
-│  资源: 测试脚本模板                  │
-└─────────────────────────────────────┘
-```
-
-### Concept 3: What is the Template? / 什么是模板？
-
-**English** | The Template is a pre-configured project structure with all AI settings, hooks, and skills ready to use.
-
-**中文** | 模板是预先配置好的项目结构，包含所有 AI 设置、钩子和技能，开箱即用。
-
-```
-smc template 之后，你的项目会变成：
-
-your-project/
-├── .claude/
-│   ├── commands/      # 斜杠命令定义
-│   ├── skills/        # 技能库
-│   ├── hooks/         # 自动化钩子
-│   ├── rag/           # 项目知识库
-│   └── sessions/      # 对话历史
-├── CLAUDE.md          # AI 配置文件
-└── development/
-    └── todos/         # 任务管理系统
-```
-
----
-
-## Layer 4: Quick Start / 第四层：快速开始
-
-### Installation / 安装
+### Install
 
 ```bash
 npm install -g sumulige-claude
 ```
 
-### Three Commands to Get Started / 三个命令开始使用
+### Verify
 
 ```bash
-# Step 1: Initialize global config / 初始化全局配置
-smc init
+smc --version
+```
 
-# Step 2: Deploy to your project / 部署到项目
-mkdir my-project && cd my-project
+---
+
+## Usage
+
+### New Project Setup
+
+```bash
+# Deploy Claude Code template
 smc template
 
-# Step 3: Start planning / 开始规划
-smc kickoff
+# Or deploy for both platforms
+smc template --all
+
+# Or Codex only
+smc template --codex
 ```
 
-### What Each Command Does / 每个命令做什么
-
-| 命令 | 做什么 | 类比 |
-|------|--------|------|
-| `smc init` | 创建 `~/.claude/config.json` | 买房前准备工具箱 |
-| `smc template` | 复制模板到项目 | 装修新房子 |
-| `smc kickoff` | 启动项目规划 | 开工典礼 |
-
----
-
-## Layer 5: Commands / 第五层：命令参考
-
-### Command Groups / 命令分组
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  基础命令 (每次使用都需要)                                    │
-├─────────────────────────────────────────────────────────────┤
-│  smc init          初始化全局配置                            │
-│  smc status        查看当前状态                              │
-│  smc sync          同步到当前项目（增量）                     │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│  项目命令 (新项目启动时使用)                                  │
-├─────────────────────────────────────────────────────────────┤
-│  smc template      部署项目模板                              │
-│  smc kickoff       启动项目规划                              │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│  技能命令 (管理 Claude 能力)                                 │
-├─────────────────────────────────────────────────────────────┤
-│  smc skill:list    列出已安装技能                            │
-│  smc marketplace:list  浏览技能市场                          │
-│  smc marketplace:install <name>  安装技能                   │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│  配置命令 (高级配置)                                          │
-├─────────────────────────────────────────────────────────────┤
-│  smc config:validate   验证配置文件                          │
-│  smc config:backup     创建配置备份                          │
-│  smc qg:check          运行质量检查                          │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Command Flow / 命令流程
-
-```
-新项目流程：
-┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│  新建   │──▶ │ smc     │──▶ │ smc     │──▶ │ smc     │
-│  项目   │    │ template │    │ kickoff │    │  开发   │
-└─────────┘    └─────────┘    └─────────┘    └─────────┘
-
-已有项目：
-┌─────────┐    ┌─────────┐    ┌─────────┐
-│ 进入    │──▶ │ smc     │──▶ │  开发   │
-│ 项目    │    │ sync    │    │         │
-└─────────┘    └─────────┘    └─────────┘
-```
-
----
-
-## Layer 5.5: Core Skills / 核心技能系统
-
-### 4 Core Skills / 4 个核心技能
-
-> v2.0.0 优化：将 9 个技能合并为 4 个核心技能，成本降低 60-70%
-
-| Skill | 命令 | 模型 | 作用 |
-|-------|------|------|------|
-| `quality-guard` | `/review` | sonnet | 代码审查 + 安全检查 + 清理建议 |
-| `test-master` | `/test` | sonnet | TDD + E2E + 覆盖率分析 |
-| `design-brain` | `/plan` | opus | 规划 + 架构设计 |
-| `quick-fix` | `/fix` | haiku | 快速修复构建/类型/lint 错误 |
-
-### Quick Reference / 命令速查
+### Existing Project
 
 ```bash
-# 代码审查
-/review              # 标准审查
-/review --security   # 安全深扫 (OWASP Top 10)
-/review --clean      # 死代码清理
+# Add to existing project (safe mode - won't overwrite)
+smc template --safe
 
-# 测试
-/test                # 运行测试
-/test --tdd          # TDD 模式
-/test --e2e          # E2E 测试
-/test --coverage     # 覆盖率
-
-# 规划
-/plan                # 快速规划
-/plan --deep         # 深度设计
-
-# 快速修复
-/fix                 # 自动检测修复
-/fix --build         # 构建错误
-/fix --type          # 类型错误
-
-# 重构
-/refactor            # 分析建议
-/refactor --execute  # 执行清理
+# Or sync incrementally
+smc sync
 ```
 
-### Model Cost Strategy / 模型成本策略
+### Platform Commands
 
-```
-┌─────────┬─────────────────────┬──────────┬────────┐
-│  模型   │      使用场景        │ 相对成本 │  速度  │
-├─────────┼─────────────────────┼──────────┼────────┤
-│ haiku   │ /fix 快速修复        │   1x     │  最快  │
-│ sonnet  │ /review, /test      │   5x     │  中等  │
-│ opus    │ /plan --deep        │  15x     │  较慢  │
-└─────────┴─────────────────────┴──────────┴────────┘
-```
+```bash
+# Detect configured platforms
+smc platform:detect
 
-详细使用指南: [.claude/USAGE.md](.claude/USAGE.md)
+# Convert Claude config to Codex
+smc platform:convert claude codex
+
+# Sync to all platforms
+smc platform:sync
+```
 
 ---
 
-## Layer 6: Advanced / 第六层：高级配置
+## Project Structure
 
-### Multi-Agent Configuration / 多 Agent 配置
+After `smc template`, your project looks like:
 
-**English** | Each agent can be customized with its own model and role description.
+```
+your-project/
+├── .claude/                 # Claude Code configuration
+│   ├── settings.json        # Hooks and settings
+│   ├── CLAUDE.md            # Project instructions
+│   ├── commands/            # Slash commands
+│   ├── skills/              # Installed skills
+│   ├── hooks/               # Automation hooks
+│   ├── rag/                 # Knowledge index
+│   └── memory/current.md    # AI persistent state
+│
+├── .codex/                  # Codex CLI configuration (if --all)
+│   └── config.toml          # Codex settings
+│
+├── AGENTS.md                # Codex instructions (if --all)
+└── CLAUDE.md                # Project-level AI config
+```
 
-**中文** | 每个 Agent 都可以自定义模型和职责描述。
+---
+
+## Commands Reference
+
+### Core Commands
+
+| Command | Description |
+|---------|-------------|
+| `smc init` | Initialize global configuration |
+| `smc template` | Deploy project template |
+| `smc sync` | Sync configuration (incremental) |
+| `smc status` | Show current status |
+
+### Platform Commands
+
+| Command | Description |
+|---------|-------------|
+| `smc platform:detect` | Detect AI platforms in project |
+| `smc platform:list` | List supported platforms |
+| `smc platform:convert <from> <to>` | Convert between platforms |
+| `smc platform:sync` | Sync config to all platforms |
+
+### Skill Commands
+
+| Command | Description |
+|---------|-------------|
+| `smc skill:list` | List installed skills |
+| `smc skill:create <name>` | Create new skill |
+| `smc marketplace:list` | Browse skill marketplace |
+| `smc marketplace:install <name>` | Install a skill |
+
+### Quality Commands
+
+| Command | Description |
+|---------|-------------|
+| `smc qg:check` | Run quality gate checks |
+| `smc qg:rules` | List quality rules |
+| `smc config:validate` | Validate configuration |
+
+---
+
+## Slash Commands
+
+Available in Claude Code after template deployment:
+
+| Command | Model | Description |
+|---------|-------|-------------|
+| `/review` | Sonnet | Code review + security scan |
+| `/test` | Sonnet | Run tests with TDD support |
+| `/fix` | Haiku | Quick fix for build/lint errors |
+| `/plan` | Opus | Architecture and planning |
+| `/commit` | - | Git commit with message |
+| `/tdd` | - | Test-driven development workflow |
+| `/todos` | - | Task management |
+
+## Agent Commands
+
+```bash
+# List available agents
+smc agent --list
+
+# Route task to appropriate agent
+smc agent "设计 REST API"              # → Architect
+smc agent "实现登录功能"               # → Builder
+smc agent "审查代码质量"               # → Reviewer
+
+# Options
+smc agent "任务" --dry-run             # Preview only
+smc agent "任务" --create-todo         # Create todo from output
+smc agent "任务" --verbose             # Detailed output
+```
+
+## Workflow Commands
+
+```bash
+# Task kickoff and analysis
+smc workflow kickoff "实现用户反馈功能"           # Create placeholder todo
+smc workflow kickoff "任务" --dry-run             # Show Conductor prompt
+smc workflow kickoff --parse                       # Parse Claude output to todos
+
+# Project workflow
+smc workflow start "Build a REST API"             # Start Phase 1
+smc workflow status                                # Show all projects
+smc workflow next                                  # Advance to next phase
+```
+
+---
+
+## Multi-Platform Workflow
+
+### Converting Existing Project
+
+```bash
+# You have a Claude Code project, want to add Codex support
+
+# 1. See what's configured
+smc platform:detect
+# Output: Detected 1 platform(s): claude
+
+# 2. Convert to Codex
+smc platform:convert claude codex
+
+# 3. Verify
+smc platform:detect
+# Output: Detected 2 platform(s): claude, codex
+
+# 4. Use either CLI
+claude "Fix the login bug"
+codex "Fix the login bug"
+```
+
+### Platform Config Mapping
+
+| Claude Code | Codex CLI |
+|-------------|-----------|
+| `.claude/settings.json` | `.codex/config.toml` |
+| `CLAUDE.md` | `AGENTS.md` |
+| JSON format | TOML format |
+| Hooks in settings.json | Notifications in config.toml |
+
+---
+
+## Configuration
+
+### Claude Code (`~/.claude/config.json`)
 
 ```json
 {
-  "version": "1.2.0",
-  "model": "claude-opus-4.5",
+  "version": "1.7.2",
+  "model": "claude-sonnet-4",
   "agents": {
-    "conductor": {
-      "role": "任务协调与分解 - 理解需求并分配给合适的 Agent",
-      "model": "claude-opus-4.5"
-    },
-    "architect": {
-      "role": "架构设计 - 设计系统架构和技术选型",
-      "model": "claude-sonnet-4.5"
-    },
-    "builder": {
-      "role": "代码实现 - 编写高质量代码和测试",
-      "model": "claude-sonnet-4.5"
-    },
-    "reviewer": {
-      "role": "代码审查 - 检查代码质量和安全问题",
-      "model": "claude-opus-4.5"
-    },
-    "librarian": {
-      "role": "文档管理 - 整理文档和知识库",
-      "model": "claude-haiku-4.5"
-    }
+    "architect": { "model": "claude-opus-4" },
+    "builder": { "model": "claude-sonnet-4" },
+    "reviewer": { "model": "claude-opus-4" }
   },
-  "skills": [
-    "anthropics/skills",
-    "numman-ali/n-skills"
-  ],
   "thinkingLens": {
     "enabled": true,
-    "autoSync": true,
-    "syncInterval": 20
+    "autoSync": true
   }
 }
 ```
 
-### Quality Gate / 质量门禁
+### Codex CLI (`.codex/config.toml`)
 
-**English** | Automatically check code quality before commits.
+```toml
+model = "o3"
+model_provider = "openai"
+sandbox_mode = "workspace-write"
+approval_policy = "on-failure"
 
-**中文** | 提交前自动检查代码质量。
+[project]
+project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]
 
-```json
-{
-  "enabled": true,
-  "severity": "warn",
-  "rules": [
-    { "id": "line-count-limit", "enabled": true },
-    { "id": "no-console-logs", "enabled": true }
-  ],
-  "gates": {
-    "preCommit": true,
-    "prePush": true
-  }
-}
-```
-
-### Skills Marketplace / 技能市场
-
-```bash
-# Browse available skills / 浏览可用技能
-smc marketplace:list
-
-# Install a skill / 安装技能
-smc marketplace:install dev-browser
-
-# Create your own skill / 创建自己的技能
-smc skill:create my-skill
+[features]
+shell_tool = true
+web_search_request = true
 ```
 
 ---
 
-## Layer 7: Lifecycle Hooks / 第七层：生命周期钩子
+## Architecture
 
-### Auto-Sync System / 自动同步系统
+### Memory System
 
-> v1.3.2: 利用 Claude Code 官方 Hook 事件实现记忆自动同步
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  SessionStart ──► memory-loader.cjs                         │
-│    └─ 自动加载 MEMORY.md, ANCHORS.md, TODO 状态              │
-│                                                              │
-│  PreCompact ──► auto-handoff.cjs                            │
-│    └─ 上下文压缩前自动生成 handoff 文档                       │
-│                                                              │
-│  SessionEnd ──► memory-saver.cjs                            │
-│    └─ 会话结束自动保存摘要到 MEMORY.md                        │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Hook Files / 钩子文件
-
-| Hook | 文件 | 触发时机 | 功能 |
-|------|------|----------|------|
-| `SessionStart` | `memory-loader.cjs` | 会话开始 | 加载记忆、锚点、TODO |
-| `SessionEnd` | `memory-saver.cjs` | 会话结束 | 保存摘要、归档会话 |
-| `PreCompact` | `auto-handoff.cjs` | 上下文压缩前 | 生成 handoff 保护上下文 |
-
-### Handoff Documents / 交接文档
-
-当上下文即将被压缩时，自动生成交接文档：
+**Dual-Layer Architecture** (Inspired by [Clawdbot](https://github.com/peterthehan/clawdbot))
 
 ```
-.claude/handoffs/
-├── LATEST.md           # 最新交接文档
-├── INDEX.md            # 交接文档索引
-└── handoff_*.md        # 历史交接文档
+.claude/
+├── memory/
+│   ├── current.md         # 持久状态（会话结束自动更新）
+│   ├── 2026-01-27.md      # 今日笔记
+│   ├── 2026-01-26.md      # 昨日笔记
+│   └── ...                # 14天滚动清理
+└── handoffs/
+    └── LATEST.md          # 压缩前快照（< 2h 有效）
 ```
 
-每个交接文档包含：
-- 会话信息（项目、版本、开始时间）
-- 活跃 TODOs 列表
-- 最近修改的文件
-- 恢复命令
+| Layer | 文件 | 内容 | 生命周期 |
+|-------|------|------|---------|
+| **Layer 1** | `memory/YYYY-MM-DD.md` | 临时笔记、会话记录、WIP | 14天滚动 |
+| **Layer 2** | `memory/current.md` | 项目状态、偏好、约束 | 永久 |
 
-### Update Hooks / 更新钩子
+#### Session Lifecycle
 
-其他项目如何获取新 hooks：
+```
+Session Start
+     │
+     ▼
+┌─────────────────┐
+│ memory-loader   │ ◄── Load memory/current.md + memory/今日+昨日.md
+└─────────────────┘
+     │
+     ▼
+   Work with AI
+     │
+     ├── Pre-compaction Flush ──► 重要信息写入 memory/
+     │
+     ▼
+┌─────────────────┐
+│ memory-saver    │ ──► Save insights to memory/YYYY-MM-DD.md
+└─────────────────┘
+     │
+     ▼
+Session End
+```
+
+#### Pre-compaction Memory Flush
+
+当 context 接近上限时，AI 会主动将重要信息刷盘：
+
+```markdown
+## 15:00 - Session Summary
+
+### 关键决策
+- 采用双层记忆架构
+- 使用 14 天滚动保留
+
+### 下一步
+- [ ] 测试完整流程
+```
+
+**触发信号**: 对话 > 15 轮 | 工具调用 > 30 次 | 文件修改 > 10 个
+
+### Hook System
+
+```
+Claude Code Event
+     │
+     ▼
+┌─────────────────────────────────────────┐
+│            settings.json                 │
+├─────────────────────────────────────────┤
+│ SessionStart  → memory-loader.cjs       │
+│ SessionEnd    → memory-saver.cjs        │
+│ PreCompact    → auto-handoff.cjs        │
+│ PostToolUse   → code-formatter.cjs      │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## Upgrading
+
+### From v1.x
 
 ```bash
-# 方式 1: 完整更新（推荐）
-smc template --force
-
-# 方式 2: 增量同步（仅更新 hooks）
-smc sync --hooks
-
-# 方式 3: 手动安装
+# Update global package
 npm update -g sumulige-claude
-smc template
+
+# Update project template
+smc template --force
+```
+
+### Migration
+
+Old hooks are automatically migrated. Your custom configurations are backed up to `.claude/backup/`.
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Q: Commands not found after install**
+```bash
+# Ensure npm global bin is in PATH
+export PATH="$PATH:$(npm bin -g)"
+```
+
+**Q: Platform not detected**
+```bash
+# Ensure project has config files
+ls -la .claude/settings.json
+ls -la .codex/config.toml
+```
+
+**Q: Codex can't read AGENTS.md**
+```bash
+# Regenerate from Claude config
+smc platform:convert claude codex
 ```
 
 ---
 
-## Layer 8: Data Flow Architecture / 第八层：数据流转架构
+## Contributing
 
-> v1.4.0: Hook 统一调度 + 智能过滤，Token 成本降低 62%
-
-### Hook 调度流程
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           Claude Code 事件触发                            │
-└─────────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         settings.json 路由                               │
-├─────────────────────────────────────────────────────────────────────────┤
-│  SessionStart  ──────→ memory-loader.cjs (直接执行)                      │
-│  SessionEnd    ──────→ memory-saver.cjs (直接执行)                       │
-│  PreCompact    ──────→ auto-handoff.cjs (直接执行)                       │
-│  UserPromptSubmit ───→ hook-dispatcher.cjs                              │
-│  PreToolUse    ──────→ (空，不执行任何 hook)                              │
-│  PostToolUse   ──────→ code-formatter.cjs (仅 Write/Edit 时)            │
-│  AgentStop     ──────→ hook-dispatcher.cjs                              │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### Hook Dispatcher 内部流程
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                      hook-dispatcher.cjs                                 │
-└─────────────────────────────────────────────────────────────────────────┘
-                                    │
-                    ┌───────────────┼───────────────┐
-                    ▼               ▼               ▼
-            ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-            │ 加载 Registry│ │  加载 State │ │ 获取事件类型 │
-            │ hook-registry│ │ .dispatcher │ │CLAUDE_EVENT │
-            │    .json    │ │ -state.json │ │   _TYPE     │
-            └─────────────┘ └─────────────┘ └─────────────┘
-                    │               │               │
-                    └───────────────┼───────────────┘
-                                    ▼
-                    ┌───────────────────────────────┐
-                    │      筛选当前事件的 Hooks      │
-                    └───────────────────────────────┘
-                                    │
-                                    ▼
-            ┌───────────────────────────────────────────────┐
-            │              对每个 Hook 检查                  │
-            ├───────────────────────────────────────────────┤
-            │  1. shouldRunDebounce() - 5秒内执行过? → 跳过  │
-            │  2. shouldRunOnce() - 已执行过? → 跳过         │
-            │  3. shouldRunCondition() - 条件不满足? → 跳过  │
-            └───────────────────────────────────────────────┘
-                                    │
-                                    ▼
-                    ┌───────────────────────────────┐
-                    │   执行通过检查的 Hook + 更新状态 │
-                    └───────────────────────────────┘
-```
-
-### 增量同步流程
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    smc sync --incremental                                │
-└─────────────────────────────────────────────────────────────────────────┘
-                                    │
-        ┌───────────────────────────┼───────────────────────────┐
-        ▼                           ▼                           ▼
-┌───────────────┐         ┌───────────────┐         ┌───────────────┐
-│ 读取项目版本   │         │ 读取版本清单   │         │  计算差异变更  │
-│ .sumulige-    │         │ version-      │         │ getChangesSince│
-│ claude-version│         │ manifest.json │         │   (1.3.3)     │
-└───────────────┘         └───────────────┘         └───────────────┘
-                                    │
-                                    ▼
-            ┌───────────────────────────────────────────────┐
-            │  应用变更: hook/config/lib/command            │
-            │  更新项目版本标记                              │
-            └───────────────────────────────────────────────┘
-```
-
-### 状态文件汇总
-
-| 文件 | 用途 | 生命周期 |
-|------|------|----------|
-| `.dispatcher-state.json` | Hook 执行状态 | 会话级 |
-| `.match-cache.json` | RAG 匹配缓存 | 5 分钟 TTL |
-| `.sumulige-claude-version` | 项目版本标记 | 永久 |
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing`)
+5. Open a Pull Request
 
 ---
 
-## Documentation / 文档
+## Documentation
 
-- **[Development Guide / 开发指南](docs/DEVELOPMENT.md)** - Architecture, adding skills / 架构、添加技能
-- **[Marketplace Guide / 市场指南](docs/MARKETPLACE.md)** - Skill marketplace user guide / 技能市场用户指南
-- **[Q&A / 常见问题](Q&A.md)** - Core design concepts explained / 核心设计理念解释
-
----
-
-## Changelog / 更新日志
-
-### v1.2.0 (2026-01-17)
-
-**English** | Comprehensive regression test suite.
-
-**中文** | 完整的回归测试套件。
-
-- **Test Coverage / 测试覆盖**
-  - 219 new tests across 6 modules / 6 个模块新增 219 个测试
-  - errors.js: 100% statement coverage / 100% 语句覆盖率
-  - quality-gate.js: 95.59% statement coverage / 95.59% 语句覆盖率
-  - quality-rules.js: 86.17% statement coverage / 86.17% 语句覆盖率
-  - config-manager.js: 91.66% statement coverage / 91.66% 语句覆盖率
-  - config-validator.js: 77.41% statement coverage / 77.41% 语句覆盖率
-  - version-check.js: 55.07% statement coverage / 55.07% 语句覆盖率
-
-### v1.1.1 (2026-01-16)
-
-**English** | Config validation and quality gate system.
-
-**中文** | 配置验证和质量门禁系统。
-
-- **Config System / 配置系统**
-  - JSON Schema validation for all configs / 所有配置的 JSON Schema 验证
-  - Backup/rollback functionality / 备份回滚功能
-  - Environment variable expansion / 环境变量展开
-- **Quality Gate / 质量门禁**
-  - 8 built-in quality rules / 8 条内置质量规则
-  - Pre-commit/pre-push Git hooks / Git 钩子
-  - Configurable severity levels / 可配置严重级别
-
-### v1.1.0 (2026-01-15)
-
-**English** | Skill Marketplace with auto-sync.
-
-**中文** | 技能市场，支持自动同步。
-
-- Marketplace system with 6 new commands / 市场系统，6 个新命令
-- Auto-sync via GitHub Actions / GitHub Actions 自动同步
-- 20+ built-in skills / 20+ 内置技能
+| Document | Description |
+|----------|-------------|
+| [Development Guide](docs/DEVELOPMENT.md) | Architecture and adding skills |
+| [Marketplace Guide](docs/MARKETPLACE.md) | Skill marketplace user guide |
+| [Q&A](Q&A.md) | Frequently asked questions |
 
 ---
 
-## License / 许可证
+## Changelog
+
+### v1.10.2 (2026-01-27)
+
+**Quality Gate + SEO Skill**
+
+- **changelog-version-sync** - Pre-commit 检查 CHANGELOG 是否包含当前版本
+- **seo-optimization skill** - Git/README/Release/Technical SEO 最佳实践
+
+### v1.10.1 (2026-01-27)
+
+**Cleanup** - 清理测试产物 (-7,604 行)
+
+- 删除 4 个空 Skills、3 个测试项目、demo 文件
+
+### v1.10.0 (2026-01-27)
+
+**New Platform Support** - Windsurf + Antigravity (8 → 10 platforms)
+
+- **Windsurf** (Codeium) - AI-native IDE with Cascade system
+- **Antigravity** (Google) - Agent-first IDE
+
+### v1.9.2 (2026-01-27)
+
+**Multi-Platform Architecture Refactoring** - Plugin-style architecture
+
+- **UnifiedInstruction** - Unified instruction format, N×M → 2N conversion methods
+- **PlatformRegistry** - Auto-discovery registration, no manual index.js changes
+- **Self-contained Adapters** - Each platform in single directory (`lib/platforms/xxx/`)
+- **Backward Compatible** - `lib/adapters/` re-exports new architecture
+- **Code Reduction** - Removed ~1900 lines of legacy code
+
+### v1.8.0 (2026-01-27)
+
+**6 New Platforms** - Aider, Cursor, Cline, OpenCode, Trae, Zed
+
+- Support for 8 total AI coding platforms
+- Platform-specific configuration and instruction formats
+
+### v1.7.2 (2026-01-27)
+
+**Dual-Layer Memory System** - Inspired by Clawdbot
+
+- **Two-Layer Architecture** - Daily notes (`memory/YYYY-MM-DD.md`) + Persistent state (`memory/current.md`)
+- **Pre-compaction Flush** - Save important info before context compression
+- **Content-Aware Save** - Save insights, not just metadata
+- **14-Day Rolling** - Auto-cleanup of old daily notes
+
+### v1.7.0 (2026-01-26)
+
+**Agent Orchestration & Workflow Integration**
+
+- **5-Agent System** - Conductor, Architect, Builder, Reviewer, Librarian
+- **Intelligent Routing** - Auto-route tasks based on pattern matching
+- **Workflow Pipeline** - kickoff → agent → todo → tdd
+- **Todo Bridge** - Auto-create todos from agent analysis
+- **Strategic Compact** - Smart context compression before compaction
+- **New Commands**:
+  - `smc agent <task>` - Route task to agent
+  - `smc workflow kickoff` - Task analysis and planning
+  - `--create-todo`, `--parse` options
+
+### v1.6.0 (2026-01-24)
+
+**Multi-Platform Support** - OpenAI Codex CLI compatibility
+
+- Platform Adapters, Config Converter, Instruction Converter
+- `platform:detect`, `platform:convert`, `platform:sync` commands
+
+### v1.5.2 (2026-01-23)
+
+- Architecture refactoring and code cleanup
+
+[Full Changelog](CHANGELOG.md)
+
+---
+
+## Feedback & Contributing
+
+We'd love to hear from you!
+
+| 类型 | 链接 |
+|------|------|
+| 🐛 Bug 报告 | [Open an Issue](https://github.com/sumulige/sumulige-claude/issues/new?template=bug_report.md) |
+| 💡 功能建议 | [Feature Request](https://github.com/sumulige/sumulige-claude/issues/new?template=feature_request.md) |
+| 💬 问题讨论 | [Discussions](https://github.com/sumulige/sumulige-claude/discussions) |
+| ⭐ 觉得有用？ | [Give us a Star](https://github.com/sumulige/sumulige-claude) |
+
+### Contributing
+
+```bash
+# Fork & Clone
+git clone https://github.com/YOUR_USERNAME/sumulige-claude.git
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Submit PR
+```
+
+欢迎提交 PR！无论是修复 typo 还是新增功能，我们都很感激。
+
+---
+
+## License
 
 MIT © [sumulige](https://github.com/sumulige)
 
 ---
 
-**Happy Coding with AI! / 祝编码愉快! 🚀**
+<p align="center">
+  <strong>Works with</strong><br>
+  <a href="https://claude.ai">Claude Code</a> •
+  <a href="https://openai.com/codex">Codex CLI</a>
+</p>

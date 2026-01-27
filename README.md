@@ -189,7 +189,7 @@ your-project/
 │   ├── skills/              # Installed skills
 │   ├── hooks/               # Automation hooks
 │   ├── rag/                 # Knowledge index
-│   └── MEMORY.md            # AI memory
+│   └── memory/current.md    # AI persistent state
 │
 ├── .codex/                  # Codex CLI configuration (if --all)
 │   └── config.toml          # Codex settings
@@ -366,17 +366,19 @@ web_search_request = true
 
 ```
 .claude/
-├── MEMORY.md              # Layer 2: 长期记忆（偏好、约束、决策）
-└── memory/
-    ├── 2026-01-27.md      # Layer 1: 今日笔记
-    ├── 2026-01-26.md      # 昨日笔记
-    └── ...                # 14天滚动清理
+├── memory/
+│   ├── current.md         # 持久状态（会话结束自动更新）
+│   ├── 2026-01-27.md      # 今日笔记
+│   ├── 2026-01-26.md      # 昨日笔记
+│   └── ...                # 14天滚动清理
+└── handoffs/
+    └── LATEST.md          # 压缩前快照（< 2h 有效）
 ```
 
 | Layer | 文件 | 内容 | 生命周期 |
 |-------|------|------|---------|
 | **Layer 1** | `memory/YYYY-MM-DD.md` | 临时笔记、会话记录、WIP | 14天滚动 |
-| **Layer 2** | `MEMORY.md` | 用户偏好、架构决策、项目约束 | 永久 |
+| **Layer 2** | `memory/current.md` | 项目状态、偏好、约束 | 永久 |
 
 #### Session Lifecycle
 
@@ -385,7 +387,7 @@ Session Start
      │
      ▼
 ┌─────────────────┐
-│ memory-loader   │ ◄── Load memory/今日+昨日.md + MEMORY.md
+│ memory-loader   │ ◄── Load memory/current.md + memory/今日+昨日.md
 └─────────────────┘
      │
      ▼
@@ -543,7 +545,7 @@ smc platform:convert claude codex
 
 **Dual-Layer Memory System** - Inspired by Clawdbot
 
-- **Two-Layer Architecture** - Daily notes (`memory/YYYY-MM-DD.md`) + Long-term (`MEMORY.md`)
+- **Two-Layer Architecture** - Daily notes (`memory/YYYY-MM-DD.md`) + Persistent state (`memory/current.md`)
 - **Pre-compaction Flush** - Save important info before context compression
 - **Content-Aware Save** - Save insights, not just metadata
 - **14-Day Rolling** - Auto-cleanup of old daily notes

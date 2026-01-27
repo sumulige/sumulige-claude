@@ -100,11 +100,11 @@ cat .claude/PROJECT_LOG.md
 less .claude/PROJECT_LOG.md
 ```
 
-### 查看 MEMORY.md（增量）
+### 查看 memory/current.md（状态）
 
 ```bash
-# 查看最近的变更
-cat .claude/MEMORY.md
+# 查看当前状态
+cat .claude/memory/current.md
 ```
 
 ---
@@ -124,7 +124,7 @@ alias tl-search='npx -p tsx tsx .claude/thinking-routes/index.ts search'
 
 # 项目日志
 alias log='cat .claude/PROJECT_LOG.md | less'
-alias memory='cat .claude/MEMORY.md'
+alias memory='cat .claude/memory/current.md'
 ```
 
 使用：
@@ -148,9 +148,9 @@ tl-search   # 搜索思维节点
 └── index/                       # 全局索引
 
 .claude/
-├── MEMORY.md                    # 增量记忆
+├── memory/current.md            # 持久状态
 ├── PROJECT_LOG.md               # 完整日志
-└── ANCHORS.md                  # 快速索引
+└── ANCHORS.md                   # 快速索引
 ```
 
 ---
@@ -159,5 +159,5 @@ tl-search   # 搜索思维节点
 
 1. **日常回顾**：每天结束前执行 `tl` 查看摘要
 2. **查找决策**：用 `tl-search "关键词"` 搜索
-3. **了解历史**：查看 `MEMORY.md` 或 `PROJECT_LOG.md`
+3. **了解历史**：查看 `memory/current.md` 或 `PROJECT_LOG.md`
 4. **完整对话**：用 `claude-code history` 查看内置历史

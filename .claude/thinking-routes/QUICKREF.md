@@ -20,7 +20,7 @@
 .claude/
 ├── thinking-routes/
 │   └── .conversation-flow.json    ← 对话流数据
-├── MEMORY.md                       ← 增量记忆
+├── memory/current.md               ← 持久状态
 ├── PROJECT_LOG.md                  ← 完整日志
 └── ANCHORS.md                      ← 快速索引
 ```
@@ -52,8 +52,8 @@ cat .claude/PROJECT_LOG.md | grep -i "API"
 # 查看所有决策
 cat .claude/PROJECT_LOG.md | grep "决策"
 
-# 查看所有变更
-cat .claude/MEMORY.md | grep "新增"
+# 查看当前状态
+cat .claude/memory/current.md
 ```
 
 ---
@@ -66,7 +66,7 @@ cat .claude/MEMORY.md | grep "新增"
 # 对话历史
 alias tl='.claude/hooks/tl-summary.sh'
 alias log='less .claude/PROJECT_LOG.md'
-alias memory='cat .claude/MEMORY.md'
+alias memory='cat .claude/memory/current.md'
 
 # 思维节点
 alias tl-recent='npx -p tsx tsx .claude/thinking-routes/index.ts recent'
@@ -95,4 +95,4 @@ claude-code resume <conversation-id>
 | 每天回顾 | `tl` |
 | 找决策理由 | `tl-search "关键词"` |
 | 了解项目全貌 | `log` |
-| 查看最近变更 | `memory` |
+| 查看当前状态 | `memory` |

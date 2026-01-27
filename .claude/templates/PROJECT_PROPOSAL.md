@@ -106,7 +106,7 @@ interface {ENTITY_NAME} {
 ├── tests/                 # 测试
 ├── .claude/               # AI 上下文
 │   ├── CLAUDE.md          # 项目说明
-│   ├── MEMORY.md          # 增量记忆
+│   ├── memory/current.md  # 持久状态
 │   ├── PROJECT_LOG.md     # 构建历史
 │   ├── TASK_PLAN.md       # 任务计划
 │   └── skills/            # 领域技能

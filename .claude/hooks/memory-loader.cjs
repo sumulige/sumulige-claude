@@ -6,10 +6,15 @@
  * Triggered: Once at the beginning of each session
  *
  * Features:
- * - Auto-load MEMORY.md for recent context
+ * - Auto-load memory/current.md for recent context (primary)
+ * - Auto-load memory/YYYY-MM-DD.md for daily notes
  * - Auto-load ANCHORS.md for module navigation
  * - Restore TODO state from .state.json
  * - Inject session context summary
+ *
+ * Optimized: 2026-01-27
+ * - Replaced MEMORY.md with memory/current.md
+ * - Simplified load priority
  *
  * Environment Variables:
  * - CLAUDE_PROJECT_DIR: Project directory path
@@ -21,8 +26,8 @@ const path = require('path');
 
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const CLAUDE_DIR = path.join(PROJECT_DIR, '.claude');
-const MEMORY_FILE = path.join(CLAUDE_DIR, 'MEMORY.md');
 const MEMORY_DIR = path.join(CLAUDE_DIR, 'memory');
+const CURRENT_FILE = path.join(MEMORY_DIR, 'current.md');
 const ANCHORS_FILE = path.join(CLAUDE_DIR, 'ANCHORS.md');
 const STATE_FILE = path.join(PROJECT_DIR, 'development', 'todos', '.state.json');
 const SESSION_ID = process.env.CLAUDE_SESSION_ID || 'unknown';
@@ -61,38 +66,39 @@ function loadDailyMemory(days = 2) {
 }
 
 /**
- * Load long-term memory file (MEMORY.md)
+ * Load current memory file (memory/current.md)
+ * This is the primary memory source (replaces MEMORY.md)
  */
-function loadLongTermMemory() {
-  if (!fs.existsSync(MEMORY_FILE)) {
+function loadCurrentMemory() {
+  if (!fs.existsSync(CURRENT_FILE)) {
     return { exists: false, content: '', entries: 0 };
   }
 
-  const content = fs.readFileSync(MEMORY_FILE, 'utf-8');
-  const entries = content.split('## ').slice(1);
+  const content = fs.readFileSync(CURRENT_FILE, 'utf-8');
+  const sections = content.split('## ').slice(1);
 
   return {
     exists: true,
     content: content,
-    entries: entries.length
+    entries: sections.length
   };
 }
 
 /**
- * Load memory file content (combined: daily + long-term)
+ * Load memory file content (combined: current + daily)
  */
-function loadMemory(days = 7) {
+function loadMemory() {
+  // Load current memory (primary)
+  const current = loadCurrentMemory();
+
   // Load daily memory (today + yesterday)
   const daily = loadDailyMemory(2);
 
-  // Load long-term memory
-  const longTerm = loadLongTermMemory();
-
   return {
-    exists: daily.exists || longTerm.exists,
+    exists: current.exists || daily.exists,
+    current: current,
     daily: daily,
-    longTerm: longTerm,
-    entries: daily.entries + longTerm.entries
+    entries: current.entries + daily.entries
   };
 }
 
@@ -177,14 +183,14 @@ function generateSessionContext() {
     memory: {
       loaded: memory.exists,
       entries: memory.entries,
+      current: {
+        loaded: memory.current?.exists || false,
+        entries: memory.current?.entries || 0
+      },
       daily: {
         loaded: memory.daily?.exists || false,
         files: memory.daily?.files || [],
         entries: memory.daily?.entries || 0
-      },
-      longTerm: {
-        loaded: memory.longTerm?.exists || false,
-        entries: memory.longTerm?.entries || 0
       }
     },
     anchors: {
@@ -224,15 +230,15 @@ function formatSessionSummary(context) {
 
   summary += `\n📂 Session: ${context.session.project} v${context.session.version}\n`;
 
+  // Current memory (primary)
+  if (context.memory.current?.loaded && context.memory.current.entries > 0) {
+    summary += `💾 Current: memory/current.md (${context.memory.current.entries} sections)\n`;
+  }
+
   // Daily memory (temporary notes)
   if (context.memory.daily?.loaded && context.memory.daily.entries > 0) {
     const files = context.memory.daily.files.join(', ');
-    summary += `📝 Daily notes: ${context.memory.daily.entries} files (${files})\n`;
-  }
-
-  // Long-term memory
-  if (context.memory.longTerm?.loaded && context.memory.longTerm.entries > 0) {
-    summary += `💾 Long-term: ${context.memory.longTerm.entries} entries\n`;
+    summary += `📝 Daily: ${context.memory.daily.entries} files (${files})\n`;
   }
 
   if (context.anchors.loaded && context.anchors.modules > 0) {
@@ -277,9 +283,11 @@ if (require.main === module) {
 module.exports = {
   loadMemory,
   loadDailyMemory,
-  loadLongTermMemory,
+  loadCurrentMemory,
   loadAnchors,
   loadTodoState,
   generateSessionContext,
-  formatSessionSummary
+  formatSessionSummary,
+  // Constants
+  CURRENT_FILE
 };

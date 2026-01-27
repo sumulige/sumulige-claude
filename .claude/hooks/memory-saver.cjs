@@ -6,10 +6,15 @@
  * Triggered: Once at the end of each session
  *
  * Features:
- * - Auto-save session summary to MEMORY.md
+ * - Auto-save session summary to memory/current.md (simplified)
+ * - Save daily notes to memory/YYYY-MM-DD.md
+ * - Archive session state (keep last 5)
  * - Sync TODO state changes
- * - Archive session state
- * - Generate session statistics
+ *
+ * Optimized: 2026-01-27
+ * - Removed MEMORY.md (replaced by memory/current.md)
+ * - Simplified archive (20 -> 5)
+ * - Unified output format
  *
  * Environment Variables:
  * - CLAUDE_PROJECT_DIR: Project directory path
@@ -21,13 +26,14 @@ const path = require('path');
 
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const CLAUDE_DIR = path.join(PROJECT_DIR, '.claude');
-const MEMORY_FILE = path.join(CLAUDE_DIR, 'MEMORY.md');
 const MEMORY_DIR = path.join(CLAUDE_DIR, 'memory');
-const SESSION_STATE_FILE = path.join(CLAUDE_DIR, '.session-state.json');
+const CURRENT_FILE = path.join(MEMORY_DIR, 'current.md');
 const SESSIONS_DIR = path.join(CLAUDE_DIR, 'sessions');
+const SESSION_STATE_FILE = path.join(CLAUDE_DIR, '.session-state.json');
 const STATE_FILE = path.join(PROJECT_DIR, 'development', 'todos', '.state.json');
 const SESSION_ID = process.env.CLAUDE_SESSION_ID || 'unknown';
 const DAILY_MEMORY_RETENTION_DAYS = 14;
+const MAX_SESSION_ARCHIVES = 5;
 
 /**
  * Ensure directories exist
@@ -172,65 +178,150 @@ function calculateDuration(startTime) {
 }
 
 /**
- * Save session summary to MEMORY.md
+ * Get active todos from development/todos/active/
  */
-function saveToMemory(sessionState) {
+function getActiveTodos() {
+  const activePath = path.join(PROJECT_DIR, 'development', 'todos', 'active');
+  if (!fs.existsSync(activePath)) {
+    return [];
+  }
+
+  try {
+    const files = fs.readdirSync(activePath).filter(f => f.endsWith('.md'));
+    return files.map(f => {
+      const filePath = path.join(activePath, f);
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const titleMatch = content.match(/^#\s+(.+)/m);
+      const statusMatch = content.match(/\*\*状态\*\*:\s*(.+)/);
+      return {
+        file: f,
+        title: titleMatch ? titleMatch[1] : f.replace('.md', ''),
+        status: statusMatch ? statusMatch[1].trim() : '进行中'
+      };
+    });
+  } catch (e) {
+    return [];
+  }
+}
+
+/**
+ * Get project info from package.json and CLAUDE.md
+ */
+function getProjectContext() {
+  const context = {
+    name: 'unknown',
+    version: 'unknown',
+    codeStyle: 'Linus Torvalds 编程哲学',
+    qualityMetrics: '800行/文件, 8文件/目录'
+  };
+
+  // From package.json
+  const pkgPath = path.join(PROJECT_DIR, 'package.json');
+  if (fs.existsSync(pkgPath)) {
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+      context.name = pkg.name || context.name;
+      context.version = pkg.version || context.version;
+    } catch (e) {}
+  }
+
+  return context;
+}
+
+/**
+ * Save current session state to memory/current.md
+ * This is the primary memory file (replaces MEMORY.md)
+ */
+function saveToCurrentMemory(sessionState) {
   ensureDirectories();
 
   const now = new Date();
   const dateStr = now.toISOString().split('T')[0];
+  const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
   const duration = sessionState?.session?.startTime
     ? calculateDuration(sessionState.session.startTime)
     : 'unknown';
 
-  // Generate session entry
-  const entry = `### Session ${now.toISOString()}
+  const insights = sessionState?.insights || {};
+  const todos = sessionState?.todos || {};
+  const projectContext = getProjectContext();
+  const activeTodos = getActiveTodos();
 
-- **Duration**: ${duration}
-- **Project**: ${sessionState?.session?.project || 'unknown'}
-- **Memory entries**: ${sessionState?.memory?.entries || 0}
-- **TODOs**: ${sessionState?.todos?.active || 0} active, ${sessionState?.todos?.completed || 0} completed
+  let content = `# Current Session State
+
+> Auto-updated by memory-saver.cjs
+> Last updated: ${now.toISOString()}
+
+## 项目概览
+
+- **项目**: ${projectContext.name} v${projectContext.version}
+- **代码风格**: ${projectContext.codeStyle}
+- **质量指标**: ${projectContext.qualityMetrics}
+
+## 会话信息
+
+- **Session ID**: ${SESSION_ID}
+- **持续时间**: ${duration}
+- **日期**: ${dateStr} ${timeStr}
+
+## 活跃任务
 
 `;
 
-  // Read existing memory
-  let content = '';
-  if (fs.existsSync(MEMORY_FILE)) {
-    content = fs.readFileSync(MEMORY_FILE, 'utf-8');
-  }
-
-  // Check if today's section exists
-  const todaySection = `## ${dateStr}`;
-  if (content.includes(todaySection)) {
-    // Append to today's section
-    const parts = content.split(todaySection);
-    const beforeToday = parts[0];
-    const afterHeader = parts[1];
-
-    // Find next section or end
-    const nextSectionMatch = afterHeader.match(/\n## \d{4}-\d{2}-\d{2}/);
-    if (nextSectionMatch) {
-      const insertPoint = nextSectionMatch.index;
-      const todayContent = afterHeader.slice(0, insertPoint);
-      const restContent = afterHeader.slice(insertPoint);
-      content = beforeToday + todaySection + todayContent + entry + restContent;
-    } else {
-      content = beforeToday + todaySection + afterHeader + entry;
-    }
+  if (activeTodos.length > 0) {
+    activeTodos.forEach(todo => {
+      content += `- **${todo.title}** - ${todo.status}\n`;
+    });
   } else {
-    // Create new day section at the top
-    const header = content.startsWith('#') ? '' : '# Memory\n\n<!-- Project memory updated by AI -->\n\n';
-    const existingContent = content.replace(/^# Memory\n+(?:<!-- [^>]+ -->\n+)?/, '');
-    content = header + `${todaySection}\n\n${entry}` + existingContent;
+    content += `- 无活跃任务\n`;
   }
 
-  // Keep only last 7 days
-  const sections = content.split(/(?=\n## \d{4}-\d{2}-\d{2})/);
-  const header = sections[0];
-  const daySections = sections.slice(1, 8); // Keep 7 days max
-  content = header + daySections.join('');
+  content += `\n## TODOs 统计\n\n`;
+  content += `- **Active**: ${todos.active || activeTodos.length}\n`;
+  content += `- **Completed**: ${todos.completed || 0}\n\n`;
 
-  fs.writeFileSync(MEMORY_FILE, content.trim() + '\n');
+  if (insights.keyDecisions?.length > 0) {
+    content += `## 关键决策\n\n`;
+    insights.keyDecisions.forEach(d => {
+      content += `- ${d}\n`;
+    });
+    content += '\n';
+  }
+
+  if (insights.newKnowledge?.length > 0) {
+    content += `## 学到的新东西\n\n`;
+    insights.newKnowledge.forEach(k => {
+      content += `- ${k}\n`;
+    });
+    content += '\n';
+  }
+
+  if (insights.nextSteps?.length > 0) {
+    content += `## 下一步\n\n`;
+    insights.nextSteps.forEach(s => {
+      content += `- [ ] ${s}\n`;
+    });
+    content += '\n';
+  }
+
+  content += `---
+
+## Recovery
+
+\`\`\`bash
+# View daily notes
+cat .claude/memory/${dateStr}.md
+
+# View handoff (if recent)
+cat .claude/handoffs/LATEST.md
+
+# Check TODOs
+cat development/todos/INDEX.md
+\`\`\`
+`;
+
+  fs.writeFileSync(CURRENT_FILE, content);
+  return CURRENT_FILE;
 }
 
 /**
@@ -253,14 +344,14 @@ function archiveSession(sessionState) {
 
   fs.writeFileSync(filepath, JSON.stringify(archiveData, null, 2));
 
-  // Clean up old sessions (keep last 20)
+  // Clean up old sessions (keep last 5)
   const files = fs.readdirSync(SESSIONS_DIR)
     .filter(f => f.startsWith('session_') && f.endsWith('.json'))
     .sort()
     .reverse();
 
-  if (files.length > 20) {
-    files.slice(20).forEach(f => {
+  if (files.length > MAX_SESSION_ARCHIVES) {
+    files.slice(MAX_SESSION_ARCHIVES).forEach(f => {
       try {
         fs.unlinkSync(path.join(SESSIONS_DIR, f));
       } catch (e) {
@@ -306,7 +397,7 @@ function cleanupSessionState() {
 /**
  * Format session end summary
  */
-function formatEndSummary(sessionState, archiveFile, dailyFile) {
+function formatEndSummary(sessionState, dailyFile) {
   let summary = '';
 
   const duration = sessionState?.session?.startTime
@@ -314,14 +405,12 @@ function formatEndSummary(sessionState, archiveFile, dailyFile) {
     : 'unknown';
 
   summary += `\n✅ Session ended (${duration})\n`;
+  summary += `💾 Current: memory/current.md\n`;
 
   if (dailyFile) {
     const dailyFilename = path.basename(dailyFile);
-    summary += `📝 Daily notes: memory/${dailyFilename}\n`;
+    summary += `📝 Daily: memory/${dailyFilename}\n`;
   }
-
-  summary += `💾 Long-term: MEMORY.md\n`;
-  summary += `📁 Archived: ${archiveFile}\n`;
 
   return summary;
 }
@@ -334,23 +423,23 @@ function main() {
     const sessionState = loadSessionState();
 
     if (sessionState) {
-      // Save to daily memory (new: date-sharded files)
+      // Save to current memory (primary, replaces MEMORY.md)
+      saveToCurrentMemory(sessionState);
+
+      // Save to daily memory (date-sharded files)
       const dailyFile = saveToDailyMemory(sessionState);
 
-      // Save to long-term memory (existing: MEMORY.md)
-      saveToMemory(sessionState);
-
-      // Archive session
-      const archiveFile = archiveSession(sessionState);
+      // Archive session (simplified, keep 5)
+      archiveSession(sessionState);
 
       // Sync TODO state
       syncTodoState();
 
       // Output summary
-      console.log(formatEndSummary(sessionState, archiveFile, dailyFile));
+      console.log(formatEndSummary(sessionState, dailyFile));
     }
 
-    // Clean up
+    // Clean up session state file
     cleanupSessionState();
 
     process.exit(0);
@@ -368,11 +457,14 @@ if (require.main === module) {
 
 module.exports = {
   loadSessionState,
-  saveToMemory,
+  saveToCurrentMemory,
   saveToDailyMemory,
   cleanOldMemoryFiles,
   archiveSession,
   syncTodoState,
   calculateDuration,
-  formatEndSummary
+  formatEndSummary,
+  // Constants
+  CURRENT_FILE,
+  MAX_SESSION_ARCHIVES
 };

@@ -53,24 +53,24 @@
   },
 
   "auto-handoff": {
-    "events": ["PreCompact"],
+    "events": ["PreCompact", "SessionStart"],
     "enabled": true,
-    "description": "Auto-generate handoff before compaction"
+    "description": "Handoff 保存 (PreCompact) 和恢复 (SessionStart)"
   },
 
   "strategic-compact": {
     "events": ["PreCompact"],
-    "enabled": true,
+    "enabled": false,
     "priority": 1,
-    "description": "Strategic context compression before compaction"
+    "description": "DISABLED: 依赖已弃用模块 (priority-scorer, context-analyzer)"
   },
 
   "handoff-loader": {
     "events": ["SessionStart"],
     "runOnce": true,
     "after": ["memory-loader"],
-    "enabled": true,
-    "description": "Load recent handoff if available"
+    "enabled": false,
+    "description": "DISABLED: 已合并到 auto-handoff.cjs"
   },
 
   "verify-work": {
