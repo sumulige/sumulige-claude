@@ -15,7 +15,7 @@ const REQUIRED_FILES = [
   'README.md',
   'LICENSE',
   'package.json',
-  '.claude/skills/react-node-practices/SKILL.md',
+  '.claude/skills/react-best-practices/SKILL.md',
   '.claude/rules/coding-style.md',
   '.claude/rules/security.md',
   '.claude/rules/testing.md',
