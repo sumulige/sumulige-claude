@@ -1,3 +1,37 @@
+## 用户偏好
+
+| 规则 | 说明 |
+|------|------|
+| **Push = Publish** | 每次 git push 后必须同步发布到 npm |
+
+---
+
+## 2026-01-27
+
+### v1.7.2 - 双层记忆系统
+
+**重大架构变更**: 借鉴 Clawdbot 实现双层记忆
+
+```
+.claude/
+├── MEMORY.md        # 长期记忆（本文件）
+└── memory/
+    └── YYYY-MM-DD.md # 临时笔记（14天滚动）
+```
+
+**核心设计原则**:
+- **分层存储**: 临时 vs 永久分离
+- **先保存再压缩**: Pre-compaction flush
+- **搜索 > 注入**: 按需检索而非全量加载
+
+**修改的文件**:
+- `.claude/CLAUDE.md` - Context 管理规则
+- `.claude/rules/performance.md` - PERF-006
+- `.claude/hooks/memory-loader.cjs` - 双层加载
+- `.claude/hooks/memory-saver.cjs` - 日期文件 + insights
+
+---
+
 ## 2026-01-23
 
 ### Session: 前端设计灵感 & 3D 可视化
