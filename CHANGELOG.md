@@ -1,3 +1,16 @@
+## [1.10.1](https://github.com/sumulige/sumulige-claude/compare/v1.10.0...v1.10.1) (2026-01-27)
+
+### 🧹 Cleanup
+
+清理测试产物，减少包体积
+
+- 删除 3 个测试 workflow 项目 (`development/projects/proj_*`)
+- 删除 4 个空 Skills (`api-tester`, `code-reviewer-123`, `my-skill`, `test-skill-name`)
+- 删除测试目录和 demo 文件
+- **-7,604 行代码**，包文件数 524 → 508
+
+---
+
 ## [1.10.0](https://github.com/sumulige/sumulige-claude/compare/v1.9.4...v1.10.0) (2026-01-27)
 
 ### ✨ New Platform Support
