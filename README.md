@@ -528,6 +528,36 @@ smc platform:convert claude codex
 
 ---
 
+## Feedback & Contributing
+
+We'd love to hear from you!
+
+| 类型 | 链接 |
+|------|------|
+| 🐛 Bug 报告 | [Open an Issue](https://github.com/sumulige/sumulige-claude/issues/new?template=bug_report.md) |
+| 💡 功能建议 | [Feature Request](https://github.com/sumulige/sumulige-claude/issues/new?template=feature_request.md) |
+| 💬 问题讨论 | [Discussions](https://github.com/sumulige/sumulige-claude/discussions) |
+| ⭐ 觉得有用？ | [Give us a Star](https://github.com/sumulige/sumulige-claude) |
+
+### Contributing
+
+```bash
+# Fork & Clone
+git clone https://github.com/YOUR_USERNAME/sumulige-claude.git
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Submit PR
+```
+
+欢迎提交 PR！无论是修复 typo 还是新增功能，我们都很感激。
+
+---
+
 ## License
 
 MIT © [sumulige](https://github.com/sumulige)
