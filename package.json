@@ -1,6 +1,6 @@
 {
   "name": "sumulige-claude",
-  "version": "1.7.7",
+  "version": "1.8.0",
   "description": "The Best Agent Harness for Claude Code - AI Agent Skills, Rules & Best Practices",
   "main": "cli.js",
   "bin": {
@@ -71,14 +71,14 @@
     "@iarna/toml": "^2.2.5",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
-    "patchright": "^1.57.0"
+    "patchright": "^1.57.0",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "jest": "^30.2.0",
     "mock-fs": "^5.5.0",
     "prettier": "^3.7.4",
     "sinon": "^21.0.1",
-    "standard-version": "^9.5.0",
-    "yaml": "^2.8.2"
+    "standard-version": "^9.5.0"
   }
 }
