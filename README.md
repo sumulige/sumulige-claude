@@ -11,10 +11,10 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/sumulige-claude"><img src="https://img.shields.io/npm/v/sumulige-claude.svg" alt="npm version"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="#supported-platforms"><img src="https://img.shields.io/badge/platforms-8%20AI%20CLIs-blue.svg" alt="Platforms"></a>
+  <a href="#supported-platforms"><img src="https://img.shields.io/badge/platforms-10%20AI%20CLIs-blue.svg" alt="Platforms"></a>
 </p>
 
-**Sumulige Claude** is a universal agent harness for AI coding assistants. Supports **8 platforms** including Claude Code, Codex CLI, Cursor, Aider, and more. Features 5-agent orchestration, dual-layer memory, TDD workflow, and cross-platform config sync.
+**Sumulige Claude** is a universal agent harness for AI coding assistants. Supports **10 platforms** including Claude Code, Codex CLI, Cursor, Windsurf, Antigravity, and more. Features 5-agent orchestration, dual-layer memory, TDD workflow, and cross-platform config sync.
 
 ---
 
@@ -61,6 +61,8 @@ claude
 | **OpenCode** | opencode.ai | JSONC | instructions |
 | **Trae** | ByteDance | YAML | agents config |
 | **Zed** | Zed Industries | JSON | settings |
+| **Windsurf** | Codeium | Markdown | .windsurfrules |
+| **Antigravity** | Google | JSON + MD | .agent/rules/ |
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -499,6 +501,13 @@ smc platform:convert claude codex
 ---
 
 ## Changelog
+
+### v1.10.0 (2026-01-27)
+
+**New Platform Support** - Windsurf + Antigravity (8 → 10 platforms)
+
+- **Windsurf** (Codeium) - AI-native IDE with Cascade system
+- **Antigravity** (Google) - Agent-first IDE
 
 ### v1.9.2 (2026-01-27)
 

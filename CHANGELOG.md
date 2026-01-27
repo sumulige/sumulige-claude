@@ -1,3 +1,28 @@
+## [1.10.0](https://github.com/sumulige/sumulige-claude/compare/v1.9.4...v1.10.0) (2026-01-27)
+
+### ✨ New Platform Support
+
+**8 → 10 AI CLIs** - 新增 Windsurf 和 Antigravity 支持
+
+| 平台 | Vendor | 配置格式 | 指令文件 |
+|------|--------|----------|----------|
+| **Windsurf** 🏄 | Codeium | Markdown | `.windsurfrules` / `.windsurf/rules/rules.md` |
+| **Antigravity** 🚀 | Google | JSON + MD | `.agent/rules/main.md` |
+
+#### 新增文件
+
+```
+lib/platforms/
+├── windsurf/index.js     # Codeium Windsurf IDE
+└── antigravity/index.js  # Google Antigravity IDE
+```
+
+#### 支持的全部 10 个平台
+
+Claude Code, Codex CLI, Cursor, Aider, Cline/Roo, OpenCode, Trae, Zed, **Windsurf**, **Antigravity**
+
+---
+
 ## [1.9.2](https://github.com/sumulige/sumulige-claude/compare/v1.9.0...v1.9.2) (2026-01-27)
 
 ### 🏗️ Multi-Platform Architecture Refactoring
