@@ -4,17 +4,17 @@
     <strong>The Universal Agent Harness for AI Coding Assistants</strong>
   </p>
   <p align="center">
-    Transform Claude Code and OpenAI Codex into intelligent, memory-aware development teams
+    Transform Claude Code, Codex CLI, Cursor, and 5 more AI assistants into intelligent development teams
   </p>
 </p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/sumulige-claude"><img src="https://img.shields.io/npm/v/sumulige-claude.svg" alt="npm version"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="#"><img src="https://img.shields.io/badge/platforms-8%20AI%20CLIs-blue.svg" alt="Platforms"></a>
+  <a href="#supported-platforms"><img src="https://img.shields.io/badge/platforms-8%20AI%20CLIs-blue.svg" alt="Platforms"></a>
 </p>
 
-**Sumulige Claude** is a universal agent harness that transforms Claude Code and OpenAI Codex CLI into intelligent, memory-aware development teams. Features include 5-agent orchestration system (Conductor, Architect, Builder, Reviewer, Librarian), dual-layer memory (daily notes + long-term), TDD workflow integration, and cross-platform support.
+**Sumulige Claude** is a universal agent harness for AI coding assistants. Supports **8 platforms** including Claude Code, Codex CLI, Cursor, Aider, and more. Features 5-agent orchestration, dual-layer memory, TDD workflow, and cross-platform config sync.
 
 ---
 
@@ -41,7 +41,7 @@ claude
 |---------|--------|-------|
 | AI forgets context every session | Repeat project structure constantly | Automatic memory via ThinkingLens |
 | Inconsistent code quality | Manual reviews, missed issues | Quality Gate auto-checks |
-| Works with Claude, need Codex too | Maintain two config systems | One config, both platforms |
+| Works with multiple AI CLIs | Maintain separate configs | One config, 8 platforms |
 
 ---
 
@@ -49,20 +49,28 @@ claude
 
 ### Multi-Platform Support
 
+#### Supported Platforms
+
+| Platform | Vendor | Config | Instructions |
+|----------|--------|--------|--------------|
+| **Claude Code** | Anthropic | JSON | CLAUDE.md |
+| **Codex CLI** | OpenAI | TOML | AGENTS.md |
+| **Cursor** | cursor.com | MDC | .cursorrules |
+| **Aider** | aider.chat | YAML | CONVENTIONS.md |
+| **Cline/Roo** | VS Code | Markdown | .clinerules |
+| **OpenCode** | opencode.ai | JSONC | instructions |
+| **Trae** | ByteDance | YAML | agents config |
+| **Zed** | Zed Industries | JSON | settings |
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    smc CLI                                   │
 ├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────────┐          ┌─────────────────┐           │
-│  │   Claude Code   │          │   Codex CLI     │           │
-│  │   (Anthropic)   │          │   (OpenAI)      │           │
-│  │                 │          │                 │           │
-│  │  .claude/       │  ◄────►  │  .codex/        │           │
-│  │  CLAUDE.md      │  sync    │  AGENTS.md      │           │
-│  │  JSON config    │          │  TOML config    │           │
-│  └─────────────────┘          └─────────────────┘           │
+│  Claude  │  Codex  │  Cursor │  Aider  │  Cline │  ...     │
+│    ↓         ↓         ↓         ↓         ↓                │
+│  .claude/  .codex/  .cursor/  .aider    .cline              │
 ├─────────────────────────────────────────────────────────────┤
-│              Shared: Skills, Rules, Memory                   │
+│         Shared: Skills, Rules, Memory, Instructions          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
