@@ -14,6 +14,8 @@
   <a href="#"><img src="https://img.shields.io/badge/platforms-Claude%20%7C%20Codex-blue.svg" alt="Platforms"></a>
 </p>
 
+**Sumulige Claude** is a universal agent harness that transforms Claude Code and OpenAI Codex CLI into intelligent, memory-aware development teams. Features include 5-agent orchestration system (Conductor, Architect, Builder, Reviewer, Librarian), dual-layer memory (daily notes + long-term), TDD workflow integration, and cross-platform support.
+
 ---
 
 ## Quick Start
