@@ -1,0 +1,28 @@
+name: seo-optimization
+version: 1.0.0
+author: "@sumulige"
+description: |
+  SEO optimization best practices for Git commits, README, releases, and web projects.
+  Use when: writing commit messages, creating README, publishing releases,
+  writing documentation, optimizing meta tags, or improving search visibility.
+  Covers Git SEO (commits, releases), documentation SEO, and technical SEO.
+
+tags:
+  - seo
+  - documentation
+  - github
+  - commit
+  - release
+
+triggers:
+  - seo
+  - search optimization
+  - README optimization
+  - commit message
+  - release notes
+  - meta tags
+  - 搜索优化
+  - SEO优化
+  - 提交信息
+
+difficulty: intermediate

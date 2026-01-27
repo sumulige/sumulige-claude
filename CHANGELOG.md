@@ -1,3 +1,18 @@
+## [1.10.2](https://github.com/sumulige/sumulige-claude/compare/v1.10.1...v1.10.2) (2026-01-27)
+
+### Features
+
+- **changelog-version-sync**: 新增 CHANGELOG 版本同步检查规则
+  - 确保 package.json 版本在 CHANGELOG 中有对应记录
+  - pre-commit 时自动检查，阻止未更新文档的发布
+- **seo-optimization skill**: 新增 SEO 优化最佳实践 Skill
+  - Git commit message 优化
+  - README/文档 SEO
+  - GitHub Release notes 优化
+  - 技术 SEO (meta tags, Open Graph, 结构化数据)
+
+---
+
 ## [1.10.1](https://github.com/sumulige/sumulige-claude/compare/v1.10.0...v1.10.1) (2026-01-27)
 
 ### 🧹 Cleanup

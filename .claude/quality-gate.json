@@ -82,6 +82,11 @@
       "config": {
         "maxLines": 50
       }
+    },
+    {
+      "id": "changelog-version-sync",
+      "enabled": true,
+      "severity": "error"
     }
   ],
   "gates": {
