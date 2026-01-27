@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Discussions
+    url: https://github.com/sumulige/sumulige-claude/discussions
+    about: 讨论问题、分享想法、寻求帮助
+  - name: npm Package
+    url: https://www.npmjs.com/package/sumulige-claude
+    about: 查看 npm 包信息
