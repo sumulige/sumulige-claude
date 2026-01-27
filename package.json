@@ -1,6 +1,6 @@
 {
   "name": "sumulige-claude",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "description": "The Best Agent Harness for Claude Code - AI Agent Skills, Rules & Best Practices",
   "main": "cli.js",
   "bin": {
