@@ -66,7 +66,7 @@ claude
 
 ### Core Capabilities
 
-- **Memory System** - AI remembers decisions across sessions
+- **Memory System** - Dual-layer memory (daily notes + long-term) with pre-compaction flush
 - **Agent Orchestration** - 5 specialized agents with intelligent routing
 - **Workflow Integration** - kickoff → agent → todo → tdd pipeline
 - **Skills Marketplace** - Install and share reusable AI capabilities
@@ -350,25 +350,62 @@ web_search_request = true
 
 ### Memory System
 
+**Dual-Layer Architecture** (Inspired by [Clawdbot](https://github.com/peterthehan/clawdbot))
+
+```
+.claude/
+├── MEMORY.md              # Layer 2: 长期记忆（偏好、约束、决策）
+└── memory/
+    ├── 2026-01-27.md      # Layer 1: 今日笔记
+    ├── 2026-01-26.md      # 昨日笔记
+    └── ...                # 14天滚动清理
+```
+
+| Layer | 文件 | 内容 | 生命周期 |
+|-------|------|------|---------|
+| **Layer 1** | `memory/YYYY-MM-DD.md` | 临时笔记、会话记录、WIP | 14天滚动 |
+| **Layer 2** | `MEMORY.md` | 用户偏好、架构决策、项目约束 | 永久 |
+
+#### Session Lifecycle
+
 ```
 Session Start
      │
      ▼
 ┌─────────────────┐
-│ memory-loader   │ ◄── Load MEMORY.md, ANCHORS.md
+│ memory-loader   │ ◄── Load memory/今日+昨日.md + MEMORY.md
 └─────────────────┘
      │
      ▼
    Work with AI
      │
+     ├── Pre-compaction Flush ──► 重要信息写入 memory/
+     │
      ▼
 ┌─────────────────┐
-│ memory-saver    │ ──► Save to MEMORY.md
+│ memory-saver    │ ──► Save insights to memory/YYYY-MM-DD.md
 └─────────────────┘
      │
      ▼
 Session End
 ```
+
+#### Pre-compaction Memory Flush
+
+当 context 接近上限时，AI 会主动将重要信息刷盘：
+
+```markdown
+## 15:00 - Session Summary
+
+### 关键决策
+- 采用双层记忆架构
+- 使用 14 天滚动保留
+
+### 下一步
+- [ ] 测试完整流程
+```
+
+**触发信号**: 对话 > 15 轮 | 工具调用 > 30 次 | 文件修改 > 10 个
 
 ### Hook System
 
