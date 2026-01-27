@@ -1,3 +1,53 @@
+## [1.7.2](https://github.com/sumulige/sumulige-claude/compare/v1.7.0...v1.7.2) (2026-01-27)
+
+### 🧠 Dual-Layer Memory System
+
+**Clawdbot 风格双层记忆架构** - 临时笔记 + 长期记忆分离
+
+```
+.claude/
+├── MEMORY.md              # Layer 2: 长期策展（偏好、约束、决策）
+└── memory/
+    └── YYYY-MM-DD.md      # Layer 1: 日期分片（14天滚动）
+```
+
+#### 核心特性
+
+| 特性 | 说明 |
+|------|------|
+| **Pre-compaction Flush** | Context 压缩前主动保存重要信息 |
+| **Daily Notes** | 日期分片的临时笔记，14天自动清理 |
+| **Content-Aware Save** | 保存 insights 内容，而非仅元数据 |
+| **Dual Loading** | 启动时加载 今日+昨日 + 长期记忆 |
+
+#### 新增/修改文件
+
+| 文件 | 变更 |
+|------|------|
+| `.claude/CLAUDE.md` | 添加 Context 管理规则章节 |
+| `.claude/rules/performance.md` | 添加 PERF-006 Pre-compaction 规则 |
+| `.claude/hooks/memory-loader.cjs` | 支持 daily + long-term 双层加载 |
+| `.claude/hooks/memory-saver.cjs` | 支持日期文件写入 + insights 保存 |
+| `.claude/memory/` | 新建目录 |
+
+#### Session 输出示例
+
+```
+📂 Session: sumulige-claude v1.7.2
+📝 Daily notes: 1 files (2026-01-27)
+💾 Long-term: 8 entries
+📋 TODOs: 5 active, 1 completed
+```
+
+### 📚 灵感来源
+
+借鉴 [Clawdbot](https://github.com/peterthehan/clawdbot) 的记忆系统设计：
+- 两层记忆分离（临时 vs 永久）
+- Pre-compaction flush 策略
+- 搜索 > 注入原则
+
+---
+
 ## [1.7.0](https://github.com/sumulige/sumulige-claude/compare/v1.6.0...v1.7.0) (2026-01-26)
 
 ### 🤖 Agent Orchestration System
