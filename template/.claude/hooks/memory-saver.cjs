@@ -177,8 +177,25 @@ function calculateDuration(startTime) {
   return `${hours}h ${mins}m`;
 }
 
+// 递归扫描目录中的所有 .md 文件
+function scanTodosRecursive(dir, results = []) {
+  if (!fs.existsSync(dir)) return results;
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanTodosRecursive(fullPath, results);
+      } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== '_README.md') {
+        results.push(fullPath);
+      }
+    }
+  } catch (e) {}
+  return results;
+}
+
 /**
- * Get active todos from development/todos/active/
+ * Get active todos from development/todos/active/ (including subdirectories)
  */
 function getActiveTodos() {
   const activePath = path.join(PROJECT_DIR, 'development', 'todos', 'active');
@@ -187,15 +204,16 @@ function getActiveTodos() {
   }
 
   try {
-    const files = fs.readdirSync(activePath).filter(f => f.endsWith('.md'));
-    return files.map(f => {
-      const filePath = path.join(activePath, f);
-      const content = fs.readFileSync(filePath, 'utf-8');
+    // 递归扫描所有 .md 文件（包括子目录如 active/develop/）
+    const files = scanTodosRecursive(activePath);
+    return files.map(fullPath => {
+      const content = fs.readFileSync(fullPath, 'utf-8');
       const titleMatch = content.match(/^#\s+(.+)/m);
       const statusMatch = content.match(/\*\*状态\*\*:\s*(.+)/);
+      const relativePath = path.relative(activePath, fullPath);
       return {
-        file: f,
-        title: titleMatch ? titleMatch[1] : f.replace('.md', ''),
+        file: relativePath,
+        title: titleMatch ? titleMatch[1] : path.basename(fullPath, '.md'),
         status: statusMatch ? statusMatch[1].trim() : '进行中'
       };
     });

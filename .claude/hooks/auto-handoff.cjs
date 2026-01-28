@@ -69,8 +69,25 @@ function loadSessionState() {
   }
 }
 
+// 递归扫描目录中的所有 .md 文件
+function scanDirRecursive(dir, results = []) {
+  if (!fs.existsSync(dir)) return results;
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanDirRecursive(fullPath, results);
+      } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== '_README.md') {
+        results.push(fullPath);
+      }
+    }
+  } catch (e) {}
+  return results;
+}
+
 /**
- * Load active TODOs
+ * Load active TODOs (including subdirectories)
  */
 function loadActiveTodos() {
   const todosDir = path.join(PROJECT_DIR, 'development', 'todos', 'active');
@@ -79,15 +96,16 @@ function loadActiveTodos() {
   }
 
   try {
-    const files = fs.readdirSync(todosDir)
-      .filter(f => f.endsWith('.md') && f !== '_README.md');
+    // 递归扫描所有 .md 文件（包括子目录）
+    const files = scanDirRecursive(todosDir);
 
-    return files.map(f => {
-      const content = fs.readFileSync(path.join(todosDir, f), 'utf-8');
+    return files.map(fullPath => {
+      const content = fs.readFileSync(fullPath, 'utf-8');
       const titleMatch = content.match(/^#\s+(.+)$/m);
+      const relativePath = path.relative(todosDir, fullPath);
       return {
-        file: f,
-        title: titleMatch ? titleMatch[1] : path.basename(f, '.md')
+        file: relativePath,
+        title: titleMatch ? titleMatch[1] : path.basename(fullPath, '.md')
       };
     });
   } catch (e) {

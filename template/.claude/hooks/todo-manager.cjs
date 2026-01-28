@@ -47,7 +47,33 @@ function ensureDirectories() {
   });
 }
 
-// 扫描任务文件
+// 递归扫描目录中的所有 .md 文件
+function scanDirectoryRecursive(dir, baseDir, results = []) {
+  if (!fs.existsSync(dir)) return results;
+
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      // 递归扫描子目录
+      scanDirectoryRecursive(fullPath, baseDir, results);
+    } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== '_README.md') {
+      // 计算相对于 baseDir 的路径
+      const relativePath = path.relative(baseDir, fullPath);
+      results.push({
+        fullPath,
+        relativePath,
+        fileName: entry.name
+      });
+    }
+  }
+
+  return results;
+}
+
+// 扫描任务文件（支持嵌套目录）
 function scanTasks() {
   const tasks = {
     active: [],
@@ -60,24 +86,23 @@ function scanTasks() {
     const dir = path.join(TODOS_DIR, dirName);
     if (!fs.existsSync(dir)) continue;
 
-    const files = fs.readdirSync(dir)
-      .filter(f => f.endsWith('.md') && f !== '_README.md');
+    // 递归扫描所有 .md 文件
+    const files = scanDirectoryRecursive(dir, dir);
 
-    tasks[dirName] = files.map(f => {
-      const filePath = path.join(dir, f);
-      const content = fs.readFileSync(filePath, 'utf-8');
+    tasks[dirName] = files.map(({ fullPath, relativePath, fileName }) => {
+      const content = fs.readFileSync(fullPath, 'utf-8');
       const titleMatch = content.match(/^#\s+(.+)$/m);
       const statusMatch = content.match(/\*\*状态\*\*:\s*([\u{1F300}-\u{1F9FF}\s]+)/u);
       const priorityMatch = content.match(/\*\*优先级\*\*:\s*(P[0-3])/);
       const branchMatch = content.match(/\*\*分支\*\*:\s*`([^`]+)`/);
 
       return {
-        file: f,
-        title: titleMatch ? titleMatch[1] : path.basename(f, '.md'),
+        file: fileName,
+        title: titleMatch ? titleMatch[1] : path.basename(fileName, '.md'),
         status: statusMatch ? statusMatch[1].trim() : '🚧 进行中',
         priority: priorityMatch ? priorityMatch[1] : 'P2',
         branch: branchMatch ? branchMatch[1] : null,
-        path: `${dirName}/${f}`
+        path: `${dirName}/${relativePath}`
       };
     });
   }
