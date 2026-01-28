@@ -1,3 +1,18 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.11.1](https://github.com/sumulige/sumulige-claude/compare/v1.11.0...v1.11.1) (2026-01-28)
+
+
+* bump version to 1.11.0 ([eb37b6d](https://github.com/sumulige/sumulige-claude/commits/eb37b6d4f5fd163c974a043a820eb3f347a4514a))
+
+
+### Fixed
+
+* **hooks:** support recursive scanning of nested todo directories ([eb1ea17](https://github.com/sumulige/sumulige-claude/commits/eb1ea17271c375ba3eccc71580ea10302d3c2bd2))
+* update prepublish check for archived skills ([435224a](https://github.com/sumulige/sumulige-claude/commits/435224ade82d9f4ffba6b734feeca96976eadab2))
+
 ## [1.11.0](https://github.com/sumulige/sumulige-claude/compare/v1.10.2...v1.11.0) (2026-01-27)
 
 ### 🔧 Hook System Refactor
