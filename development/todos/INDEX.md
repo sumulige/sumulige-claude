@@ -2,8 +2,6 @@
 
 > 本目录由 AI 自动维护，记录项目开发任务和进度
 
-**最后更新**: 2026-01-27
-
 @version: 1.0.0
 
 ## 目录结构
@@ -11,32 +9,27 @@
 ```
 development/todos/
 ├── INDEX.md           # 本文件 - 任务总览
-├── active/            # 进行中的任务 (1)
-├── completed/         # 已完成的任务 (1)
-├── backlog/           # 待规划的任务 (1)
-└── archived/          # 已归档的任务 (0)
+├── active/            # 进行中的任务
+├── completed/         # 已完成的任务
+├── backlog/           # 待规划的任务
+└── archived/          # 已归档的任务
 ```
+
+## 任务状态说明
+
+| 状态 | 目录 | 说明 |
+|------|------|------|
+| 🚧 进行中 | `active/` | 当前正在开发的任务 |
+| ✅ 已完成 | `completed/` | 完成的任务 |
+| 📋 待办 | `backlog/` | 规划中或待分配的任务 |
+| 📦 已归档 | `archived/` | 不再活跃的历史任务 |
 
 ## 快速跳转
 
-## 🚧 进行中的任务 (1)
-
-- [P1] [Hooks 优化方案](./active/hooks-optimization.md) - 
-
-## ✅ 最近完成的任务
-
-- [Boris 最佳实践集成](./completed/boris-optimizations.md)
-
-## 📋 待办任务 (1)
-
-- [P2] [MCP 集成增强](./backlog/mcp-integration.md)
-
-## 全部目录
-
-- [🚧 所有进行中的任务](./active/) - 当前开发重点
-- [✅ 所有已完成的任务](./completed/) - 完整历史
-- [📋 所有待办任务](./backlog/) - 待规划
-- [📦 所有已归档任务](./archived/) - 历史记录
+- [🚧 进行中的任务](./active/) - 当前开发重点
+- [✅ 已完成的任务](./completed/) - 最近完成
+- [📋 待办任务](./backlog/) - 待规划
+- [📦 已归档](./archived/) - 历史记录
 
 ## 使用方式
 

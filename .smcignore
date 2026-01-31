@@ -1,0 +1,11 @@
+#.smcignore - 让上下文构建跳过这些路径
+node_modules
+.git
+.claude
+coverage
+dist
+build
+.next
+.turbo
+tmp
+logs

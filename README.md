@@ -1,622 +1,127 @@
-<p align="center">
-  <h1 align="center">Sumulige Claude</h1>
-  <p align="center">
-    <strong>The Universal Agent Harness for AI Coding Assistants</strong>
-  </p>
-  <p align="center">
-    Transform Claude Code, Codex CLI, Cursor, and 5 more AI assistants into intelligent development teams
-  </p>
-</p>
+# Sumulige Claude
+Universal agent harness for AI coding assistants (Claude Code, Codex CLI, Cursor, Windsurf, Antigravity, etc.).
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/sumulige-claude"><img src="https://img.shields.io/npm/v/sumulige-claude.svg" alt="npm version"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="#supported-platforms"><img src="https://img.shields.io/badge/platforms-10%20AI%20CLIs-blue.svg" alt="Platforms"></a>
-</p>
+[中文版本](README.zh.md)
 
-**Sumulige Claude** is a universal agent harness for AI coding assistants. Supports **10 platforms** including Claude Code, Codex CLI, Cursor, Windsurf, Antigravity, and more. Features 5-agent orchestration, dual-layer memory, TDD workflow, and cross-platform config sync.
+## What this project solves
+- Turns single-model CLIs into a **5‑agent team** with routing.
+- Adds **dual-layer memory** plus automatic rolling/compaction.
+- Ships a **workflow pipeline** (kickoff → agent → todo → TDD).
+- Provides **guardrails + observability** with sliding‑window latency/hit‑rate, thresholds, and red/yellow/green status.
+- Lets you **swap in real RAG/LLM providers** via `SMC_PROVIDER_MODULE` (timeout/retry/fallback-ready skeletons included).
+- Comes with **hooks**, **skills marketplace**, and **quality gates** that work across platforms.
 
----
-
-## Quick Start
-
-```bash
-# Install
-npm install -g sumulige-claude
-
-# Initialize in your project
-smc template
-
-# Start Claude Code
-claude
+## Architecture at a glance
+```
+User command
+   │
+   ▼
+Router (pattern match) → Conductor / Architect / Builder / Reviewer / Librarian
+   │
+   ▼
+Runtime adapter (hints → retrieve/generate; timeout/retry/fallback; memory index preheat)
+   │
+   ▼
+Observability & Guardrail (p50/p90/p99, p99_recent, hit_rate, dynamic threshold)
+   │
+   ▼
+Post-task hook → autoroll (archive) → rolling index → next-session memory preload
 ```
 
-**That's it.** Your project now has AI memory, slash commands, and quality gates.
-
----
-
-## Why Sumulige Claude?
-
-| Problem | Before | After |
-|---------|--------|-------|
-| AI forgets context every session | Repeat project structure constantly | Automatic memory via ThinkingLens |
-| Inconsistent code quality | Manual reviews, missed issues | Quality Gate auto-checks |
-| Works with multiple AI CLIs | Maintain separate configs | One config, 8 platforms |
-
----
-
-## Features
-
-### Multi-Platform Support
-
-#### Supported Platforms
-
-| Platform | Vendor | Config | Instructions |
-|----------|--------|--------|--------------|
-| **Claude Code** | Anthropic | JSON | CLAUDE.md |
-| **Codex CLI** | OpenAI | TOML | AGENTS.md |
-| **Cursor** | cursor.com | MDC | .cursorrules |
-| **Aider** | aider.chat | YAML | CONVENTIONS.md |
-| **Cline/Roo** | VS Code | Markdown | .clinerules |
-| **OpenCode** | opencode.ai | JSONC | instructions |
-| **Trae** | ByteDance | YAML | agents config |
-| **Zed** | Zed Industries | JSON | settings |
-| **Windsurf** | Codeium | Markdown | .windsurfrules |
-| **Antigravity** | Google | JSON + MD | .agent/rules/ |
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    smc CLI                                   │
-├─────────────────────────────────────────────────────────────┤
-│  Claude  │  Codex  │  Cursor │  Aider  │  Cline │  ...     │
-│    ↓         ↓         ↓         ↓         ↓                │
-│  .claude/  .codex/  .cursor/  .aider    .cline              │
-├─────────────────────────────────────────────────────────────┤
-│         Shared: Skills, Rules, Memory, Instructions          │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Core Capabilities
-
-- **Memory System** - Dual-layer memory (daily notes + long-term) with pre-compaction flush
-- **Agent Orchestration** - 5 specialized agents with intelligent routing
-- **Workflow Integration** - kickoff → agent → todo → tdd pipeline
-- **Skills Marketplace** - Install and share reusable AI capabilities
-- **Quality Gate** - Automatic code quality enforcement
-- **Slash Commands** - `/commit`, `/test`, `/review`, `/fix`
-
-### Agent Orchestration
-
-```
-smc agent "实现用户登录"
-     │
-     ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Router: Pattern Matching                                    │
-│  "实现" → Builder | "设计" → Architect | "审查" → Reviewer   │
-└─────────────────────────────────────────────────────────────┘
-     │
-     ▼
-┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
-│ Conductor │ │ Architect │ │  Builder  │ │ Reviewer  │ │ Librarian │
-│   Opus    │ │   Opus    │ │  Sonnet   │ │   Opus    │ │   Haiku   │
-│ 任务协调   │ │ 架构设计   │ │ 代码实现   │ │ 代码审查   │ │ 文档归档   │
-└───────────┘ └───────────┘ └───────────┘ └───────────┘ └───────────┘
-```
-
-### Workflow Pipeline
-
-```bash
-# Complete workflow: kickoff → agent → todo → tdd
-smc workflow kickoff "实现用户认证" --dry-run  # Generate analysis prompt
-smc workflow kickoff --parse                    # Parse output, create todos
-/tdd --from-todo                                # Start TDD from todo
-```
-
----
-
-## Installation
-
-### Requirements
-
-- Node.js 16+
-- Claude Code or Codex CLI installed
-
-### Install
-
+## Quickstart
 ```bash
 npm install -g sumulige-claude
-```
 
-### Verify
-
-```bash
-smc --version
-```
-
----
-
-## Usage
-
-### New Project Setup
-
-```bash
-# Deploy Claude Code template
-smc template
-
-# Or deploy for both platforms
-smc template --all
-
-# Or Codex only
-smc template --codex
-```
-
-### Existing Project
-
-```bash
-# Add to existing project (safe mode - won't overwrite)
+# Scaffold project template (safe for existing projects)
 smc template --safe
 
-# Or sync incrementally
-smc sync
+# Kick off a task + route to the right agent
+smc agent "设计登录接口"
+
+# Run the workflow pipeline
+smc workflow kickoff "实现用户认证" --parse   # produce todos
+/tdd --from-todo                              # in Claude Code
 ```
 
-### Platform Commands
+## Core commands (cheat sheet)
+| Area | Command | Purpose |
+|------|---------|---------|
+| Init | `smc init` | Set up global config |
+| Template | `smc template [--safe|--all]` | Deploy multi-platform scaffold |
+| Sync | `smc sync` | Incremental sync of configs |
+| Status | `smc status` | Show status + guardrail lights |
+| Agents | `smc agent "任务"` | Auto-route to Architect/Builder/Reviewer... |
+| Workflow | `smc workflow kickoff "任务" [--dry-run|--parse]` | Task analysis → todos |
+| Platform | `smc platform:detect` / `platform:convert` / `platform:sync` | Multi-CLI support |
+| Memory | `smc memory:compact` | Roll/compact `.claude/memory/current.md` |
+| Guardrail | `smc guardrail:stats --json` / `smc guardrail:clear` | Sliding-window metrics |
+| Autoroll | `npm run memory:autoroll` | Cron/CI-friendly autoroll helper |
+| Provider | `SMC_PROVIDER_MODULE=... smc agent ...` | Plug custom RAG/LLM |
 
+Slash commands (Claude Code): `/review`, `/test`, `/fix`, `/plan`, `/commit`, `/tdd`, `/todos`.
+
+## Configuration highlights
+- **Memory guardrails**: `config/memory-guardrails.json` (latency/hit-rate/cost thresholds + degrade actions).
+- **Provider module**: set `SMC_PROVIDER_MODULE=lib/runtime/providers/examples/local-rag.js` (or your module). API signature in `lib/runtime/providers/skeleton.js`.
+- **Autoroll hook**: `.claude/hooks/post-task/autoroll.sh` (enabled by default). Env: `SMC_AUTOROLL_DISABLE=1`, `SMC_AUTOROLL_DRYRUN=1`, `SMC_AUTOROLL_VERBOSE=1`.
+- **Sampling**: `lib/memory-observability.js` default sample_rate=0.1; trace/span/parent_span carried through CLI output.
+- **Dynamic thresholds**: `lib/memory-cost.js` `resolveLatencyThreshold` supports day/night windows + `dynamic_factor`.
+
+## Memory & autoroll
+- Dual-layer memory: `memory/YYYY-MM-DD.md` (rolling daily) + `memory/current.md` (persistent state).
+- Preheat: context builder loads latest summaries from `rolling-store/index.json` (last 3 archives).
+- Autoroll: `scripts/autoroll.mjs` archives conversations + writes index summaries; hook runs post-task.
+
+## Observability & guardrails
+- Metrics collected with request_id / trace_id / span_id / parent_span_id and sample_rate.
+- `smc guardrail:stats --json` exposes p50/p90/p99, `p99_recent` (TTL default 86400s), hit_rate_recent, threshold, over-threshold counts/timestamps, window info.
+- `smc status` shows red/yellow/green lights for p99 vs threshold and hit-rate.
+- CLI single-line “Metrics Summary”: `traceId | sample_rate | p99_recent/threshold`.
+- Degrade path wired via `shouldDegrade` and runtime fallbacks (cache-only or downgraded model).
+
+## Provider integration (real RAG/LLM)
+- Skeleton: `lib/runtime/providers/skeleton.js` (timeout, retry, circuit-breaker hooks).
+- Local example: `lib/runtime/providers/examples/local-rag.js`.
+- Runtime applies hints: rerank depth, search depth, cache usage, max_hops.
+- Pass provider path via env: `SMC_PROVIDER_MODULE=...`.
+
+## Workflow pipeline
+```
+kickoff → agent → todo → /tdd
+```
+- `kickoff`: generates structured analysis; `--parse` writes todos.
+- `agent`: routes to 5-agent stack; can `--create-todo` or `--dry-run`.
+- `/tdd`: guided test-driven loop in Claude Code.
+
+## Project layout (after `smc template`)
+```
+.claude/          # Claude config, hooks, commands, skills, memory
+.codex/           # Codex config (if --all)
+AGENTS.md         # Codex instructions
+CLAUDE.md         # Project-level instructions
+config/           # guardrails, platform defaults
+lib/              # runtime, agents, memory, guardrails, providers
+scripts/          # autoroll, benchmarks
+docs/production-checklist.md
+```
+
+## Development & testing
 ```bash
-# Detect configured platforms
-smc platform:detect
-
-# Convert Claude config to Codex
-smc platform:convert claude codex
-
-# Sync to all platforms
-smc platform:sync
+npm install
+npm test          # jest suite
+npm run memory:autoroll -- --dryrun   # safe check
 ```
 
----
-
-## Project Structure
-
-After `smc template`, your project looks like:
-
-```
-your-project/
-├── .claude/                 # Claude Code configuration
-│   ├── settings.json        # Hooks and settings
-│   ├── CLAUDE.md            # Project instructions
-│   ├── commands/            # Slash commands
-│   ├── skills/              # Installed skills
-│   ├── hooks/               # Automation hooks
-│   ├── rag/                 # Knowledge index
-│   └── memory/current.md    # AI persistent state
-│
-├── .codex/                  # Codex CLI configuration (if --all)
-│   └── config.toml          # Codex settings
-│
-├── AGENTS.md                # Codex instructions (if --all)
-└── CLAUDE.md                # Project-level AI config
-```
-
----
-
-## Commands Reference
-
-### Core Commands
-
-| Command | Description |
-|---------|-------------|
-| `smc init` | Initialize global configuration |
-| `smc template` | Deploy project template |
-| `smc sync` | Sync configuration (incremental) |
-| `smc status` | Show current status |
-
-### Platform Commands
-
-| Command | Description |
-|---------|-------------|
-| `smc platform:detect` | Detect AI platforms in project |
-| `smc platform:list` | List supported platforms |
-| `smc platform:convert <from> <to>` | Convert between platforms |
-| `smc platform:sync` | Sync config to all platforms |
-
-### Skill Commands
-
-| Command | Description |
-|---------|-------------|
-| `smc skill:list` | List installed skills |
-| `smc skill:create <name>` | Create new skill |
-| `smc marketplace:list` | Browse skill marketplace |
-| `smc marketplace:install <name>` | Install a skill |
-
-### Quality Commands
-
-| Command | Description |
-|---------|-------------|
-| `smc qg:check` | Run quality gate checks |
-| `smc qg:rules` | List quality rules |
-| `smc config:validate` | Validate configuration |
-
----
-
-## Slash Commands
-
-Available in Claude Code after template deployment:
-
-| Command | Model | Description |
-|---------|-------|-------------|
-| `/review` | Sonnet | Code review + security scan |
-| `/test` | Sonnet | Run tests with TDD support |
-| `/fix` | Haiku | Quick fix for build/lint errors |
-| `/plan` | Opus | Architecture and planning |
-| `/commit` | - | Git commit with message |
-| `/tdd` | - | Test-driven development workflow |
-| `/todos` | - | Task management |
-
-## Agent Commands
-
-```bash
-# List available agents
-smc agent --list
-
-# Route task to appropriate agent
-smc agent "设计 REST API"              # → Architect
-smc agent "实现登录功能"               # → Builder
-smc agent "审查代码质量"               # → Reviewer
-
-# Options
-smc agent "任务" --dry-run             # Preview only
-smc agent "任务" --create-todo         # Create todo from output
-smc agent "任务" --verbose             # Detailed output
-```
-
-## Workflow Commands
-
-```bash
-# Task kickoff and analysis
-smc workflow kickoff "实现用户反馈功能"           # Create placeholder todo
-smc workflow kickoff "任务" --dry-run             # Show Conductor prompt
-smc workflow kickoff --parse                       # Parse Claude output to todos
-
-# Project workflow
-smc workflow start "Build a REST API"             # Start Phase 1
-smc workflow status                                # Show all projects
-smc workflow next                                  # Advance to next phase
-```
-
----
-
-## Multi-Platform Workflow
-
-### Converting Existing Project
-
-```bash
-# You have a Claude Code project, want to add Codex support
-
-# 1. See what's configured
-smc platform:detect
-# Output: Detected 1 platform(s): claude
-
-# 2. Convert to Codex
-smc platform:convert claude codex
-
-# 3. Verify
-smc platform:detect
-# Output: Detected 2 platform(s): claude, codex
-
-# 4. Use either CLI
-claude "Fix the login bug"
-codex "Fix the login bug"
-```
-
-### Platform Config Mapping
-
-| Claude Code | Codex CLI |
-|-------------|-----------|
-| `.claude/settings.json` | `.codex/config.toml` |
-| `CLAUDE.md` | `AGENTS.md` |
-| JSON format | TOML format |
-| Hooks in settings.json | Notifications in config.toml |
-
----
-
-## Configuration
-
-### Claude Code (`~/.claude/config.json`)
-
-```json
-{
-  "version": "1.7.2",
-  "model": "claude-sonnet-4",
-  "agents": {
-    "architect": { "model": "claude-opus-4" },
-    "builder": { "model": "claude-sonnet-4" },
-    "reviewer": { "model": "claude-opus-4" }
-  },
-  "thinkingLens": {
-    "enabled": true,
-    "autoSync": true
-  }
-}
-```
-
-### Codex CLI (`.codex/config.toml`)
-
-```toml
-model = "o3"
-model_provider = "openai"
-sandbox_mode = "workspace-write"
-approval_policy = "on-failure"
-
-[project]
-project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]
-
-[features]
-shell_tool = true
-web_search_request = true
-```
-
----
-
-## Architecture
-
-### Memory System
-
-**Dual-Layer Architecture** (Inspired by [Clawdbot](https://github.com/peterthehan/clawdbot))
-
-```
-.claude/
-├── memory/
-│   ├── current.md         # 持久状态（会话结束自动更新）
-│   ├── 2026-01-27.md      # 今日笔记
-│   ├── 2026-01-26.md      # 昨日笔记
-│   └── ...                # 14天滚动清理
-└── handoffs/
-    └── LATEST.md          # 压缩前快照（< 2h 有效）
-```
-
-| Layer | 文件 | 内容 | 生命周期 |
-|-------|------|------|---------|
-| **Layer 1** | `memory/YYYY-MM-DD.md` | 临时笔记、会话记录、WIP | 14天滚动 |
-| **Layer 2** | `memory/current.md` | 项目状态、偏好、约束 | 永久 |
-
-#### Session Lifecycle
-
-```
-Session Start
-     │
-     ▼
-┌─────────────────┐
-│ memory-loader   │ ◄── Load memory/current.md + memory/今日+昨日.md
-└─────────────────┘
-     │
-     ▼
-   Work with AI
-     │
-     ├── Pre-compaction Flush ──► 重要信息写入 memory/
-     │
-     ▼
-┌─────────────────┐
-│ memory-saver    │ ──► Save insights to memory/YYYY-MM-DD.md
-└─────────────────┘
-     │
-     ▼
-Session End
-```
-
-#### Pre-compaction Memory Flush
-
-当 context 接近上限时，AI 会主动将重要信息刷盘：
-
-```markdown
-## 15:00 - Session Summary
-
-### 关键决策
-- 采用双层记忆架构
-- 使用 14 天滚动保留
-
-### 下一步
-- [ ] 测试完整流程
-```
-
-**触发信号**: 对话 > 15 轮 | 工具调用 > 30 次 | 文件修改 > 10 个
-
-### Hook System
-
-```
-Claude Code Event
-     │
-     ▼
-┌─────────────────────────────────────────┐
-│            settings.json                 │
-├─────────────────────────────────────────┤
-│ SessionStart  → memory-loader.cjs       │
-│ SessionEnd    → memory-saver.cjs        │
-│ PreCompact    → auto-handoff.cjs        │
-│ PostToolUse   → code-formatter.cjs      │
-└─────────────────────────────────────────┘
-```
-
----
-
-## Upgrading
-
-### From v1.x
-
-```bash
-# Update global package
-npm update -g sumulige-claude
-
-# Update project template
-smc template --force
-```
-
-### Migration
-
-Old hooks are automatically migrated. Your custom configurations are backed up to `.claude/backup/`.
-
----
+## Production checklist
+See `docs/production-checklist.md` for monitoring, thresholds, provider wiring, logging, and rollout steps.
 
 ## Troubleshooting
-
-### Common Issues
-
-**Q: Commands not found after install**
-```bash
-# Ensure npm global bin is in PATH
-export PATH="$PATH:$(npm bin -g)"
-```
-
-**Q: Platform not detected**
-```bash
-# Ensure project has config files
-ls -la .claude/settings.json
-ls -la .codex/config.toml
-```
-
-**Q: Codex can't read AGENTS.md**
-```bash
-# Regenerate from Claude config
-smc platform:convert claude codex
-```
-
----
+- **Command not found**: `export PATH="$PATH:$(npm bin -g)"`.
+- **Platform not detected**: ensure `.claude/settings.json` or `.codex/config.toml` exists.
+- **Memory too large**: `smc memory:compact` or enable autoroll (default on).
 
 ## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing`)
-5. Open a Pull Request
-
----
-
-## Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Development Guide](docs/DEVELOPMENT.md) | Architecture and adding skills |
-| [Marketplace Guide](docs/MARKETPLACE.md) | Skill marketplace user guide |
-| [Q&A](Q&A.md) | Frequently asked questions |
-
----
-
-## Changelog
-
-### v1.10.2 (2026-01-27)
-
-**Quality Gate + SEO Skill**
-
-- **changelog-version-sync** - Pre-commit 检查 CHANGELOG 是否包含当前版本
-- **seo-optimization skill** - Git/README/Release/Technical SEO 最佳实践
-
-### v1.10.1 (2026-01-27)
-
-**Cleanup** - 清理测试产物 (-7,604 行)
-
-- 删除 4 个空 Skills、3 个测试项目、demo 文件
-
-### v1.10.0 (2026-01-27)
-
-**New Platform Support** - Windsurf + Antigravity (8 → 10 platforms)
-
-- **Windsurf** (Codeium) - AI-native IDE with Cascade system
-- **Antigravity** (Google) - Agent-first IDE
-
-### v1.9.2 (2026-01-27)
-
-**Multi-Platform Architecture Refactoring** - Plugin-style architecture
-
-- **UnifiedInstruction** - Unified instruction format, N×M → 2N conversion methods
-- **PlatformRegistry** - Auto-discovery registration, no manual index.js changes
-- **Self-contained Adapters** - Each platform in single directory (`lib/platforms/xxx/`)
-- **Backward Compatible** - `lib/adapters/` re-exports new architecture
-- **Code Reduction** - Removed ~1900 lines of legacy code
-
-### v1.8.0 (2026-01-27)
-
-**6 New Platforms** - Aider, Cursor, Cline, OpenCode, Trae, Zed
-
-- Support for 8 total AI coding platforms
-- Platform-specific configuration and instruction formats
-
-### v1.7.2 (2026-01-27)
-
-**Dual-Layer Memory System** - Inspired by Clawdbot
-
-- **Two-Layer Architecture** - Daily notes (`memory/YYYY-MM-DD.md`) + Persistent state (`memory/current.md`)
-- **Pre-compaction Flush** - Save important info before context compression
-- **Content-Aware Save** - Save insights, not just metadata
-- **14-Day Rolling** - Auto-cleanup of old daily notes
-
-### v1.7.0 (2026-01-26)
-
-**Agent Orchestration & Workflow Integration**
-
-- **5-Agent System** - Conductor, Architect, Builder, Reviewer, Librarian
-- **Intelligent Routing** - Auto-route tasks based on pattern matching
-- **Workflow Pipeline** - kickoff → agent → todo → tdd
-- **Todo Bridge** - Auto-create todos from agent analysis
-- **Strategic Compact** - Smart context compression before compaction
-- **New Commands**:
-  - `smc agent <task>` - Route task to agent
-  - `smc workflow kickoff` - Task analysis and planning
-  - `--create-todo`, `--parse` options
-
-### v1.6.0 (2026-01-24)
-
-**Multi-Platform Support** - OpenAI Codex CLI compatibility
-
-- Platform Adapters, Config Converter, Instruction Converter
-- `platform:detect`, `platform:convert`, `platform:sync` commands
-
-### v1.5.2 (2026-01-23)
-
-- Architecture refactoring and code cleanup
-
-[Full Changelog](CHANGELOG.md)
-
----
-
-## Feedback & Contributing
-
-We'd love to hear from you!
-
-| 类型 | 链接 |
-|------|------|
-| 🐛 Bug 报告 | [Open an Issue](https://github.com/sumulige/sumulige-claude/issues/new?template=bug_report.md) |
-| 💡 功能建议 | [Feature Request](https://github.com/sumulige/sumulige-claude/issues/new?template=feature_request.md) |
-| 💬 问题讨论 | [Discussions](https://github.com/sumulige/sumulige-claude/discussions) |
-| ⭐ 觉得有用？ | [Give us a Star](https://github.com/sumulige/sumulige-claude) |
-
-### Contributing
-
-```bash
-# Fork & Clone
-git clone https://github.com/YOUR_USERNAME/sumulige-claude.git
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-
-# Submit PR
-```
-
-欢迎提交 PR！无论是修复 typo 还是新增功能，我们都很感激。
-
----
+PRs welcome. Please run `npm test` before submitting.
 
 ## License
-
-MIT © [sumulige](https://github.com/sumulige)
-
----
-
-<p align="center">
-  <strong>Works with</strong><br>
-  <a href="https://claude.ai">Claude Code</a> •
-  <a href="https://openai.com/codex">Codex CLI</a>
-</p>
+MIT © sumulige

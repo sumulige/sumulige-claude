@@ -545,8 +545,8 @@ Usage notes:
 </skill>
 
 <skill>
-<name>react-node-practices</name>
-<description></description>
+<name>seo-optimization</name>
+<description>SEO best practices for Git, documentation, and web projects</description>
 <location>project</location>
 </skill>
 
@@ -569,20 +569,8 @@ Usage notes:
 </skill>
 
 <skill>
-<name>test-master</name>
-<description></description>
-<location>project</location>
-</skill>
-
-<skill>
 <name>test-skill-name</name>
 <description></description>
-<location>project</location>
-</skill>
-
-<skill>
-<name>test-workflow</name>
-<description>Automated testing workflow that combines Playwright testing, Slack GIF recording, and test report generation. Use when user mentions "测试"、"test"、"Playwright" or asks for QA/testing workflows. Automatically generates: (1) Test execution with Playwright, (2) Slack-optimized GIF of test process, (3) Screenshot at each verification point, (4) Markdown test report with embedded screenshots.</description>
 <location>project</location>
 </skill>
 

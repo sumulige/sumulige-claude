@@ -1,68 +1,33 @@
 # 技能索引 (Skills Index)
 
-> Sumulige Claude 技能库总览
+> Oh My Claude 技能库总览
 
-@version: 1.7.0
-@updated: 2026-01-26
+@version: 1.0.0
 
 ## 目录
 
-- [核心技能](#核心技能)
-- [开发技能](#开发技能)
-- [设计技能](#设计技能)
-- [文档技能](#文档技能)
-- [工作流技能](#工作流技能)
+- [内置技能](#内置技能)
+- [示例技能](#示例技能)
+- [技能模板](#技能模板)
+- [创建新技能](#创建新技能)
 
 ---
 
-## 核心技能
+## 内置技能
 
-| 技能 | 模型 | 说明 |
+### 工作流类
+
+| 技能 | 说明 | 难度 |
 |------|------|------|
-| [quality-guard](./quality-guard/) | Sonnet | 代码审查 + 安全扫描 + 清理 |
-| [test-master](./test-master/) | Sonnet | TDD + E2E + 覆盖率 |
-| [design-brain](./design-brain/) | Opus | 规划 + 架构设计 |
-| [quick-fix](./quick-fix/) | Haiku | 快速错误修复 |
+| [manus-kickoff](./manus-kickoff/) | Manus 风格项目启动流程 | 中级 |
 
-## 开发技能
+### 开发类
 
-| 技能 | 说明 |
-|------|------|
-| [react-best-practices](./react-best-practices/) | React/Next.js 45 条性能规则 |
-| [react-node-practices](./react-node-practices/) | React + Node.js 最佳实践 |
-| [mcp-builder](./mcp-builder/) | MCP Server 构建指南 |
-| [web-artifacts-builder](./web-artifacts-builder/) | React/Tailwind 复杂 Artifact |
+*(待补充)*
 
-## 设计技能
+### 设计类
 
-| 技能 | 说明 |
-|------|------|
-| [frontend-design](./frontend-design/) | 前端界面设计 |
-| [canvas-design](./canvas-design/) | 视觉艺术创作 |
-| [algorithmic-art](./algorithmic-art/) | p5.js 生成艺术 |
-| [threejs-fundamentals](./threejs-fundamentals/) | 3D 场景基础 |
-| [web-design-guidelines](./web-design-guidelines/) | Vercel UI 规范 |
-| [brand-guidelines](./brand-guidelines/) | Anthropic 品牌规范 |
-| [theme-factory](./theme-factory/) | 10 套预设主题 |
-| [slack-gif-creator](./slack-gif-creator/) | Slack GIF 制作 |
-
-## 文档技能
-
-| 技能 | 说明 |
-|------|------|
-| [doc-coauthoring](./doc-coauthoring/) | 文档协作工作流 |
-| [internal-comms](./internal-comms/) | 内部沟通模板 |
-| [pdf](./pdf/) | PDF 处理 |
-| [docx](./docx/) | Word 文档处理 |
-| [pptx](./pptx/) | PPT 演示文稿 |
-
-## 工作流技能
-
-| 技能 | 说明 |
-|------|------|
-| [manus-kickoff](./manus-kickoff/) | 项目启动流程 |
-| [skill-creator](./skill-creator/) | 技能创建指南 |
-| [test-workflow](./test-workflow/) | 测试工作流 |
+*(待补充)*
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.7",
+  "version": "1.11.1",
   "model": "claude-opus-4.5",
   "agents": {
     "conductor": {
@@ -30,5 +30,23 @@
     "enabled": true,
     "autoSync": true,
     "syncInterval": 20
+  },
+  "agentRegistry": {
+    "agents": {
+      "conductor": { "role": "任务协调与分解", "model": "claude-opus-4.5" },
+      "architect": { "role": "架构设计", "model": "claude-opus-4.5" },
+      "builder": { "role": "代码实现", "model": "claude-sonnet-4.5" },
+      "reviewer": { "role": "代码审查", "model": "claude-opus-4.5" },
+      "librarian": { "role": "文档归档", "model": "claude-haiku-4.5" }
+    },
+    "routing": {
+      "default": "conductor",
+      "patterns": [
+        { "match": "设计|架构|API|模型", "agent": "architect", "priority": 10 },
+        { "match": "实现|编码|开发|测试", "agent": "builder", "priority": 8 },
+        { "match": "审查|review|安全|检查", "agent": "reviewer", "priority": 7 },
+        { "match": "文档|记录|归档", "agent": "librarian", "priority": 5 }
+      ]
+    }
   }
 }

@@ -112,6 +112,14 @@ const COMMANDS = {
     help: 'Check system health',
     args: ''
   },
+  'guardrail:stats': {
+    help: 'Show guardrail sliding window latency stats',
+    args: ''
+  },
+  'guardrail:clear': {
+    help: 'Clear guardrail sliding window data',
+    args: ''
+  },
   'skills:search': {
     help: 'Search skills by keyword',
     args: '<keyword>'
@@ -163,6 +171,10 @@ const COMMANDS = {
   changelog: {
     help: 'Generate changelog from git commits',
     args: '[--from <tag>] [--to <tag>] [--json]'
+  },
+  'memory:compact': {
+    help: 'Compact .claude/memory/current.md with rolling archive',
+    args: ''
   },
   workflow: {
     help: 'Manage AI development workflow (Phase 1: NotebookLM research)',
@@ -257,7 +269,7 @@ function showHelp() {
 // Main Entry
 // ============================================================================
 
-function main() {
+async function main() {
   const [cmd, ...args] = process.argv.slice(2);
 
   // Handle --version flag
@@ -282,9 +294,9 @@ function main() {
   if (handler) {
     // Check if it's a marketplace command
     if (cmd.startsWith('marketplace:')) {
-      marketplaceCommands[cmd](...args);
+      await marketplaceCommands[cmd](...args);
     } else {
-      runCommand(cmd, args);
+      await runCommand(cmd, args);
     }
   } else {
     console.log(`Unknown command: ${cmd}`);
@@ -295,4 +307,7 @@ function main() {
 }
 
 // Run
-main();
+main().catch((err) => {
+  console.error(err?.stack || err?.message || err);
+  process.exit(1);
+});

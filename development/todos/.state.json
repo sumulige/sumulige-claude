@@ -1,9 +1,21 @@
 {
-  "timestamp": "2026-01-27T14:37:07.981Z",
+  "timestamp": "2026-01-28T16:51:34.173Z",
   "completed": [
     {
       "file": "boris-optimizations.md",
       "title": "Boris 最佳实践集成"
+    },
+    {
+      "file": "local-knowledge-index.md",
+      "title": "本地知识库索引"
+    },
+    {
+      "file": "todo-system.md",
+      "title": "TODO 任务管理系统"
+    },
+    {
+      "file": "web-search-integration.md",
+      "title": "网络搜索集成"
     }
   ],
   "active": [

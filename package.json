@@ -24,6 +24,8 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "postinstall": "node cli.js init",
+    "memory:autoroll": "node scripts/autoroll.mjs",
+    "version:sync": "node scripts/sync-version.mjs",
     "sync": "node scripts/sync-external.mjs",
     "update-registry": "node scripts/update-registry.mjs",
     "sync:all": "npm run sync && npm run update-registry",

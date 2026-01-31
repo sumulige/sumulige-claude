@@ -69,6 +69,9 @@ function loadSessionState() {
   }
 }
 
+/**
+ * Load active TODOs
+ */
 // 递归扫描目录中的所有 .md 文件
 function scanDirRecursive(dir, results = []) {
   if (!fs.existsSync(dir)) return results;
@@ -86,9 +89,6 @@ function scanDirRecursive(dir, results = []) {
   return results;
 }
 
-/**
- * Load active TODOs (including subdirectories)
- */
 function loadActiveTodos() {
   const todosDir = path.join(PROJECT_DIR, 'development', 'todos', 'active');
   if (!fs.existsSync(todosDir)) {

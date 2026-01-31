@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "thresholds": {
+    "latency_ms_p99": 1200,
+    "hit_rate_min": 0.75,
+    "cost_per_req_usd": 0.002
+  },
+  "degrade": {
+    "actions": [
+      "disable_rerank",
+      "fallback_local_cache",
+      "limit_hops_to_1"
+    ],
+    "restore_after_seconds": 600
+  }
+}

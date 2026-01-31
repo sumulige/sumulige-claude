@@ -1,0 +1,38 @@
+{
+  "session": {
+    "id": "unknown",
+    "startTime": "2026-01-27T14:53:20.169Z",
+    "project": "sumulige-claude",
+    "version": "1.11.0"
+  },
+  "memory": {
+    "loaded": true,
+    "entries": 8,
+    "current": {
+      "loaded": true,
+      "entries": 7
+    },
+    "daily": {
+      "loaded": true,
+      "files": [
+        "2026-01-27"
+      ],
+      "entries": 1
+    }
+  },
+  "anchors": {
+    "loaded": true,
+    "modules": 0
+  },
+  "todos": {
+    "loaded": true,
+    "active": 1,
+    "completed": 1
+  },
+  "insights": {
+    "keyDecisions": [],
+    "newKnowledge": [],
+    "openQuestions": [],
+    "nextSteps": []
+  }
+}
