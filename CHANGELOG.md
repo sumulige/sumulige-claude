@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.2](https://github.com/sumulige/sumulige-claude/compare/v1.11.1...v1.11.2) (2026-01-31)
+
+### Features
+- Guardrail & metrics: 滑窗 p99_recent/命中率、动态阈值、status 灯牌、CLI Metrics Summary。
+- Memory 归档：post-task autoroll hook 默认启用，rolling-store/index.json 摘要透传检索。
+- Runtime：可插拔 RAG/LLM Provider skeleton（超时/重试/熔断/降级），hints 作用到检索/缓存。
+
+### Documentation
+- README 英/中文重写，新增生产落地检查、观测与 provider 接入说明。
+- 新增 docs/memory-guardrails.md、docs/metrics-tracing.md、docs/production-checklist.md。
+
 ### [1.11.1](https://github.com/sumulige/sumulige-claude/compare/v1.11.0...v1.11.1) (2026-01-28)
 
 
