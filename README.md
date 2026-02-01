@@ -35,6 +35,10 @@ npm install -g sumulige-claude
 # Scaffold project template (safe for existing projects)
 smc template --safe
 
+# Safe sync flow (plan/apply, non-destructive, overlay-aware)
+smc sync:plan           # show actions → .claude/upstream (no changes)
+smc sync:apply          # apply template → .claude/upstream (local untouched)
+
 # Kick off a task + route to the right agent
 smc agent "设计登录接口"
 
@@ -61,6 +65,7 @@ smc workflow kickoff "实现用户认证" --parse   # produce todos
 Slash commands (Claude Code): `/review`, `/test`, `/fix`, `/plan`, `/commit`, `/tdd`, `/todos`.
 
 ## Configuration highlights
+- **Overlay (local > root > upstream)**: put project-specific hooks/registry in `.claude/local`, upstream sync lands in `.claude/upstream`, runtime will prefer local → root → upstream.
 - **Memory guardrails**: `config/memory-guardrails.json` (latency/hit-rate/cost thresholds + degrade actions).
 - **Provider module**: set `SMC_PROVIDER_MODULE=lib/runtime/providers/examples/local-rag.js` (or your module). API signature in `lib/runtime/providers/skeleton.js`.
 - **Autoroll hook**: `.claude/hooks/post-task/autoroll.sh` (enabled by default). Env: `SMC_AUTOROLL_DISABLE=1`, `SMC_AUTOROLL_DRYRUN=1`, `SMC_AUTOROLL_VERBOSE=1`.

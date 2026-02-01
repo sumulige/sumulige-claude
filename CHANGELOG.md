@@ -883,3 +883,15 @@ Tests:       575 passed, 575 total
 
 ### Added
 - Initial stable release
+## 1.12.1 (2026-02-01)
+- Added overlay-aware dispatcher (hooks/registry load order: .claude/local > .claude/hooks > .claude/upstream/hooks)
+- Introduced safe sync flow: `smc sync:plan` (no-op) and `smc sync:apply` (write to .claude/upstream only)
+- Postinstall now opt-in via `SMC_POSTINSTALL=0|1` to avoid sandbox/CI side effects
+- Added affected-files generator (`scripts/affected-files.mjs`) based on version-manifest
+- Template hook-registry includes optional `post-task-autoroll` (disabled by default)
+## 1.12.0 (2026-02-01)
+- Added overlay-aware dispatcher (hooks/registry load order: .claude/local > .claude/hooks > .claude/upstream/hooks)
+- Introduced safe sync flow: `smc sync:plan` (no-op) and `smc sync:apply` (write to .claude/upstream only)
+- Postinstall now opt-in via `SMC_POSTINSTALL=0|1` to avoid sandbox/CI side effects
+- Added affected-files generator (`scripts/affected-files.mjs`) based on version-manifest
+- Template hook-registry includes optional `post-task-autoroll` (disabled by default)

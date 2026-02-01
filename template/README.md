@@ -27,6 +27,10 @@ npm install -g sumulige-claude
 # Initialize in your project
 smc template
 
+# Safe sync (plan/apply, overlay-aware)
+smc sync:plan   # no-op, shows actions to .claude/upstream
+smc sync:apply  # apply template to .claude/upstream, local untouched
+
 # Start Claude Code
 claude
 ```
@@ -42,6 +46,11 @@ claude
 | AI forgets context every session | Repeat project structure constantly | Automatic memory via ThinkingLens |
 | Inconsistent code quality | Manual reviews, missed issues | Quality Gate auto-checks |
 | Works with multiple AI CLIs | Maintain separate configs | One config, 8 platforms |
+
+Overlay model (local > root > upstream)
+- Put project-specific overrides in `.claude/local`.
+- Template sync writes to `.claude/upstream`.
+- Runtime dispatcher and registry merge prefer local → .claude/hooks → upstream/hooks.
 
 ---
 

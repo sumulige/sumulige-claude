@@ -1,0 +1,532 @@
+#!/usr/bin/env node
+/**
+ * Auto Handoff Hook - Context Preservation & Recovery
+ *
+ * Claude Official Hooks: PreCompact, SessionStart
+ * Triggered:
+ * - PreCompact: Before conversation context is compressed (SAVE)
+ * - SessionStart: At session start to recover context (LOAD)
+ *
+ * Features:
+ * - Auto-generate handoff document before context compression
+ * - Auto-load recent handoff at session start
+ * - Preserve critical context that might be lost during compaction
+ * - Save current state including progress, blockers, and next steps
+ *
+ * Merged from: auto-handoff.cjs + handoff-loader.cjs (2026-01-27)
+ *
+ * Environment Variables:
+ * - CLAUDE_PROJECT_DIR: Project directory path
+ * - CLAUDE_SESSION_ID: Unique session identifier
+ * - CLAUDE_CONVERSATION_ID: Conversation identifier
+ * - CLAUDE_EVENT_TYPE: Current event type (PreCompact/SessionStart)
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+const CLAUDE_DIR = path.join(PROJECT_DIR, '.claude');
+const HANDOFFS_DIR = path.join(CLAUDE_DIR, 'handoffs');
+const LATEST_FILE = path.join(HANDOFFS_DIR, 'LATEST.md');
+const SESSION_STATE_FILE = path.join(CLAUDE_DIR, '.session-state.json');
+const COMPACT_STATE_FILE = path.join(CLAUDE_DIR, '.compact-state.json');
+const STATE_FILE = path.join(PROJECT_DIR, 'development', 'todos', '.state.json');
+const SESSION_ID = process.env.CLAUDE_SESSION_ID || 'unknown';
+const CONVERSATION_ID = process.env.CLAUDE_CONVERSATION_ID || 'unknown';
+const CURRENT_EVENT = process.env.CLAUDE_EVENT_TYPE || 'PreCompact';
+const VALIDITY_HOURS = 2;
+
+/**
+ * Ensure handoffs directory exists
+ */
+function ensureHandoffsDir() {
+  if (!fs.existsSync(HANDOFFS_DIR)) {
+    fs.mkdirSync(HANDOFFS_DIR, { recursive: true });
+  }
+}
+
+/**
+ * Load current session state
+ */
+function loadSessionState() {
+  if (!fs.existsSync(SESSION_STATE_FILE)) {
+    return {
+      session: { project: path.basename(PROJECT_DIR) },
+      memory: { entries: 0 },
+      todos: { active: 0, completed: 0 }
+    };
+  }
+
+  try {
+    return JSON.parse(fs.readFileSync(SESSION_STATE_FILE, 'utf-8'));
+  } catch (e) {
+    return {
+      session: { project: path.basename(PROJECT_DIR) },
+      memory: { entries: 0 },
+      todos: { active: 0, completed: 0 }
+    };
+  }
+}
+
+/**
+ * Load active TODOs
+ */
+// 递归扫描目录中的所有 .md 文件
+function scanDirRecursive(dir, results = []) {
+  if (!fs.existsSync(dir)) return results;
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanDirRecursive(fullPath, results);
+      } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== '_README.md') {
+        results.push(fullPath);
+      }
+    }
+  } catch (e) {}
+  return results;
+}
+
+function loadActiveTodos() {
+  const todosDir = path.join(PROJECT_DIR, 'development', 'todos', 'active');
+  if (!fs.existsSync(todosDir)) {
+    return [];
+  }
+
+  try {
+    // 递归扫描所有 .md 文件（包括子目录）
+    const files = scanDirRecursive(todosDir);
+
+    return files.map(fullPath => {
+      const content = fs.readFileSync(fullPath, 'utf-8');
+      const titleMatch = content.match(/^#\s+(.+)$/m);
+      const relativePath = path.relative(todosDir, fullPath);
+      return {
+        file: relativePath,
+        title: titleMatch ? titleMatch[1] : path.basename(fullPath, '.md')
+      };
+    });
+  } catch (e) {
+    return [];
+  }
+}
+
+/**
+ * Get recently modified files
+ */
+function getRecentlyModifiedFiles(hours = 24) {
+  const recentFiles = [];
+  const cutoff = Date.now() - (hours * 60 * 60 * 1000);
+
+  // Check common source directories
+  const sourceDirs = ['src', 'lib', '.claude', 'development'];
+
+  for (const dir of sourceDirs) {
+    const fullPath = path.join(PROJECT_DIR, dir);
+    if (!fs.existsSync(fullPath)) continue;
+
+    try {
+      const walkDir = (dirPath, depth = 0) => {
+        if (depth > 3) return; // Limit depth
+
+        const items = fs.readdirSync(dirPath, { withFileTypes: true });
+        for (const item of items) {
+          const itemPath = path.join(dirPath, item.name);
+
+          if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules') {
+            walkDir(itemPath, depth + 1);
+          } else if (item.isFile()) {
+            try {
+              const stat = fs.statSync(itemPath);
+              if (stat.mtimeMs > cutoff) {
+                const relativePath = path.relative(PROJECT_DIR, itemPath);
+                recentFiles.push({
+                  path: relativePath,
+                  modified: stat.mtime.toISOString()
+                });
+              }
+            } catch (e) {
+              // Ignore stat errors
+            }
+          }
+        }
+      };
+
+      walkDir(fullPath);
+    } catch (e) {
+      // Ignore directory errors
+    }
+  }
+
+  // Sort by modification time (most recent first)
+  recentFiles.sort((a, b) => b.modified.localeCompare(a.modified));
+
+  return recentFiles.slice(0, 20); // Return top 20
+}
+
+/**
+ * Generate handoff document
+ */
+function generateHandoff(sessionState) {
+  const now = new Date();
+  const todos = loadActiveTodos();
+  const recentFiles = getRecentlyModifiedFiles();
+
+  let content = `# Handoff: Pre-Compact Context Preservation
+
+> Auto-generated before context compression
+> Date: ${now.toISOString()}
+> Session: ${SESSION_ID}
+> Conversation: ${CONVERSATION_ID}
+
+---
+
+## Session Info
+
+- **Project**: ${sessionState.session?.project || 'unknown'}
+- **Version**: ${sessionState.session?.version || 'unknown'}
+- **Start Time**: ${sessionState.session?.startTime || 'unknown'}
+
+---
+
+## Memory State
+
+- **Entries Loaded**: ${sessionState.memory?.entries || 0}
+- **Anchors Modules**: ${sessionState.anchors?.modules || 0}
+
+---
+
+## Active TODOs (${todos.length})
+
+`;
+
+  if (todos.length > 0) {
+    todos.forEach(todo => {
+      content += `- [ ] ${todo.title} (\`${todo.file}\`)\n`;
+    });
+  } else {
+    content += `*No active TODOs*\n`;
+  }
+
+  content += `
+
+---
+
+## Recently Modified Files (Last 24h)
+
+`;
+
+  if (recentFiles.length > 0) {
+    recentFiles.slice(0, 10).forEach(f => {
+      content += `- \`${f.path}\` (${f.modified.split('T')[0]})\n`;
+    });
+    if (recentFiles.length > 10) {
+      content += `- *...and ${recentFiles.length - 10} more files*\n`;
+    }
+  } else {
+    content += `*No recently modified files*\n`;
+  }
+
+  content += `
+
+---
+
+## Context Preservation Notes
+
+**Important**: This handoff was auto-generated before context compaction.
+The following information should be re-loaded after compaction:
+
+1. Read \`.claude/MEMORY.md\` for recent session context
+2. Check \`development/todos/INDEX.md\` for task status
+3. Review recent git commits for code changes
+
+---
+
+## Recovery Commands
+
+\`\`\`bash
+# View recent memory
+cat .claude/MEMORY.md | head -100
+
+# Check active TODOs
+ls development/todos/active/
+
+# View recent changes
+git log --oneline -10
+git status
+\`\`\`
+
+---
+
+*Auto-generated by auto-handoff.cjs at ${now.toISOString()}*
+`;
+
+  return content;
+}
+
+/**
+ * Save handoff document
+ */
+function saveHandoff(content) {
+  ensureHandoffsDir();
+
+  const now = new Date();
+  const filename = `handoff_${now.toISOString().replace(/[:.]/g, '-')}.md`;
+  const filepath = path.join(HANDOFFS_DIR, filename);
+
+  fs.writeFileSync(filepath, content);
+
+  // Also save as latest handoff for easy access
+  const latestPath = path.join(HANDOFFS_DIR, 'LATEST.md');
+  fs.writeFileSync(latestPath, content);
+
+  // Clean up old handoffs (keep last 10)
+  const files = fs.readdirSync(HANDOFFS_DIR)
+    .filter(f => f.startsWith('handoff_') && f.endsWith('.md'))
+    .sort()
+    .reverse();
+
+  if (files.length > 10) {
+    files.slice(10).forEach(f => {
+      try {
+        fs.unlinkSync(path.join(HANDOFFS_DIR, f));
+      } catch (e) {
+        // Ignore deletion errors
+      }
+    });
+  }
+
+  return filename;
+}
+
+/**
+ * Update handoffs index
+ */
+function updateHandoffsIndex() {
+  const indexPath = path.join(HANDOFFS_DIR, 'INDEX.md');
+
+  const files = fs.readdirSync(HANDOFFS_DIR)
+    .filter(f => f.startsWith('handoff_') && f.endsWith('.md'))
+    .sort()
+    .reverse();
+
+  let content = `# Handoffs Index
+
+> Auto-generated context preservation documents
+> Updated: ${new Date().toISOString()}
+
+---
+
+## Recent Handoffs (${files.length})
+
+`;
+
+  files.slice(0, 20).forEach(f => {
+    const filepath = path.join(HANDOFFS_DIR, f);
+    const stat = fs.statSync(filepath);
+    content += `- [${f}](./${f}) - ${stat.mtime.toISOString()}\n`;
+  });
+
+  content += `
+
+---
+
+## Latest Handoff
+
+See [LATEST.md](./LATEST.md) for the most recent context snapshot.
+
+---
+
+*Index maintained by auto-handoff.cjs*
+`;
+
+  fs.writeFileSync(indexPath, content);
+}
+
+// ============================================================================
+// LOAD FUNCTIONS (SessionStart)
+// ============================================================================
+
+/**
+ * Get handoff file age in hours
+ */
+function getHandoffAge() {
+  try {
+    if (!fs.existsSync(LATEST_FILE)) return Infinity;
+    const stat = fs.statSync(LATEST_FILE);
+    return (Date.now() - stat.mtimeMs) / (1000 * 60 * 60);
+  } catch (e) {
+    return Infinity;
+  }
+}
+
+/**
+ * Parse handoff document into sections
+ */
+function parseHandoff(content) {
+  const sections = {};
+  const sectionPatterns = {
+    sessionInfo: /## Session Info\n([\s\S]*?)(?=\n## |$)/,
+    memoryState: /## Memory State\n([\s\S]*?)(?=\n## |$)/,
+    activeTodos: /## Active TODOs[^\n]*\n([\s\S]*?)(?=\n## |$)/,
+    recentFiles: /## Recently Modified Files[^\n]*\n([\s\S]*?)(?=\n## |$)/,
+    recoveryCommands: /## Recovery Commands\n([\s\S]*?)(?=\n## |$)/
+  };
+
+  for (const [key, pattern] of Object.entries(sectionPatterns)) {
+    const match = content.match(pattern);
+    sections[key] = match ? match[1].trim() : '';
+  }
+
+  return {
+    raw: content,
+    sections,
+    ageHours: getHandoffAge(),
+    hasContent: Object.values(sections).some(s => s.length > 0)
+  };
+}
+
+/**
+ * Load recent handoff if valid
+ */
+function loadRecentHandoff() {
+  if (!fs.existsSync(LATEST_FILE)) return null;
+
+  const ageHours = getHandoffAge();
+  if (ageHours > VALIDITY_HOURS) return null;
+
+  const content = fs.readFileSync(LATEST_FILE, 'utf-8');
+  return parseHandoff(content);
+}
+
+/**
+ * Load compact state if exists
+ */
+function loadCompactState() {
+  if (!fs.existsSync(COMPACT_STATE_FILE)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(COMPACT_STATE_FILE, 'utf-8'));
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Generate recovery context for SessionStart
+ */
+function generateRecoveryContext() {
+  const handoff = loadRecentHandoff();
+  const compactState = loadCompactState();
+
+  if (!handoff && !compactState) return null;
+
+  const context = {
+    source: handoff ? 'handoff' : 'compact-state',
+    timestamp: Date.now()
+  };
+
+  if (handoff) {
+    context.handoff = {
+      ageHours: handoff.ageHours,
+      activeTodos: handoff.sections.activeTodos,
+      recentFiles: handoff.sections.recentFiles
+    };
+  }
+
+  if (compactState) {
+    context.compact = {
+      level: compactState.level,
+      summary: compactState.summary,
+      itemsKept: compactState.itemsKept
+    };
+  }
+
+  return context;
+}
+
+/**
+ * Handle SessionStart - load recent handoff
+ */
+function handleSessionStart() {
+  const handoff = loadRecentHandoff();
+
+  if (handoff && handoff.hasContent) {
+    const ageMinutes = Math.round(handoff.ageHours * 60);
+    console.log(`\n🔄 Handoff loaded (${ageMinutes}min ago)`);
+
+    if (handoff.sections.activeTodos) {
+      const todoCount = (handoff.sections.activeTodos.match(/- \[/g) || []).length;
+      if (todoCount > 0) {
+        console.log(`   📋 ${todoCount} active TODOs`);
+      }
+    }
+
+    console.log(`   📁 Recovery: .claude/handoffs/LATEST.md\n`);
+  }
+}
+
+/**
+ * Handle PreCompact - save handoff
+ */
+function handlePreCompact() {
+  const sessionState = loadSessionState();
+  const content = generateHandoff(sessionState);
+  const filename = saveHandoff(content);
+  updateHandoffsIndex();
+
+  console.log(`\n⚡ PreCompact: Context preserved → ${filename}`);
+  console.log(`   Recovery: .claude/handoffs/LATEST.md\n`);
+}
+
+// ============================================================================
+// MAIN
+// ============================================================================
+
+/**
+ * Main execution - routes to appropriate handler based on event type
+ */
+function main() {
+  try {
+    if (CURRENT_EVENT === 'SessionStart') {
+      handleSessionStart();
+    } else {
+      // Default: PreCompact
+      handlePreCompact();
+    }
+    process.exit(0);
+  } catch (e) {
+    // Silent failure - don't interrupt
+    if (process.env.CLAUDE_HOOK_DEBUG) {
+      console.error(`Handoff error: ${e.message}`);
+    }
+    process.exit(0);
+  }
+}
+
+// Run
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  // Save functions
+  loadSessionState,
+  loadActiveTodos,
+  getRecentlyModifiedFiles,
+  generateHandoff,
+  saveHandoff,
+  updateHandoffsIndex,
+  // Load functions
+  getHandoffAge,
+  parseHandoff,
+  loadRecentHandoff,
+  loadCompactState,
+  generateRecoveryContext,
+  // Handlers
+  handleSessionStart,
+  handlePreCompact,
+  // Constants
+  VALIDITY_HOURS
+};

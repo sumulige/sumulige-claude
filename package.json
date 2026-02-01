@@ -1,6 +1,6 @@
 {
   "name": "sumulige-claude",
-  "version": "1.11.2",
+  "version": "1.12.1",
   "description": "The Best Agent Harness for Claude Code - AI Agent Skills, Rules & Best Practices",
   "main": "cli.js",
   "bin": {
@@ -23,7 +23,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
-    "postinstall": "node cli.js init",
+    "postinstall": "node scripts/postinstall.js",
     "memory:autoroll": "node scripts/autoroll.mjs",
     "version:sync": "node scripts/sync-version.mjs",
     "sync": "node scripts/sync-external.mjs",

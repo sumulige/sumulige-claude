@@ -32,6 +32,14 @@ const COMMANDS = {
     help: 'Sync to current project (auto-migrates old format)',
     args: '[--check-update] [--hooks]'
   },
+  'sync:plan': {
+    help: 'Show planned sync actions to .claude/upstream (no changes)',
+    args: ''
+  },
+  'sync:apply': {
+    help: 'Apply template sync to .claude/upstream (non-destructive)',
+    args: ''
+  },
   migrate: {
     help: 'Migrate old hooks format to new',
     args: ''
