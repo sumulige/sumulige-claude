@@ -250,6 +250,7 @@ function showHelp() {
   console.log('  smc template --safe   # Skip existing files');
   console.log('  smc template --force  # Overwrite without backup');
   console.log('  smc kickoff        # Start project planning');
+  console.log('  smc kickoff agent "Build a multi-platform chat"');
   console.log('  smc agent "Build a REST API"');
   console.log('  smc skill:create api-tester');
   console.log('  smc skill:check manus-kickoff');
