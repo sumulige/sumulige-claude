@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.2](https://github.com/sumulige/sumulige-claude/compare/v1.12.1...v1.12.2) (2026-02-03)
+
+### Fixed
+- todo-manager: 写入失败时输出简短错误并记录到 `.claude/agent-logs/todo-errors.log`，避免静默失败。
+- smc status: 兼容新版 `development/todos/INDEX.md` 统计格式，减少状态脱节。
+
 ### [1.11.2](https://github.com/sumulige/sumulige-claude/compare/v1.11.1...v1.11.2) (2026-01-31)
 
 ### Features
