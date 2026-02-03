@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.3](https://github.com/sumulige/sumulige-claude/compare/v1.12.2...v1.12.3) (2026-02-03)
+
+### Fixed
+- npm: 包发布时缺少 `scripts/postinstall.js`，导致全局安装失败。
+
 ### [1.12.2](https://github.com/sumulige/sumulige-claude/compare/v1.12.1...v1.12.2) (2026-02-03)
 
 ### Fixed
