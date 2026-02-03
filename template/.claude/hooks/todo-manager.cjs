@@ -24,6 +24,8 @@ const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const TODOS_DIR = path.join(PROJECT_DIR, 'development', 'todos');
 const INDEX_FILE = path.join(TODOS_DIR, 'INDEX.md');
 const STATE_FILE = path.join(TODOS_DIR, '.state.json');
+const LOG_DIR = path.join(PROJECT_DIR, '.claude', 'agent-logs');
+const ERROR_LOG = path.join(LOG_DIR, 'todo-errors.log');
 
 // 任务状态
 const STATUS = {
@@ -39,11 +41,23 @@ const COMPLETION_CALLBACK = {
   triggerLibrarian: true
 };
 
+function logError(context, error) {
+  const message = `[todo-manager] ${context}: ${error && error.message ? error.message : String(error)}`;
+  try {
+    console.error(`❌ ${message}`);
+  } catch {}
+  try {
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+    const details = error && error.stack ? error.stack : String(error);
+    fs.appendFileSync(ERROR_LOG, `${new Date().toISOString()} ${context}: ${details}\n`);
+  } catch {}
+}
+
 // 确保目录存在
 function ensureDirectories() {
   [TODOS_DIR, STATUS.ACTIVE, STATUS.COMPLETED, STATUS.BACKLOG, STATUS.ARCHIVED].forEach(dir => {
     const fullPath = dir.startsWith('/') ? dir : path.join(TODOS_DIR, dir);
-    try { fs.mkdirSync(fullPath, { recursive: true }); } catch (e) {}
+    try { fs.mkdirSync(fullPath, { recursive: true }); } catch (e) { logError('ensureDirectories mkdir failed', e); }
   });
 }
 
@@ -227,7 +241,7 @@ function loadPreviousState() {
     if (fs.existsSync(STATE_FILE)) {
       return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
     }
-  } catch (e) {}
+  } catch (e) { logError('loadPreviousState failed', e); }
   return null;
 }
 
@@ -240,7 +254,7 @@ function saveCurrentState(tasks) {
       active: tasks.active.map(t => ({ file: t.file, title: t.title }))
     };
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
-  } catch (e) {}
+  } catch (e) { logError('saveCurrentState failed', e); }
 }
 
 // 触发完成回调
@@ -264,7 +278,7 @@ async function triggerCompletionCallback(completedTask) {
     };
 
     fs.appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
-  } catch (e) {}
+  } catch (e) { logError('triggerCompletionCallback log failed', e); }
 
   // 可选：触发 Librarian 归档（异步，不阻塞）
   if (COMPLETION_CALLBACK.triggerLibrarian) {
@@ -279,7 +293,7 @@ async function triggerCompletionCallback(completedTask) {
           timestamp: new Date().toISOString()
         }) + '\n');
       }
-    } catch (e) {}
+    } catch (e) { logError('triggerCompletionCallback pending-archival failed', e); }
   }
 }
 
@@ -330,6 +344,7 @@ function updateIndex() {
 
     return { tasks, updated: needsUpdate, newlyCompleted };
   } catch (e) {
+    logError('updateIndex failed', e);
     return { tasks: { active: [], completed: [], backlog: [], archived: [] }, updated: false, newlyCompleted: [] };
   }
 }
