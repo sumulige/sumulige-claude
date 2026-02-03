@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.4](https://github.com/sumulige/sumulige-claude/compare/v1.12.3...v1.12.4) (2026-02-03)
+
+### Features
+- smc agent/kickoff agent: 默认 plan 模式 + 统一四段结构输出（规划/执行计划/测试/达标标准）。
+- Prompt 路由：自动加载 software-architect / web-designer / linus-architect。
+- UI 全局场景自动触发 ui-ux-pro-max（uipro init）。
+- 自动静默激活 skills，并记录激活日志。
+- Kickoff 自动创建 todos；agent 输出自动回写并可迁移 completed。
+- todo 索引强制刷新，避免 require 缓存不更新。
+
 ### [1.12.3](https://github.com/sumulige/sumulige-claude/compare/v1.12.2...v1.12.3) (2026-02-03)
 
 ### Fixed
