@@ -1,0 +1,12 @@
+name: design-audit
+description: "Systematic UI/UX audit with Steve Jobs & Jony Ive philosophy. Use when user requests design review, UI audit, or design improvement suggestions."
+version: 1.0.0
+triggers:
+  - "audit design"
+  - "review my design"
+  - "UI audit"
+  - "UX review"
+  - "design improvement"
+  - "审计设计"
+  - "设计审查"
+  - "UI 评估"

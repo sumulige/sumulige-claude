@@ -29,6 +29,18 @@
 
 ---
 
+## 设计系统
+
+| 文件 | 用途 |
+|------|------|
+| `.claude/rules/design-philosophy.md` | **核心哲学** - Steve Jobs/Jony Ive 设计原则 |
+| `.claude/rules/web-design-standard.md` | 技术规范 - 排版、间距、组件标准 |
+| `.claude/skills/design-audit/SKILL.md` | 审计协议 - 15 维度系统性审计 |
+| `.claude/skills/frontend-design/SKILL.md` | 前端美学 - 创意方向指南 |
+| `.claude/commands/design-audit.md` | 快速入口 - `/design-audit` 命令 |
+
+---
+
 ## 关键文件
 
 | 文件 | 用途 |

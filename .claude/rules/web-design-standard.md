@@ -1,6 +1,8 @@
 # Web 设计标准
 
 > 定义什么是好的设计，而非仅提供资源
+>
+> **前置阅读**: `.claude/rules/design-philosophy.md` — Steve Jobs/Jony Ive 核心哲学
 
 ## 优先级说明
 
@@ -155,12 +157,28 @@ $space-16: 4rem;    // 64px
 ❌ 过多操作按钮
 ```
 
-## 与现有 Skills 的关系
+## 与现有 Rules/Skills 的关系
 
 ```
-web-design-standard.md (本文件)
-├── 定义原则和标准
-└── 引用以下 Skills 执行具体任务：
+设计系统层级（从核心到执行）：
+
+/rules/design-philosophy.md ⭐ 核心
+├── Steve Jobs/Jony Ive 设计哲学
+├── Jobs 过滤器、铁律、范围纪律
+└── 始终加载，融入项目骨髓
+
+/rules/web-design-standard.md (本文件)
+├── 技术规范（排版系统、间距系统、组件标准）
+└── 与 design-philosophy 互补
+
+/skills/design-audit
+├── 15 维度系统性审计协议
+├── 分阶段改进计划
+└── 触发："/design-audit" 或 "审计设计"
+
+/skills/frontend-design
+├── 前端美学创意方向
+└── 用于新建界面
 
 /skills/web-design-guidelines
 ├── Vercel Web Interface Guidelines
