@@ -73,7 +73,7 @@ function scanDirectoryRecursive(dir, baseDir, results = []) {
     if (entry.isDirectory()) {
       // 递归扫描子目录
       scanDirectoryRecursive(fullPath, baseDir, results);
-    } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== '_README.md') {
+    } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== '_README.md' && entry.name !== 'INDEX.md') {
       // 计算相对于 baseDir 的路径
       const relativePath = path.relative(baseDir, fullPath);
       results.push({
@@ -96,33 +96,55 @@ function scanTasks() {
     archived: []
   };
 
-  for (const [key, dirName] of Object.entries(STATUS)) {
-    const dir = path.join(TODOS_DIR, dirName);
-    if (!fs.existsSync(dir)) continue;
+  if (!fs.existsSync(TODOS_DIR)) return tasks;
 
-    // 递归扫描所有 .md 文件
-    const files = scanDirectoryRecursive(dir, dir);
+  const statusMap = {
+    active: '🚧 进行中',
+    completed: '✅ 已完成',
+    backlog: '📋 待规划',
+    archived: '📦 已归档'
+  };
 
-    tasks[dirName] = files.map(({ fullPath, relativePath, fileName }) => {
-      const content = fs.readFileSync(fullPath, 'utf-8');
-      const titleMatch = content.match(/^#\s+(.+)$/m);
-      const statusMatch = content.match(/\*\*状态\*\*:\s*([\u{1F300}-\u{1F9FF}\s]+)/u);
-      const priorityMatch = content.match(/\*\*优先级\*\*:\s*(P[0-3])/);
-      const branchMatch = content.match(/\*\*分支\*\*:\s*`([^`]+)`/);
+  const resolveStatusKey = (statusText, relativePath) => {
+    const text = statusText || '';
+    if (text.includes('✅') || text.includes('已完成') || text.includes('完成')) return 'completed';
+    if (text.includes('📋') || text.includes('待办') || text.includes('待规划')) return 'backlog';
+    if (text.includes('📦') || text.includes('归档')) return 'archived';
+    if (text.includes('🚧') || text.includes('进行中')) return 'active';
+    if (relativePath.startsWith('completed/')) return 'completed';
+    if (relativePath.startsWith('backlog/')) return 'backlog';
+    if (relativePath.startsWith('archived/')) return 'archived';
+    return 'active';
+  };
 
-      return {
-        file: fileName,
-        title: titleMatch ? titleMatch[1] : path.basename(fileName, '.md'),
-        status: statusMatch ? statusMatch[1].trim() : '🚧 进行中',
-        priority: priorityMatch ? priorityMatch[1] : 'P2',
-        branch: branchMatch ? branchMatch[1] : null,
-        path: `${dirName}/${relativePath}`
-      };
+  // 递归扫描所有 .md 文件
+  const files = scanDirectoryRecursive(TODOS_DIR, TODOS_DIR);
+
+  files.forEach(({ fullPath, relativePath, fileName }) => {
+    if (fileName === 'INDEX.md' || fileName.startsWith('.')) return;
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const statusMatch = content.match(/\*\*状态\*\*:\s*([^\n]+)/);
+    const priorityMatch = content.match(/\*\*优先级\*\*:\s*(P[0-3])/);
+    const branchMatch = content.match(/\*\*分支\*\*:\s*`([^`]+)`/);
+
+    const statusText = statusMatch ? statusMatch[1].trim() : '';
+    const statusKey = resolveStatusKey(statusText, relativePath);
+    const displayStatus = statusText || statusMap[statusKey];
+
+    tasks[statusKey].push({
+      file: fileName,
+      title: titleMatch ? titleMatch[1] : path.basename(fileName, '.md'),
+      status: displayStatus,
+      priority: priorityMatch ? priorityMatch[1] : 'P2',
+      branch: branchMatch ? branchMatch[1] : null,
+      path: relativePath
     });
-  }
+  });
 
   return tasks;
 }
+
 
 // 生成任务索引
 function generateIndex(tasks) {
