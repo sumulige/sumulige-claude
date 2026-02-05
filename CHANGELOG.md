@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.2](https://github.com/sumulige/sumulige-claude/compare/v1.13.1...v1.13.2) (2026-02-05)
+
+### Fixed
+- **hooks**: 修复项目缺少本地 hooks 时的 "MODULE_NOT_FOUND" 错误
+  - 优先使用项目目录 `.claude/hooks/`
+  - 回退到全局 `~/.claude/hooks/`
+  - 都不存在时静默处理
+
 ### [1.13.1](https://github.com/sumulige/sumulige-claude/compare/v1.13.0...v1.13.1) (2026-02-05)
 
 ### Features
