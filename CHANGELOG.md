@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.1](https://github.com/sumulige/sumulige-claude/compare/v1.13.0...v1.13.1) (2026-02-05)
+
+### Features
+- **agent-browser**: 添加 vercel-labs/agent-browser 作为默认 skill
+  - 浏览器自动化 CLI：导航、交互、截图、数据抓取
+  - Element refs 系统确保可靠自动化
+  - 支持会话管理和视频录制
+
 ## [1.13.0](https://github.com/sumulige/sumulige-claude/compare/v1.12.4...v1.13.0) (2026-02-05)
 
 ### Features
