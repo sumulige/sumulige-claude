@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/sumulige/sumulige-claude/compare/v1.12.4...v1.13.0) (2026-02-05)
+
+### Features
+- **design-philosophy**: Steve Jobs/Jony Ive 设计哲学融入项目骨髓
+  - Jobs 过滤器：5 个核心问题指导每个设计决策
+  - 8 条设计铁律：简洁是架构、一致性不可协商、层级驱动一切等
+  - 范围纪律：只改视觉，不碰功能
+- **design-audit**: 15 维度系统性 UI/UX 审计协议
+  - 视觉层级、间距、排版、颜色、对齐、组件一致性
+  - 空/加载/错误状态、响应式、可访问性全覆盖
+  - 分阶段改进计划输出（关键→精化→打磨）
+- **command**: `/design-audit` 快速入口
+
+### Fixed
+- **todo-manager**: 改进状态解析和错误日志
+- **workflow**: 重构命令结构提升可维护性
+
 ### [1.12.4](https://github.com/sumulige/sumulige-claude/compare/v1.12.3...v1.12.4) (2026-02-03)
 
 ### Features
