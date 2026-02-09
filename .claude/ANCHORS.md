@@ -41,6 +41,15 @@
 
 ---
 
+## 产品工作流
+
+| 文件 | 用途 |
+|------|------|
+| `prompts/technical-cofounder-core.md` | Always-on 协作协议 - PO 控制权、假设清单、关键决策点停顿 |
+| `.claude/skills/technical-cofounder/SKILL.md` | 深模式工作流 - Discovery → Planning → Building → Polish → Handoff（PHASE 门控） |
+
+---
+
 ## 关键文件
 
 | 文件 | 用途 |

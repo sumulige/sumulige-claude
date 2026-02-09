@@ -1,0 +1,34 @@
+name: technical-cofounder
+version: 1.0.0
+author: "@sumulige"
+description: |
+  Technical Co-Founder workflow for building real, launchable products with strict phase gates.
+  Use when the user wants to build/ship an app/product/MVP (launch/上线/发布), not for small bug fixes.
+
+tags:
+  - product
+  - workflow
+  - cofounder
+  - planning
+  - delivery
+
+triggers:
+  - product
+  - MVP
+  - launch
+  - ship
+  - startup
+  - SaaS
+  - build an app
+  - chrome extension
+  - mobile app
+  - 产品
+  - 上线
+  - 发布
+  - 启动
+  - 落地
+
+dependencies: []
+
+difficulty: intermediate
+

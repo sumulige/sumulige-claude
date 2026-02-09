@@ -20,6 +20,7 @@
 | 技能 | 说明 | 难度 |
 |------|------|------|
 | [manus-kickoff](./manus-kickoff/) | Manus 风格项目启动流程 | 中级 |
+| [technical-cofounder](./technical-cofounder/) | Technical Co-Founder 阶段门控工作流（Discovery → Planning → Building → Polish → Handoff） | 中级 |
 
 ### 开发类
 

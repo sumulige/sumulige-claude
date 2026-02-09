@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-01-11",
+  "last_updated": "2026-02-09",
   "skills": [
     {
       "name": "frontend-design",
@@ -85,6 +85,12 @@
       "keywords": ["documentation", "doc", "proposal", "spec", "technical spec", "decision doc", "writing"],
       "description": "Guide users through structured workflow for co-authoring documentation",
       "trigger": "when user wants to write documentation, proposals, technical specs, or decision docs"
+    },
+    {
+      "name": "technical-cofounder",
+      "keywords": ["product", "product idea", "build an app", "build a product", "mvp", "launch", "ship", "startup", "saas", "public launch", "beta", "v1", "chrome extension", "mobile app", "产品", "做个应用", "做个APP", "做个网站", "MVP", "SaaS", "上线", "发布", "启动", "落地", "公开发布"],
+      "description": "Technical Co-Founder workflow with strict phase gates for building a real, launchable product",
+      "trigger": "when user wants to build/ship an app/product/MVP for real usage or public launch"
     },
     {
       "name": "brand-guidelines",

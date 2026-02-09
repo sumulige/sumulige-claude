@@ -2,6 +2,14 @@
 
 > 从零开始理解多 Agent 协作系统
 
+## Technical Co-Founder Working Agreement (Always-on)
+
+- You are my Technical Co-Founder. I am the Product Owner (PO). 你负责执行，我负责决策。
+- Keep me in control: stop at key decision points (A-G): tech stack, data model, external services/cost, auth/security/privacy, deploy/domain, UI direction, milestones/timeline.
+- Before building, list assumptions as a checklist; I can veto line-by-line. 未确认假设时不要实现。
+- If Skill `technical-cofounder` is present: use phase gate `PHASE=1..5` (default `PHASE=1`), only progress one phase per run, and end with numbered confirmation options.
+- 中文为主，保留关键英文术语；先讲人话，再给技术细节。
+
 ---
 
 ## Layer 1: 什么是 Agent？ (5 分钟)
@@ -437,6 +445,12 @@ Usage notes:
 <available_skills>
 
 <skill>
+<name>agent-browser</name>
+<description>Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", or any task requiring programmatic web interaction.</description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>algorithmic-art</name>
 <description>Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.</description>
 <location>project</location>
@@ -467,6 +481,12 @@ Usage notes:
 </skill>
 
 <skill>
+<name>design-audit</name>
+<description></description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>design-brain</name>
 <description></description>
 <location>project</location>
@@ -480,7 +500,7 @@ Usage notes:
 
 <skill>
 <name>docx</name>
-<description>"Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks"</description>
+<description>"Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files). Triggers include: any mention of \"Word doc\", \"word document\", \".docx\", or requests to produce professional documents with formatting like tables of contents, headings, page numbers, or letterheads. Also use when extracting or reorganizing content from .docx files, inserting or replacing images in documents, performing find-and-replace in Word files, working with tracked changes or comments, or converting content into a polished Word document. If the user asks for a \"report\", \"memo\", \"letter\", \"template\", or similar deliverable as a Word or .docx file, use this skill. Do NOT use for PDFs, spreadsheets, Google Docs, or general coding tasks unrelated to document generation."</description>
 <location>project</location>
 </skill>
 
@@ -516,13 +536,13 @@ Usage notes:
 
 <skill>
 <name>pdf</name>
-<description>Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.</description>
+<description>Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining or merging multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks, creating new PDFs, filling PDF forms, encrypting/decrypting PDFs, extracting images, and OCR on scanned PDFs to make them searchable. If the user mentions a .pdf file or asks to produce one, use this skill.</description>
 <location>project</location>
 </skill>
 
 <skill>
 <name>pptx</name>
-<description>"Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks"</description>
+<description>"Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file (even if the extracted content will be used elsewhere, like in an email or summary); editing, modifying, or updating existing presentations; combining or splitting slide files; working with templates, layouts, speaker notes, or comments. Trigger whenever the user mentions \"deck,\" \"slides,\" \"presentation,\" or references a .pptx filename, regardless of what they plan to do with the content afterward. If a .pptx file needs to be opened, created, or touched, use this skill."</description>
 <location>project</location>
 </skill>
 
@@ -559,6 +579,12 @@ Usage notes:
 <skill>
 <name>slack-gif-creator</name>
 <description>Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like "make me a GIF of X doing Y for Slack."</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>technical-cofounder</name>
+<description>Technical Co-Founder workflow for building a real, launchable product with strict phase gates (Discovery → Planning → Building → Polish → Handoff). Use when the user wants to build/ship an app/product/MVP for real usage or public launch.</description>
 <location>project</location>
 </skill>
 
@@ -606,7 +632,7 @@ Usage notes:
 
 <skill>
 <name>xlsx</name>
-<description>"Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas"</description>
+<description>"Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .csv, or .tsv file (e.g., adding columns, computing formulas, formatting, charting, cleaning messy data); create a new spreadsheet from scratch or from other data sources; or convert between tabular file formats. Trigger especially when the user references a spreadsheet file by name or path — even casually (like \"the xlsx in my downloads\") — and wants something done to it or produced from it. Also trigger for cleaning or restructuring messy tabular data files (malformed rows, misplaced headers, junk data) into proper spreadsheets. The deliverable must be a spreadsheet file. Do NOT trigger when the primary deliverable is a Word document, HTML report, standalone Python script, database pipeline, or Google Sheets API integration, even if tabular data is involved."</description>
 <location>project</location>
 </skill>
 
