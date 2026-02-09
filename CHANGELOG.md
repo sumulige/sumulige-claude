@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.3](https://github.com/sumulige/sumulige-claude/compare/v1.13.2...v1.13.3) (2026-02-09)
+
+
+### Added
+
+* embed technical cofounder workflow ([c93c796](https://github.com/sumulige/sumulige-claude/commits/c93c7964b94862dba996642fc679392c837a3c77))
+
+
+### Fixed
+
+* make commands tests side-effect free ([467d7fe](https://github.com/sumulige/sumulige-claude/commits/467d7fe305f16896c643c2780d6a3d957e25d0c7))
+
 ### [1.13.2](https://github.com/sumulige/sumulige-claude/compare/v1.13.1...v1.13.2) (2026-02-05)
 
 ### Fixed
