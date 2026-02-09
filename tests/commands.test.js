@@ -6,8 +6,71 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+
+// Prevent tests from touching real user env or running external installers.
+// Note: must be set before requiring ../lib/commands (which derives paths from HOME).
+const TEST_HOME = path.join(
+  os.tmpdir(),
+  'smc-test-home-' + Date.now() + '-' + Math.random().toString(16).slice(2),
+);
+process.env.HOME = TEST_HOME;
+process.env.DISABLE_AUTOUPDATER = '1';
+
+jest.mock('child_process', () => {
+  const actual = jest.requireActual('child_process');
+  return {
+    ...actual,
+    execSync: jest.fn(() => Buffer.from('')),
+  };
+});
+
+jest.mock('../lib/version-check', () => {
+  const actual = jest.requireActual('../lib/version-check');
+  return {
+    ...actual,
+    checkUpdate: jest.fn(async () => ({
+      current: actual.CURRENT_VERSION || '0.0.0',
+      latest: null,
+      updateAvailable: false,
+      cached: true,
+    })),
+  };
+});
+
 const commands = require('../lib/commands');
 const { CopyMode } = require('../lib/utils');
+
+function makeTempProjectDir(prefix = 'smc-project-') {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+  return dir;
+}
+
+async function withTempCwd(fn) {
+  const original = process.cwd();
+  const dir = makeTempProjectDir();
+  process.chdir(dir);
+  try {
+    return await fn(dir);
+  } finally {
+    process.chdir(original);
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// Default all cwd-dependent commands to a throwaway project directory.
+const ORIGINAL_CWD = process.cwd();
+const TEST_CWD = makeTempProjectDir('smc-test-cwd-');
+
+beforeAll(() => {
+  process.chdir(TEST_CWD);
+});
+
+afterAll(() => {
+  process.chdir(ORIGINAL_CWD);
+  fs.rmSync(TEST_CWD, { recursive: true, force: true });
+  // Cleanup mocked HOME directory contents created by commands like `init`.
+  fs.rmSync(TEST_HOME, { recursive: true, force: true });
+});
 
 // ============================================================================
 // Helper Functions Tests
@@ -262,7 +325,7 @@ describe('Commands Module - Extended Tests', () => {
     });
 
     it('should pass arguments to command function', async () => {
-      const agentSpy = jest.spyOn(commands.commands, 'agent');
+      const agentSpy = jest.spyOn(commands.commands, 'agent').mockImplementation(async () => {});
       await commands.runCommand('agent', ['test task']);
       expect(agentSpy).toHaveBeenCalledWith('test task');
       agentSpy.mockRestore();
@@ -275,7 +338,7 @@ describe('Commands Module - Extended Tests', () => {
     });
 
     it('should handle commands with multiple arguments', async () => {
-      const syncSpy = jest.spyOn(commands.commands, 'sync');
+      const syncSpy = jest.spyOn(commands.commands, 'sync').mockImplementation(async () => {});
       await commands.runCommand('sync', ['--check-update']);
       expect(syncSpy).toHaveBeenCalledWith('--check-update');
       syncSpy.mockRestore();
@@ -312,15 +375,19 @@ describe('Commands Module - Extended Tests', () => {
     });
 
     it('should not throw on basic call', async () => {
-      await expect(async () => {
-        await commands.commands.sync();
-      }).not.toThrow();
+      await withTempCwd(async () => {
+        await expect(async () => {
+          await commands.commands.sync();
+        }).not.toThrow();
+      });
     });
 
     it('should recognize --check-update flag', async () => {
-      await expect(async () => {
-        await commands.commands.sync('--check-update');
-      }).not.toThrow();
+      await withTempCwd(async () => {
+        await expect(async () => {
+          await commands.commands.sync('--check-update');
+        }).not.toThrow();
+      });
     });
   });
 
@@ -329,8 +396,10 @@ describe('Commands Module - Extended Tests', () => {
       expect(typeof commands.commands.migrate).toBe('function');
     });
 
-    it('should not throw', () => {
-      expect(() => commands.commands.migrate()).not.toThrow();
+    it('should not throw', async () => {
+      await withTempCwd(async () => {
+        expect(() => commands.commands.migrate()).not.toThrow();
+      });
     });
   });
 
@@ -347,18 +416,18 @@ describe('Commands Module - Extended Tests', () => {
   });
 
   describe('agent command', () => {
-    it('should show usage when no task provided', () => {
+    it('should show usage when no task provided', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      commands.commands.agent();
+      await commands.commands.agent();
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls.flat().join(' ');
       expect(output).toContain('Usage');
       consoleSpy.mockRestore();
     });
 
-    it('should display agent information when task provided', () => {
+    it('should display agent information when task provided', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      commands.commands.agent('Build a REST API');
+      await commands.commands.agent('Build a REST API', '--dry-run');
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls.flat().join(' ');
       expect(output).toContain('Agent Orchestration');
@@ -366,9 +435,9 @@ describe('Commands Module - Extended Tests', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should show available agents', () => {
+    it('should show available agents', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      commands.commands.agent('test task');
+      await commands.commands.agent('--list');
       const output = consoleSpy.mock.calls.flat().join(' ');
       expect(output).toContain('Available Agents');
       consoleSpy.mockRestore();
@@ -530,19 +599,20 @@ describe('Commands Module - Extended Tests', () => {
     });
 
     it('should accept --safe flag', () => {
-      expect(() => commands.commands.template('--safe')).not.toThrow();
+      // Avoid deploying template into the repo during tests.
+      expect(() => commands.commands.template('--safe', '--help')).not.toThrow();
     });
 
     it('should accept --force flag', () => {
-      expect(() => commands.commands.template('--force')).not.toThrow();
+      expect(() => commands.commands.template('--force', '--help')).not.toThrow();
     });
 
     it('should accept path argument', () => {
-      expect(() => commands.commands.template('/tmp/test-project')).not.toThrow();
+      expect(() => commands.commands.template('/tmp/test-project', '--help')).not.toThrow();
     });
 
     it('should accept combined flags and path', () => {
-      expect(() => commands.commands.template('/tmp/test', '--safe')).not.toThrow();
+      expect(() => commands.commands.template('/tmp/test', '--safe', '--help')).not.toThrow();
     });
   });
 
@@ -551,8 +621,12 @@ describe('Commands Module - Extended Tests', () => {
       expect(typeof commands.commands.kickoff).toBe('function');
     });
 
-    it('should not throw', () => {
-      expect(() => commands.commands.kickoff()).not.toThrow();
+    it('should not throw', async () => {
+      await withTempCwd(async () => {
+        await expect(async () => {
+          await commands.commands.kickoff();
+        }).not.toThrow();
+      });
     });
   });
 
@@ -893,16 +967,16 @@ describe('Commands Module - Extended Tests', () => {
   });
 
   describe('agent command details', () => {
-    it('should handle empty task gracefully', () => {
+    it('should handle empty task gracefully', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      commands.commands.agent('');
+      await commands.commands.agent('', '--list');
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
 
-    it('should handle multi-word task', () => {
+    it('should handle multi-word task', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      commands.commands.agent('build a rest api with authentication');
+      await commands.commands.agent('build a rest api with authentication', '--dry-run', '--no-skills');
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
@@ -910,15 +984,15 @@ describe('Commands Module - Extended Tests', () => {
 
   describe('template command edge cases', () => {
     it('should handle path with spaces', () => {
-      expect(() => commands.commands.template('/tmp/test project')).not.toThrow();
+      expect(() => commands.commands.template('/tmp/test project', '--help')).not.toThrow();
     });
 
     it('should handle multiple flags', () => {
-      expect(() => commands.commands.template('--safe', '--force')).not.toThrow();
+      expect(() => commands.commands.template('--safe', '--force', '--help')).not.toThrow();
     });
 
     it('should handle path before flags', () => {
-      expect(() => commands.commands.template('/tmp/test', '--safe')).not.toThrow();
+      expect(() => commands.commands.template('/tmp/test', '--safe', '--help')).not.toThrow();
     });
   });
 
@@ -976,26 +1050,20 @@ describe('Commands Module - Extended Tests', () => {
   });
 
   describe('skills:update command', () => {
-    it('should not throw', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      expect(() => commands.commands['skills:update']()).not.toThrow();
-      consoleSpy.mockRestore();
+    it('should be a function (avoid network/FS side effects in tests)', () => {
+      expect(typeof commands.commands['skills:update']).toBe('function');
     });
   });
 
   describe('skills:publish command', () => {
-    it('should not throw', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      expect(() => commands.commands['skills:publish']()).not.toThrow();
-      consoleSpy.mockRestore();
+    it('should be a function (interactive; do not execute in tests)', () => {
+      expect(typeof commands.commands['skills:publish']).toBe('function');
     });
   });
 
   describe('skills:install-all command', () => {
-    it('should not throw', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      expect(() => commands.commands['skills:install-all']()).not.toThrow();
-      consoleSpy.mockRestore();
+    it('should be a function (avoid external installers in tests)', () => {
+      expect(typeof commands.commands['skills:install-all']).toBe('function');
     });
   });
 
@@ -1068,9 +1136,11 @@ describe('Commands Module - Extended Tests', () => {
   // ============================================================================
 
   describe('kickoff with arguments', () => {
-    it('should handle project name argument', () => {
+    it('should handle project name argument', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      expect(() => commands.commands.kickoff('my-project')).not.toThrow();
+      await expect(async () => {
+        await commands.commands.kickoff('my-project');
+      }).not.toThrow();
       consoleSpy.mockRestore();
     });
   });
